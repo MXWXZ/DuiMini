@@ -3,7 +3,7 @@
 ### 这是一个基于MIT开源协议的轻量级DirectUI库。
 ### 抛弃繁杂的功能，只追求轻量与实用~
 <br><br>
-开发手册：<https://mxwxz.github.io/DuiMini/>
+开发手册：<https://mxwxz.github.io/DuiMini/>  
 稳定版本：<https://github.com/MXWXZ/DuiMini/releases>
 <br><br>
 ##### 版本号：1.0
