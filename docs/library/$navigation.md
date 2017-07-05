@@ -6,6 +6,7 @@
 - [DuiMini-The MIT License](?file=001-关于DuiMini/02-DuiMini-The MIT License "DuiMini-The MIT License")
 - [DirectUI License](?file=001-关于DuiMini/03-DirectUI License "DirectUI License")
 - [Duilib-The BSD License](?file=001-关于DuiMini/04-Duilib-The BSD License "Duilib-The BSD License")
+- [ZLIB License](?file=001-关于DuiMini/05-ZLIB License "ZLIB License")
 
 ##### 开始使用DuiMini
 - [环境和项目设置](?file=002-开始使用DuiMini/01-环境和项目设置 "环境和项目设置")
