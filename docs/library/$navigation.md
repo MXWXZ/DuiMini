@@ -3,10 +3,12 @@
 
 ##### 关于DuiMini
 - [DuiMini库简介](?file=001-关于DuiMini/01-DuiMini库简介 "DuiMini库简介")
-- [DuiMini-The MIT License](?file=001-关于DuiMini/02-DuiMini-The MIT License "DuiMini-The MIT License")
-- [DirectUI License](?file=001-关于DuiMini/03-DirectUI License "DirectUI License")
-- [Duilib-The BSD License](?file=001-关于DuiMini/04-Duilib-The BSD License "Duilib-The BSD License")
-- [ZLIB License](?file=001-关于DuiMini/05-ZLIB License "ZLIB License")
+- **Licenses**
+    - [DuiMini-The MIT License](?file=001-关于DuiMini/02-Licenses/01-DuiMini-The MIT License "DuiMini-The MIT License")
+    - [DirectUI License](?file=001-关于DuiMini/02-Licenses/02-DirectUI License "DirectUI License")
+    - [Duilib-The BSD License](?file=001-关于DuiMini/02-Licenses/03-Duilib-The BSD License "Duilib-The BSD License")
+    - [ZLIB License](?file=001-关于DuiMini/02-Licenses/04-ZLIB License "ZLIB License")
+    - [amWiki-The MIT License](?file=001-关于DuiMini/02-Licenses/05-amWiki-The MIT License "amWiki-The MIT License")
 
 ##### 开始使用DuiMini
 - [环境和项目设置](?file=002-开始使用DuiMini/01-环境和项目设置 "环境和项目设置")
