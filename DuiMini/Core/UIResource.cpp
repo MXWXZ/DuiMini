@@ -21,6 +21,23 @@ UIResource::~UIResource() {
 }
 
 /************************************************************************
+设定资源类型
+Restype type：资源类型
+            kRestype_File      常规文件
+            kRestype_Package   压缩包
+            kRestype_Self      自身rc资源
+************************************************************************/
+void UIResource::SetResType(Restype type) {
+    if (zipcache_ != NULL)
+        UIUnzip::CloseZip(zipcache_);
+    resid_ = 0;
+    lastfile_ = _T("");
+    respath_ = _T("");
+    zipcache_ = NULL;
+    restype_ = type;
+}
+
+/************************************************************************
 获取资源文件大小
 LPCTSTR path：资源文件路径
 返回值：-1文件不存在，否则为资源文件大小
@@ -36,7 +53,7 @@ long UIResource::GetFileSize(LPCTSTR path) {
         if (fp == NULL) {
             UStr msg;
             msg.Format(_T("File \"%s\" doesn't exist!"), tmppath);
-            UIRecLog::RecordLog(kLoglevel_Error, msg);
+            UIRecLog::RecordLog(kLoglevel_Error, msg, EXITCODE_FILEFAIL);
             return -1;
         }
         fseek(fp, 0, SEEK_END);
@@ -107,7 +124,7 @@ bool UIResource::GetFile(BYTE* buf, long size) {
         if (fp == NULL) {
             UStr msg;
             msg.Format(_T("File \"%s\" doesn't exist!"), tmppath);
-            UIRecLog::RecordLog(kLoglevel_Error, msg);
+            UIRecLog::RecordLog(kLoglevel_Error, msg, EXITCODE_FILEFAIL);
             return false;
         }
         fread(buf, 1, size, fp);
@@ -117,7 +134,7 @@ bool UIResource::GetFile(BYTE* buf, long size) {
             UStr msg;
             msg.Format(_T("Read file \"%s\" in \"%s\" error!"),
                        lastfile_, respath_);
-            UIRecLog::RecordLog(kLoglevel_Error, msg);
+            UIRecLog::RecordLog(kLoglevel_Error, msg, EXITCODE_FILEFAIL);
             return false;
         }
     }

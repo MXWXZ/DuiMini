@@ -3,8 +3,8 @@ Copyright (c) 2017 MXWXZ
 UI库日志记录类
 ************************************************************************/
 #pragma once
-#ifndef E__CODE_DUIMINI_DUIMINI_UTILS_UIRECLOG_H_
-#define E__CODE_DUIMINI_DUIMINI_UTILS_UIRECLOG_H_
+#ifndef DUIMINI_UTILS_UIRECLOG_H_
+#define DUIMINI_UTILS_UIRECLOG_H_
 
 namespace DuiMini {
 enum Loglevel {
@@ -35,4 +35,4 @@ class DUIMINI_API UIRecLog {
 
 }   // namespace DuiMini
 
-#endif  // E__CODE_DUIMINI_DUIMINI_UTILS_UIRECLOG_H_
+#endif  // DUIMINI_UTILS_UIRECLOG_H_

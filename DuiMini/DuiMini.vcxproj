@@ -444,7 +444,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Core\UIMarkup.cpp" />
     <ClCompile Include="Core\UIResource.cpp" />
     <ClCompile Include="Core\UISystem.cpp" />
     <ClCompile Include="DuiMini.cpp">
@@ -523,12 +522,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\UIDefine.h" />
-    <ClInclude Include="Core\UIMarkup.h" />
     <ClInclude Include="Core\UIResource.h" />
     <ClInclude Include="Core\UISystem.h" />
     <ClInclude Include="DuiMini.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="thirdpart\rapidxml\rapidxml.hpp" />
+    <ClInclude Include="thirdpart\rapidxml\rapidxml_print.hpp" />
+    <ClInclude Include="thirdpart\rapidxml\rapidxml_utils.hpp" />
     <ClInclude Include="thirdpart\zlib\ioapi.h" />
     <ClInclude Include="thirdpart\zlib\iowin32.h" />
     <ClInclude Include="thirdpart\zlib\unzip.h" />

@@ -3,8 +3,8 @@ Copyright (c) 2017 MXWXZ
 UI×ÊÔ´Àà
 ************************************************************************/
 #pragma once
-#ifndef E__CODE_DUIMINI_DUIMINI_CORE_UIRESOURCE_H_
-#define E__CODE_DUIMINI_DUIMINI_CORE_UIRESOURCE_H_
+#ifndef DUIMINI_CORE_UIRESOURCE_H_
+#define DUIMINI_CORE_UIRESOURCE_H_
 
 namespace DuiMini {
 enum Restype {
@@ -19,7 +19,7 @@ class DUIMINI_API UIResource {
     static long GetFileSize(LPCTSTR path);
     static bool GetFile(BYTE* buf, long size);
 
-    static void SetResType(Restype type) { restype_ = type; }
+    static void SetResType(Restype type);
     static Restype GetResType() { return restype_; }
     // for type0&1
     static void SetResPath(LPCTSTR path) { respath_ = path; }
@@ -38,4 +38,4 @@ class DUIMINI_API UIResource {
 
 }   // namespace DuiMini
 
-#endif  // E__CODE_DUIMINI_DUIMINI_CORE_UIRESOURCE_H_
+#endif  // DUIMINI_CORE_UIRESOURCE_H_

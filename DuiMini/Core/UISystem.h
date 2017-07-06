@@ -3,8 +3,8 @@ Copyright (c) 2017 MXWXZ
 UI全局类 无实例
 ************************************************************************/
 #pragma once
-#ifndef E__CODE_DUIMINI_DUIMINI_CORE_UISYSTEM_H_
-#define E__CODE_DUIMINI_DUIMINI_CORE_UISYSTEM_H_
+#ifndef DUIMINI_CORE_UISYSTEM_H_
+#define DUIMINI_CORE_UISYSTEM_H_
 
 namespace DuiMini {
 class DUIMINI_API UISystem {
@@ -25,4 +25,4 @@ class DUIMINI_API UISystem {
 
 }   // namespace DuiMini
 
-#endif  // E__CODE_DUIMINI_DUIMINI_CORE_UISYSTEM_H_
+#endif  // DUIMINI_CORE_UISYSTEM_H_

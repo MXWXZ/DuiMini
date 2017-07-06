@@ -37,6 +37,9 @@
     <Filter Include="源文件\thirdpart\zlib">
       <UniqueIdentifier>{9de9c371-8400-4942-9efd-f1c936900488}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\thirdpart\rapidxml">
+      <UniqueIdentifier>{3fcee51c-2a5f-47f4-b081-9c64d1b6f750}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DuiMini.cpp">
@@ -50,9 +53,6 @@
     </ClCompile>
     <ClCompile Include="StdAfx.cpp">
       <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\UIMarkup.cpp">
-      <Filter>源文件\Core</Filter>
     </ClCompile>
     <ClCompile Include="Core\UIResource.cpp">
       <Filter>源文件\Utils</Filter>
@@ -92,9 +92,6 @@
     <ClInclude Include="StdAfx.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Core\UIMarkup.h">
-      <Filter>头文件\Core</Filter>
-    </ClInclude>
     <ClInclude Include="Core\UIResource.h">
       <Filter>头文件\Utils</Filter>
     </ClInclude>
@@ -118,6 +115,15 @@
     </ClInclude>
     <ClInclude Include="Utils\UIRecLog.h">
       <Filter>头文件\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdpart\rapidxml\rapidxml_print.hpp">
+      <Filter>头文件\thirdpart\rapidxml</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdpart\rapidxml\rapidxml_utils.hpp">
+      <Filter>头文件\thirdpart\rapidxml</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdpart\rapidxml\rapidxml.hpp">
+      <Filter>头文件\thirdpart\rapidxml</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

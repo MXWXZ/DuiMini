@@ -3,8 +3,8 @@ Copyright (c) 2017 MXWXZ
 UI¿â¹«¹²Àà
 ************************************************************************/
 #pragma once
-#ifndef E__CODE_DUIMINI_DUIMINI_UTILS_UIUTILS_H_
-#define E__CODE_DUIMINI_DUIMINI_UTILS_UIUTILS_H_
+#ifndef DUIMINI_UTILS_UIUTILS_H_
+#define DUIMINI_UTILS_UIUTILS_H_
 
 namespace DuiMini {
 class DUIMINI_API UIString {
@@ -70,5 +70,5 @@ typedef const UIString CUStr;
 
 }   // namespace DuiMini
 
-#endif  // E__CODE_DUIMINI_DUIMINI_UTILS_UIUTILS_H_
+#endif  // DUIMINI_UTILS_UIUTILS_H_
 

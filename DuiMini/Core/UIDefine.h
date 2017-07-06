@@ -3,8 +3,8 @@ Copyright (c) 2017 MXWXZ
 库定义文件
 ************************************************************************/
 #pragma once
-#ifndef E__CODE_DUIMINI_DUIMINI_CORE_UIDEFINE_H_
-#define E__CODE_DUIMINI_DUIMINI_CORE_UIDEFINE_H_
+#ifndef DUIMINI_CORE_UIDEFINE_H_
+#define DUIMINI_CORE_UIDEFINE_H_
 
 // LIB导出函数（主程序请不要定义UILIB_EXPORT！静态编译请加上UILIB_STATIC）
 #ifdef UILIB_STATIC
@@ -29,4 +29,4 @@ const int kMax_XML_Attributes = 64;         // XML最大属性个数
 
 typedef unzFile ZFile;
 
-#endif  // E__CODE_DUIMINI_DUIMINI_CORE_UIDEFINE_H_
+#endif  // DUIMINI_CORE_UIDEFINE_H_

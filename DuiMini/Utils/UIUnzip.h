@@ -3,8 +3,8 @@ Copyright (c) 2017 MXWXZ
 UIø‚Ω‚—πÀı¿‡
 ************************************************************************/
 #pragma once
-#ifndef E__CODE_DUIMINI_DUIMINI_UTILS_UIUNZIP_H_
-#define E__CODE_DUIMINI_DUIMINI_UTILS_UIUNZIP_H_
+#ifndef DUIMINI_UTILS_UIUNZIP_H_
+#define DUIMINI_UTILS_UIUNZIP_H_
 
 namespace DuiMini {
 class DUIMINI_API UIUnzip {
@@ -17,4 +17,4 @@ class DUIMINI_API UIUnzip {
 
 }   // namespace DuiMini
 
-#endif  // E__CODE_DUIMINI_DUIMINI_UTILS_UIUNZIP_H_
+#endif  // DUIMINI_UTILS_UIUNZIP_H_

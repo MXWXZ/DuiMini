@@ -3,8 +3,8 @@ Copyright (c) 2017 MXWXZ
 DuiMini公共头文件
 ************************************************************************/
 #pragma once
-#ifndef E__CODE_DUIMINI_DUIMINI_DUIMINI_H_
-#define E__CODE_DUIMINI_DUIMINI_DUIMINI_H_
+#ifndef DUIMINI_DUIMINI_H_
+#define DUIMINI_DUIMINI_H_
 
 // 头文件
 #include <windows.h>
@@ -15,6 +15,12 @@ DuiMini公共头文件
 #include <locale.h>
 #include <time.h>
 
+// third-part
+// 放到zlib头文件后会报错
+#include "thirdpart/rapidxml/rapidxml.hpp"      // rapidxml 1.13
+#include "thirdpart/rapidxml/rapidxml_utils.hpp"
+#include "thirdpart/rapidxml/rapidxml_print.hpp"
+
 #include "thirdpart/zlib/unzip.h"        // zlib 1.2.11
 #include "thirdpart/zlib/iowin32.h"
 #ifdef _WIN64
@@ -23,13 +29,13 @@ DuiMini公共头文件
 #pragma comment(lib, "thirdpart/zlib/zlib_x86.lib")
 #endif
 
+// DuiMini
 #include "Core/UIDefine.h"                // UI库定义文件
 #include "Utils/UIUtils.h"                // UI库公用文件
 #include "Utils/UIUnzip.h"                // UI库解压类
 #include "Utils/UIRecLog.h"               // UI库日志记录类
 #include "Core/UIResource.h"              // UI库资源类
 #include "Core/UISystem.h"                // UI库系统类
-#include "Core/UIMarkup.h"                // UI库XML解析类
 
 /*
 #include "Utils/Utils.h"
@@ -75,4 +81,4 @@ DuiMini公共头文件
 #include "Control/UIGifAnim.h"
 */
 
-#endif  // E__CODE_DUIMINI_DUIMINI_DUIMINI_H_
+#endif  // DUIMINI_DUIMINI_H_
