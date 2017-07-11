@@ -15,7 +15,6 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
                        _In_ int       nCmdShow) {
     UISystem::Init(hInstance);
 
-
     UISystem::Cleanup();
     return 0;
 }

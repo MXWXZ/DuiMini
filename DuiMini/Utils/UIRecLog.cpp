@@ -7,18 +7,20 @@ Copyright (c) 2017 MXWXZ
 
 namespace DuiMini {
 /************************************************************************
-静态成员初始化
+Initialize static member
 ************************************************************************/
 Reclevel UIRecLog::reclevel_ = kReclevel_Debug;
 UStr UIRecLog::logfilepath_ = UStr(UISystem::GetCurrentDir())
                                 + _T("\\logfile.txt");
 
 /************************************************************************
-记录日志（自定义）
-LPCTSTR text：记录信息
-const int isexit：非负值则以此为退出值退出程序，否则不退出 默认-1
-返回值：false 文件访问失败 true 记录成功
-注：函数不在末尾添加回车
+Record log(custom)
+LPCTSTR text: the message
+const int isexit: if is positive number,exit using this number as code
+                  otherwise,stay running(default: -1)
+ret value: false - access file fail
+           true - record succeed
+WARNING: this function WILL NOT add '\n' at the end
 ************************************************************************/
 bool UIRecLog::RecordLog(LPCTSTR text, const int code /*= -1*/) {
     if (logfilepath_.IsEmpty())
@@ -37,15 +39,17 @@ bool UIRecLog::RecordLog(LPCTSTR text, const int code /*= -1*/) {
 }
 
 /************************************************************************
-记录日志（按格式）
-Loglevel level：日志级别
-                kLoglevel_Info为信息
-                kLoglevel_Warning为警告
-                kLoglevel_Error为错误
-LPCTSTR text：记录信息
-const int isexit：非负值则以此为退出值退出程序，否则不退出 默认-1
-返回值：false 文件访问失败 true 记录成功
-注：函数会自动在末尾添加回车
+Record log(according to format)
+Loglevel level: log level
+                kLoglevel_Info    - information of program
+                kLoglevel_Warning - warning(not fatal)
+                kLoglevel_Error   - error(fatal,usually exit)
+LPCTSTR text: the message
+const int isexit: if is positive number,exit using this number as code
+                  otherwise,stay running(default: -1)
+ret value: false - access file fail
+           true - record succeed
+WARNING: this function WILL AUTOMATICALLY add '\n' at the end
 ************************************************************************/
 bool UIRecLog::RecordLog(Loglevel level, LPCTSTR text,
                          const int code /*= -1*/) {

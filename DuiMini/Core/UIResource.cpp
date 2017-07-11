@@ -7,7 +7,7 @@ Copyright (c) 2017 MXWXZ
 
 namespace DuiMini {
 /************************************************************************
-静态成员初始化
+Initialize static member
 ************************************************************************/
 UINT UIResource::resid_ = 0;
 UStr UIResource::lastfile_ = _T("");
@@ -21,11 +21,11 @@ UIResource::~UIResource() {
 }
 
 /************************************************************************
-设定资源类型
-Restype type：资源类型
-            kRestype_File      常规文件
-            kRestype_Package   压缩包
-            kRestype_Self      自身rc资源
+Set resource type
+Restype type: resource type
+            kRestype_File      normal file
+            kRestype_Package   zip file
+            kRestype_Self      .rc resource
 ************************************************************************/
 void UIResource::SetResType(Restype type) {
     if (zipcache_ != NULL)
@@ -38,9 +38,10 @@ void UIResource::SetResType(Restype type) {
 }
 
 /************************************************************************
-获取资源文件大小
-LPCTSTR path：资源文件路径
-返回值：-1文件不存在，否则为资源文件大小
+Get resource file size
+LPCTSTR path: relative path
+ret value: -1 when file do not exist or damaged
+           otherwise is the file size
 ************************************************************************/
 long UIResource::GetFileSize(LPCTSTR path) {
     lastfile_ = path;
@@ -107,12 +108,13 @@ long UIResource::GetFileSize(LPCTSTR path) {
 }
 
 /************************************************************************
-获取资源文件
-BYTE* buf：文件缓冲区（必须先调用GetFileSize获取文件大小并初始化缓冲区，
-            函数不检查空间是否足够）
-long size：缓冲区大小
-返回值：true成功 false失败
-注：初始化在GetFileSize中进行，请不要在GetFileSize之前调用本函数！
+Get resource file
+BYTE* buf: buffer(please call 'GetFileSize' to get the
+            size and apply for memory space.)
+long size: buffer size
+ret value: false - fail     true - succeed
+WARNING: this function MUST be used after calling 'GetFileSize' and
+         WILL NOT check if there is enough space in the buffer.
 ************************************************************************/
 bool UIResource::GetFile(BYTE* buf, long size) {
     if (restype_ == kRestype_File) {

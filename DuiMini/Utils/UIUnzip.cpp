@@ -7,9 +7,9 @@ Copyright (c) 2017 MXWXZ
 
 namespace DuiMini {
 /************************************************************************
-打开文件函数
-LPCTSTR path：文件全路径
-返回值：打开的ZFile指针
+Open zip file
+LPCTSTR path: The full path of file
+ret value: opened ZFile pointer
 ************************************************************************/
 ZFile UIUnzip::OpenZip(LPCTSTR path) {
 #ifdef _UNICODE
@@ -32,8 +32,8 @@ ZFile UIUnzip::OpenZip(LPCTSTR path) {
 }
 
 /************************************************************************
-关闭文件函数
-ZFile fp：待关闭的文件指针
+Close zip file
+ZFile fp: file pointer you want to close
 ************************************************************************/
 void UIUnzip::CloseZip(ZFile fp) {
     unzClose(fp);
@@ -41,11 +41,13 @@ void UIUnzip::CloseZip(ZFile fp) {
 }
 
 /************************************************************************
-定位文件函数
-ZFile fp：打开的文件指针
-LPCTSTR path：相对压缩文件路径（如abc/123.txt）
-返回值：-1：文件不存在或已损坏，否则为文件大小
-注：相对路径请最好用/分隔，本函数自动将\\转换为/（zlib只识别/）
+Locate file in zip
+ZFile fp: opened file pointer
+LPCTSTR path: relative path (e.g. abc/123.txt)
+ret value: -1 when file do not exist or damaged
+           otherwise is the file size
+WARNING: Please better to use '/' to divide in relative path,this function
+         will AUTOMATICALLY turn '\\' to '/' (zlib ONLY allows '/')
 ************************************************************************/
 long UIUnzip::LocateZipItem(ZFile fp, LPCTSTR path) {
     UStr formatpath = path;
@@ -74,10 +76,13 @@ long UIUnzip::LocateZipItem(ZFile fp, LPCTSTR path) {
 }
 
 /************************************************************************
-解压函数
-ZFile fp：打开的文件指针
-BYTE* data：接收数据的缓冲区（请调用LocateZipItem获得大小并自行申请空间）
-注：本函数需在LocateZipItem后使用，函数不检查空间是否足够
+Unzip file
+ZFile fp:opened file pointer
+BYTE* data: buffer to recive data(please call 'LocateZipItem' to get the
+            size and apply for memory space).
+ret value: false - fail     true - succeed
+WARNING: this function MUST be used after calling 'LocateZipItem' and 
+         WILL NOT check if there is enough space in the buffer.
 ************************************************************************/
 bool UIUnzip::UnZipData(ZFile fp, BYTE* data) {
     if (unzOpenCurrentFile(fp) != UNZ_OK)return false;

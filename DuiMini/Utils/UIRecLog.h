@@ -1,6 +1,6 @@
 /************************************************************************
 Copyright (c) 2017 MXWXZ
-UI库日志记录类
+Log file recorder class
 ************************************************************************/
 #pragma once
 #ifndef DUIMINI_UTILS_UIRECLOG_H_
@@ -29,8 +29,8 @@ class DUIMINI_API UIRecLog {
     static LPCTSTR GetLogFilePath() { return logfilepath_; }
 
  protected:
-    static Reclevel reclevel_;        // 日志文件记录级别
-    static UStr logfilepath_;         // 日志文件路径
+    static Reclevel reclevel_;
+    static UStr logfilepath_;
 };
 
 }   // namespace DuiMini

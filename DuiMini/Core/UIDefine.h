@@ -1,12 +1,14 @@
 /************************************************************************
 Copyright (c) 2017 MXWXZ
-库定义文件
+The defination file of UI library
 ************************************************************************/
 #pragma once
 #ifndef DUIMINI_CORE_UIDEFINE_H_
 #define DUIMINI_CORE_UIDEFINE_H_
 
-// LIB导出函数（主程序请不要定义UILIB_EXPORT！静态编译请加上UILIB_STATIC）
+// Library export/import define
+// DO NOT DEFINE [UILIB_EXPORT] IN YOUR MAIN PROGRAM!
+// Please add [UILIB_STATIC] as a preprocessor definition.
 #ifdef UILIB_STATIC
 #   define DUIMINI_API
 #else
@@ -17,16 +19,24 @@ Copyright (c) 2017 MXWXZ
 #   endif
 #endif
 
-#define DUIMINI_VERSION _T("1.0")           // UI库版本
+#define DUIMINI_VERSION _T("1.0")           // UI library version
 
-const int kMax_String_Length = MAX_PATH;    // 最大字符串长度
-const int kMax_XML_Attributes = 64;         // XML最大属性个数
+const int kMax_String_Length = MAX_PATH;    // Max length of UIString
+const int kMax_XML_Attributes = 64;         // Max attributes in XML files
 
-#define RESOURCE_KIND _T("ZIP")             // 自定义资源类型
+#define RESOURCE_KIND _T("ZIP")             // Custom resource type
 
+// Exit code
 #define EXITCODE_SUCCESS 0
 #define EXITCODE_FILEFAIL 1
 
 typedef unzFile ZFile;
+#ifdef _UNICODE
+typedef std::wstring tstring;    // NOLINT
+#else
+typedef std::string tstring;     // NOLINT
+#endif  // _UNICODE
+
+#pragma warning(disable: 4251)            // warnings when exporting string
 
 #endif  // DUIMINI_CORE_UIDEFINE_H_

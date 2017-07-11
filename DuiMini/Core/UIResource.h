@@ -1,6 +1,6 @@
 /************************************************************************
 Copyright (c) 2017 MXWXZ
-UI资源类
+Resource manager class
 ************************************************************************/
 #pragma once
 #ifndef DUIMINI_CORE_UIRESOURCE_H_
@@ -8,9 +8,9 @@ UI资源类
 
 namespace DuiMini {
 enum Restype {
-    kRestype_File = 0,            // 常规文件
-    kRestype_Package = 1,         // 压缩包
-    kRestype_Self = 2,            // 自身rc资源
+    kRestype_File = 0,
+    kRestype_Package = 1,
+    kRestype_Self = 2,
 };
 
 class DUIMINI_API UIResource {

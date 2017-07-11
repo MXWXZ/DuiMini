@@ -1,22 +1,24 @@
 /************************************************************************
 Copyright (c) 2017 MXWXZ
-DuiMini公共头文件
+DuiMini public header files
 ************************************************************************/
 #pragma once
 #ifndef DUIMINI_DUIMINI_H_
 #define DUIMINI_DUIMINI_H_
 
-// 头文件
-#include <windows.h>
-#include <windowsx.h>
-#include <tchar.h>
-#include <stdio.h>
-#include <assert.h>
-#include <locale.h>
-#include <time.h>
+// system header files
+#include <cstdio>
+#include <cassert>
+#include <clocale>
+#include <ctime>
+#include <algorithm>
+#include "windows.h"
+#include "windowsx.h"
+#include "tchar.h"
+#include "string.h"
 
 // third-part
-// 放到zlib头文件后会报错
+// Compile fails if it is befind zlib header files
 #include "thirdpart/rapidxml/rapidxml.hpp"      // rapidxml 1.13
 #include "thirdpart/rapidxml/rapidxml_utils.hpp"
 #include "thirdpart/rapidxml/rapidxml_print.hpp"
@@ -30,12 +32,12 @@ DuiMini公共头文件
 #endif
 
 // DuiMini
-#include "Core/UIDefine.h"                // UI库定义文件
-#include "Utils/UIUtils.h"                // UI库公用文件
-#include "Utils/UIUnzip.h"                // UI库解压类
-#include "Utils/UIRecLog.h"               // UI库日志记录类
-#include "Core/UIResource.h"              // UI库资源类
-#include "Core/UISystem.h"                // UI库系统类
+#include "Core/UIDefine.h"
+#include "Utils/UIUtils.h"
+#include "Utils/UIUnzip.h"
+#include "Utils/UIRecLog.h"
+#include "Core/UIResource.h"
+#include "Core/UISystem.h"
 
 /*
 #include "Utils/Utils.h"

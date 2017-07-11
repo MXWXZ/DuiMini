@@ -7,12 +7,12 @@ Copyright (c) 2017 MXWXZ
 
 namespace DuiMini {
 /************************************************************************
-静态成员初始化
+Initialize static member
 ************************************************************************/
 HINSTANCE UISystem::instance_;
 
 /************************************************************************
-初始化DuiMini库
+Initialize DuiMini library
 ************************************************************************/
 void UISystem::Init(HINSTANCE inst) {
     _tsetlocale(LC_ALL, _T(""));
@@ -20,14 +20,14 @@ void UISystem::Init(HINSTANCE inst) {
 }
 
 /************************************************************************
-清理（不退出）
+Clean up(DO NOT EXIT)
 ************************************************************************/
 void UISystem::Cleanup() {
 }
 
 /************************************************************************
-安全地退出程序
-const int code：退出值 默认为0
+Safely exit the program
+const int code: exit code(default:0)
 ************************************************************************/
 void UISystem::Exit(const int code /*= 0*/) {
     Cleanup();
@@ -35,8 +35,8 @@ void UISystem::Exit(const int code /*= 0*/) {
 }
 
 /************************************************************************
-获取当前路径，不包含末尾\\
-例如：c:\\windows\\system32
+Get the current path,WITHOUT THE \\ AT THE END
+e.g:c:\\windows\\system32
 ************************************************************************/
 LPCTSTR UISystem::GetCurrentDir() {
     TCHAR path[MAX_PATH] = { _T('\0') };

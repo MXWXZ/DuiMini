@@ -42,16 +42,8 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="small.ico">
-      <Filter>资源文件</Filter>
-    </Image>
     <Image Include="Demo.ico">
       <Filter>资源文件</Filter>
     </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="zip1.bin">
-      <Filter>资源文件</Filter>
-    </None>
   </ItemGroup>
 </Project>
