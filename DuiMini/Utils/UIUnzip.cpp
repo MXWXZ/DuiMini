@@ -1,16 +1,17 @@
-/************************************************************************
-Copyright (c) 2017 MXWXZ
-************************************************************************/
+// ****************************************
+// Copyright (c) 2017-2050
+// All rights reserved.
+//
+// Author:MXWXZ
+// Date:2017/09/05
+//
+// Description:
+// ****************************************
 #include "stdafx.h"
 #include "DuiMini.h"
 #include "UIUnzip.h"
 
 namespace DuiMini {
-/************************************************************************
-Open zip file
-LPCTSTR path: The full path of file
-ret value: opened ZFile pointer
-************************************************************************/
 ZFile UIUnzip::OpenZip(LPCTSTR path) {
 #ifdef _UNICODE
     int len = WideCharToMultiByte(CP_ACP, 0, path, -1, NULL, 0, NULL, NULL);
@@ -31,24 +32,11 @@ ZFile UIUnzip::OpenZip(LPCTSTR path) {
     return fp;
 }
 
-/************************************************************************
-Close zip file
-ZFile fp: file pointer you want to close
-************************************************************************/
 void UIUnzip::CloseZip(ZFile fp) {
     unzClose(fp);
     fp = NULL;
 }
 
-/************************************************************************
-Locate file in zip
-ZFile fp: opened file pointer
-LPCTSTR path: relative path (e.g. abc/123.txt)
-ret value: -1 when file do not exist or damaged
-           otherwise is the file size
-WARNING: Please better to use '/' to divide in relative path,this function
-         will AUTOMATICALLY turn '\\' to '/' (zlib ONLY allows '/')
-************************************************************************/
 long UIUnzip::LocateZipItem(ZFile fp, LPCTSTR path) {
     UStr formatpath = path;
     formatpath.Replace(_T("\\"), _T("/"));
@@ -75,15 +63,6 @@ long UIUnzip::LocateZipItem(ZFile fp, LPCTSTR path) {
     return ret;
 }
 
-/************************************************************************
-Unzip file
-ZFile fp:opened file pointer
-BYTE* data: buffer to recive data(please call 'LocateZipItem' to get the
-            size and apply for memory space).
-ret value: false - fail     true - succeed
-WARNING: this function MUST be used after calling 'LocateZipItem' and 
-         WILL NOT check if there is enough space in the buffer.
-************************************************************************/
 bool UIUnzip::UnZipData(ZFile fp, BYTE* data) {
     if (unzOpenCurrentFile(fp) != UNZ_OK)return false;
     int err, pos = 0;

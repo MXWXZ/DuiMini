@@ -1,14 +1,18 @@
-/************************************************************************
-Copyright (c) 2017 MXWXZ
-************************************************************************/
+// ****************************************
+// Copyright (c) 2017-2050
+// All rights reserved.
+//
+// Author:MXWXZ
+// Date:2017/09/05
+//
+// Description:
+// ****************************************
 #include "stdafx.h"
 #include "DuiMini.h"
 #include "UIResource.h"
 
 namespace DuiMini {
-/************************************************************************
-Initialize static member
-************************************************************************/
+// Initialize static member
 UINT UIResource::resid_ = 0;
 UStr UIResource::lastfile_ = _T("");
 UStr UIResource::respath_ = _T("");
@@ -20,13 +24,6 @@ UIResource::~UIResource() {
         UIUnzip::CloseZip(zipcache_);
 }
 
-/************************************************************************
-Set resource type
-Restype type: resource type
-            kRestype_File      normal file
-            kRestype_Package   zip file
-            kRestype_Self      .rc resource
-************************************************************************/
 void UIResource::SetResType(Restype type) {
     if (zipcache_ != NULL)
         UIUnzip::CloseZip(zipcache_);
@@ -37,14 +34,9 @@ void UIResource::SetResType(Restype type) {
     restype_ = type;
 }
 
-/************************************************************************
-Get resource file size
-LPCTSTR path: relative path
-ret value: -1 when file do not exist or damaged
-           otherwise is the file size
-************************************************************************/
 long UIResource::GetFileSize(LPCTSTR path) {
     lastfile_ = path;
+    UStr msg;
     if (restype_ == kRestype_File) {
         UStr tmppath;
         tmppath.Format(_T("%s\\%s"), respath_, path);
@@ -52,7 +44,6 @@ long UIResource::GetFileSize(LPCTSTR path) {
         FILE* fp;
         fp = _tfopen(tmppath, _T("rb"));
         if (fp == NULL) {
-            UStr msg;
             msg.Format(_T("File \"%s\" doesn't exist!"), tmppath);
             UIRecLog::RecordLog(kLoglevel_Error, msg, EXITCODE_FILEFAIL);
             return -1;
@@ -65,7 +56,6 @@ long UIResource::GetFileSize(LPCTSTR path) {
         if (zipcache_ == NULL) {
             zipcache_ = UIUnzip::OpenZip(respath_);
             if (zipcache_ == NULL) {
-                UStr msg;
                 msg.Format(_T("Zip file \"%s\" doesn't exist!"), respath_);
                 UIRecLog::RecordLog(kLoglevel_Error, msg, EXITCODE_FILEFAIL);
             }
@@ -85,7 +75,6 @@ long UIResource::GetFileSize(LPCTSTR path) {
             FILE* fp;
             fp = _tfopen(tmpfile, _T("wb"));
             if (fp == NULL) {
-                UStr msg;
                 msg.Format(_T("Temp path permission denied!"), tmppath);
                 UIRecLog::RecordLog(kLoglevel_Error, msg, EXITCODE_FILEFAIL);
             }
@@ -98,7 +87,6 @@ long UIResource::GetFileSize(LPCTSTR path) {
 
             zipcache_ = UIUnzip::OpenZip(respath_);
             if (zipcache_ == NULL) {
-                UStr msg;
                 msg.Format(_T("Zip file \"%s\" doesn't exist!"), respath_);
                 UIRecLog::RecordLog(kLoglevel_Error, msg, EXITCODE_FILEFAIL);
             }
@@ -107,16 +95,8 @@ long UIResource::GetFileSize(LPCTSTR path) {
     }
 }
 
-/************************************************************************
-Get resource file
-BYTE* buf: buffer(please call 'GetFileSize' to get the
-            size and apply for memory space.)
-long size: buffer size
-ret value: false - fail     true - succeed
-WARNING: this function MUST be used after calling 'GetFileSize' and
-         WILL NOT check if there is enough space in the buffer.
-************************************************************************/
 bool UIResource::GetFile(BYTE* buf, long size) {
+    UStr msg;
     if (restype_ == kRestype_File) {
         UStr tmppath;
         tmppath.Format(_T("%s\\%s"), respath_, lastfile_);
@@ -124,7 +104,6 @@ bool UIResource::GetFile(BYTE* buf, long size) {
         FILE* fp;
         fp = _tfopen(tmppath, _T("rb"));
         if (fp == NULL) {
-            UStr msg;
             msg.Format(_T("File \"%s\" doesn't exist!"), tmppath);
             UIRecLog::RecordLog(kLoglevel_Error, msg, EXITCODE_FILEFAIL);
             return false;
@@ -133,7 +112,6 @@ bool UIResource::GetFile(BYTE* buf, long size) {
         fclose(fp);
     } else {
         if (!UIUnzip::UnZipData(zipcache_, buf)) {
-            UStr msg;
             msg.Format(_T("Read file \"%s\" in \"%s\" error!"),
                        lastfile_, respath_);
             UIRecLog::RecordLog(kLoglevel_Error, msg, EXITCODE_FILEFAIL);

@@ -1,10 +1,13 @@
-/************************************************************************
-Copyright (c) 2017 MXWXZ
-DuiMini public header files
-************************************************************************/
+// ****************************************
+// Copyright (c) 2017-2050
+// All rights reserved.
+//
+// Author:MXWXZ
+// Date:2017/09/05
+//
+// Description:DuiMini public header files
+// ****************************************
 #pragma once
-#ifndef DUIMINI_DUIMINI_H_
-#define DUIMINI_DUIMINI_H_
 
 // system header files
 #include <cstdio>
@@ -12,10 +15,10 @@ DuiMini public header files
 #include <clocale>
 #include <ctime>
 #include <algorithm>
+#include <string>
 #include "windows.h"
 #include "windowsx.h"
 #include "tchar.h"
-#include "string.h"
 
 // third-part
 // Compile fails if it is befind zlib header files
@@ -82,5 +85,3 @@ DuiMini public header files
 #include "Control/UIWebBrowser.h"
 #include "Control/UIGifAnim.h"
 */
-
-#endif  // DUIMINI_DUIMINI_H_

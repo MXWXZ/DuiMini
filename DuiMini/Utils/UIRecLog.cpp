@@ -1,27 +1,21 @@
-/************************************************************************
-Copyright (c) 2017 MXWXZ
-************************************************************************/
+// ****************************************
+// Copyright (c) 2017-2050
+// All rights reserved.
+//
+// Author:MXWXZ
+// Date:2017/09/05
+//
+// Description:
+// ****************************************
 #include "stdafx.h"
 #include "DuiMini.h"
 #include "UIRecLog.h"
 
 namespace DuiMini {
-/************************************************************************
-Initialize static member
-************************************************************************/
+// Initialize static member
 Reclevel UIRecLog::reclevel_ = kReclevel_Debug;
-UStr UIRecLog::logfilepath_ = UStr(UISystem::GetCurrentDir())
-                                + _T("\\logfile.txt");
+UStr UIRecLog::logfilepath_ = UISystem::GetCurrentDir() + _T("\\logfile.txt");
 
-/************************************************************************
-Record log(custom)
-LPCTSTR text: the message
-const int isexit: if is positive number,exit using this number as code
-                  otherwise,stay running(default: -1)
-ret value: false - access file fail
-           true - record succeed
-WARNING: this function WILL NOT add '\n' at the end
-************************************************************************/
 bool UIRecLog::RecordLog(LPCTSTR text, const int code /*= -1*/) {
     if (logfilepath_.IsEmpty())
         return false;
@@ -38,19 +32,6 @@ bool UIRecLog::RecordLog(LPCTSTR text, const int code /*= -1*/) {
     return true;
 }
 
-/************************************************************************
-Record log(according to format)
-Loglevel level: log level
-                kLoglevel_Info    - information of program
-                kLoglevel_Warning - warning(not fatal)
-                kLoglevel_Error   - error(fatal,usually exit)
-LPCTSTR text: the message
-const int isexit: if is positive number,exit using this number as code
-                  otherwise,stay running(default: -1)
-ret value: false - access file fail
-           true - record succeed
-WARNING: this function WILL AUTOMATICALLY add '\n' at the end
-************************************************************************/
 bool UIRecLog::RecordLog(Loglevel level, LPCTSTR text,
                          const int code /*= -1*/) {
     if (logfilepath_.IsEmpty())
@@ -70,11 +51,11 @@ bool UIRecLog::RecordLog(Loglevel level, LPCTSTR text,
             strprefix = _T("[Error]");
             break;
     }
-    time_t tm;
-    time(&tm);
+    time_t tmptm;
+    time(&tmptm);
     TCHAR strtmp[64];
     _tcsftime(strtmp, sizeof(strtmp),
-              _T("%Y-%m-%d %H:%M:%S: "), localtime(&tm));
+              _T("%Y-%m-%d %H:%M:%S: "), localtime(&tmptm));
     strprefix += strtmp;
     FILE* file;
     _tfopen_s(&file, logfilepath_, _T("a+"));

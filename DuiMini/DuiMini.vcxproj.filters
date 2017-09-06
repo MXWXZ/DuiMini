@@ -14,95 +14,57 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="头文件\Core">
-      <UniqueIdentifier>{0a6e700d-db86-4086-beef-e348e7e5dd48}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="源文件\Core">
-      <UniqueIdentifier>{4118c364-5cad-4d67-979d-c4a86b1801a0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="头文件\Utils">
-      <UniqueIdentifier>{f79fdbaa-a400-4348-8cef-10cce1d06d8b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="源文件\Utils">
-      <UniqueIdentifier>{7ab373b9-249e-4d3e-befe-ae95cdb6327f}</UniqueIdentifier>
+      <UniqueIdentifier>{5760289f-cd71-4017-9f3d-fd4b93200f3f}</UniqueIdentifier>
     </Filter>
     <Filter Include="头文件\thirdpart">
-      <UniqueIdentifier>{b0a7ddae-d61b-4249-93c4-4e351a06da53}</UniqueIdentifier>
+      <UniqueIdentifier>{9c3c6ba5-cb07-4078-a479-86da805f4656}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Utils">
+      <UniqueIdentifier>{79313bdc-1ac2-436c-9484-38880c6b7729}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Core">
+      <UniqueIdentifier>{91e64244-632a-4b97-ad24-d64f2b619677}</UniqueIdentifier>
     </Filter>
     <Filter Include="源文件\thirdpart">
-      <UniqueIdentifier>{a2cd2b3e-93e4-4092-8402-8b12d50895ab}</UniqueIdentifier>
+      <UniqueIdentifier>{6299c3b4-2ba4-4c8e-975a-9e7f6ae89af9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Utils">
+      <UniqueIdentifier>{c01ba908-cf74-4f00-8fb5-47a7fe1cc639}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\thirdpart\rapidxml">
+      <UniqueIdentifier>{81ecd23f-3591-42cb-971d-42f991084727}</UniqueIdentifier>
     </Filter>
     <Filter Include="头文件\thirdpart\zlib">
-      <UniqueIdentifier>{0e6eee59-565c-4249-98a5-648926c32f7d}</UniqueIdentifier>
+      <UniqueIdentifier>{8a532910-b7e1-4d81-8df5-da9e3994c03f}</UniqueIdentifier>
     </Filter>
     <Filter Include="源文件\thirdpart\zlib">
-      <UniqueIdentifier>{9de9c371-8400-4942-9efd-f1c936900488}</UniqueIdentifier>
+      <UniqueIdentifier>{917a2c94-3b55-44b4-ab23-43edbbf8abf2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="头文件\thirdpart\rapidxml">
-      <UniqueIdentifier>{3fcee51c-2a5f-47f4-b081-9c64d1b6f750}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="DuiMini.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\UISystem.cpp">
-      <Filter>源文件\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils\UIUtils.cpp">
-      <Filter>源文件\Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="StdAfx.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\UIResource.cpp">
-      <Filter>源文件\Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils\UIUnzip.cpp">
-      <Filter>源文件\Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="thirdpart\zlib\unzip.c">
-      <Filter>源文件\thirdpart\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="thirdpart\zlib\ioapi.c">
-      <Filter>源文件\thirdpart\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="thirdpart\zlib\iowin32.c">
-      <Filter>源文件\thirdpart\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils\UIRecLog.cpp">
-      <Filter>源文件\Utils</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DuiMini.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
+    <ClInclude Include="StdAfx.h">
       <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\UISystem.h">
-      <Filter>头文件\Core</Filter>
     </ClInclude>
     <ClInclude Include="Core\UIDefine.h">
       <Filter>头文件\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Utils\UIUtils.h">
-      <Filter>头文件\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="StdAfx.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Core\UIResource.h">
-      <Filter>头文件\Utils</Filter>
+      <Filter>头文件\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\UISystem.h">
+      <Filter>头文件\Core</Filter>
     </ClInclude>
     <ClInclude Include="Utils\UIUnzip.h">
       <Filter>头文件\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="thirdpart\zlib\ioapi.h">
-      <Filter>头文件\thirdpart\zlib</Filter>
+    <ClInclude Include="Utils\UIUtils.h">
+      <Filter>头文件\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="thirdpart\zlib\unzip.h">
-      <Filter>头文件\thirdpart\zlib</Filter>
+    <ClInclude Include="Utils\UIRecLog.h">
+      <Filter>头文件\Utils</Filter>
     </ClInclude>
     <ClInclude Include="thirdpart\zlib\zconf.h">
       <Filter>头文件\thirdpart\zlib</Filter>
@@ -110,21 +72,59 @@
     <ClInclude Include="thirdpart\zlib\zlib.h">
       <Filter>头文件\thirdpart\zlib</Filter>
     </ClInclude>
+    <ClInclude Include="thirdpart\zlib\ioapi.h">
+      <Filter>头文件\thirdpart\zlib</Filter>
+    </ClInclude>
     <ClInclude Include="thirdpart\zlib\iowin32.h">
       <Filter>头文件\thirdpart\zlib</Filter>
     </ClInclude>
-    <ClInclude Include="Utils\UIRecLog.h">
-      <Filter>头文件\Utils</Filter>
+    <ClInclude Include="thirdpart\zlib\unzip.h">
+      <Filter>头文件\thirdpart\zlib</Filter>
     </ClInclude>
     <ClInclude Include="thirdpart\rapidxml\rapidxml_print.hpp">
-      <Filter>头文件\thirdpart\rapidxml</Filter>
+      <Filter>源文件\thirdpart\rapidxml</Filter>
     </ClInclude>
     <ClInclude Include="thirdpart\rapidxml\rapidxml_utils.hpp">
-      <Filter>头文件\thirdpart\rapidxml</Filter>
+      <Filter>源文件\thirdpart\rapidxml</Filter>
     </ClInclude>
     <ClInclude Include="thirdpart\rapidxml\rapidxml.hpp">
-      <Filter>头文件\thirdpart\rapidxml</Filter>
+      <Filter>源文件\thirdpart\rapidxml</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="StdAfx.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DuiMini.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\UIResource.cpp">
+      <Filter>源文件\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\UISystem.cpp">
+      <Filter>源文件\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\UIRecLog.cpp">
+      <Filter>源文件\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\UIUnzip.cpp">
+      <Filter>源文件\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\UIUtils.cpp">
+      <Filter>源文件\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdpart\zlib\ioapi.c">
+      <Filter>源文件\thirdpart\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdpart\zlib\iowin32.c">
+      <Filter>源文件\thirdpart\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdpart\zlib\unzip.c">
+      <Filter>源文件\thirdpart\zlib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DuiMini.rc">
@@ -132,7 +132,11 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Library Include="thirdpart\zlib\zlib_x64.lib" />
-    <Library Include="thirdpart\zlib\zlib_x86.lib" />
+    <Library Include="thirdpart\zlib\zlib_x64.lib">
+      <Filter>资源文件</Filter>
+    </Library>
+    <Library Include="thirdpart\zlib\zlib_x86.lib">
+      <Filter>资源文件</Filter>
+    </Library>
   </ItemGroup>
 </Project>

@@ -1,10 +1,12 @@
-/************************************************************************
-Copyright (c) 2017 MXWXZ
-************************************************************************/
+// ****************************************
+// Copyright (c) 2017-2050
+// All rights reserved.
+//
+// Author:MXWXZ
+// Date:2017/09/05
+//
+// Description:
+// ****************************************
 #pragma once
-#ifndef DUIMINI_STDAFX_H_
-#define DUIMINI_STDAFX_H_
 
 #include "DuiMini.h"
-
-#endif  // DUIMINI_STDAFX_H_

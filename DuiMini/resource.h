@@ -2,7 +2,7 @@
 // Microsoft Visual C++ generated include file.
 // Used by DuiMini.rc
 
-// Next default values for new objects
+// 新对象的下一组默认值
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS

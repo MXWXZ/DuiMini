@@ -1,158 +1,98 @@
-/************************************************************************
-Copyright (c) 2017 MXWXZ
-************************************************************************/
+// ****************************************
+// Copyright (c) 2017-2050
+// All rights reserved.
+//
+// Author:MXWXZ
+// Date:2017/09/05
+//
+// Description:
+// ****************************************
 #include "stdafx.h"
 #include "DuiMini.h"
 #include "UIUtils.h"
 
 namespace DuiMini {
-UIString::UIString() : str_(buffer_) {
-    buffer_[0] = _T('\0');
+UIString::UIString() {
+    buffer_ = _T("");
 }
 
-UIString::UIString(const TCHAR ch) : str_(buffer_) {
-    buffer_[0] = ch;
-    buffer_[1] = _T('\0');
+UIString::UIString(const TCHAR ch) {
+    buffer_ = ch;
 }
 
-UIString::UIString(LPCTSTR str, int len) : str_(buffer_) {
-    assert(!IsBadStringPtr(str, -1) || str == NULL);
-    buffer_[0] = _T('\0');
+UIString::UIString(const int val) {
+    TCHAR buf[64];
+    _itot(val, buf, 10);
+    buffer_ = buf;
+}
+
+UIString::UIString(LPCTSTR str, int len /*= -1*/) {
     Assign(str, len);
 }
 
-UIString::UIString(const UIString& src) : str_(buffer_) {
-    buffer_[0] = _T('\0');
-    Assign(src.str_);
+UIString::UIString(const UIString& src) {
+    buffer_ = src.buffer_;
 }
 
-UIString::~UIString() {
-    if (str_ != buffer_)
-        free(str_);
-}
-
-UIString UIString::ToString() {
-    return str_;
-}
+UIString::~UIString() {}
 
 int UIString::GetLength() const {
-    return static_cast<int>(_tcslen(str_));
+    return buffer_.length();
 }
 
 UIString::operator LPCTSTR() const {
-    return str_;
+    return GetData();
 }
 
 void UIString::Append(LPCTSTR str) {
-    int len = GetLength() + static_cast<int>(_tcslen(str));
-    if (len >= kMax_String_Length) {
-        if (str_ == buffer_) {
-            str_ = static_cast<LPTSTR>(malloc((len + 1) * sizeof(TCHAR)));
-            _tcscpy(str_, buffer_);
-            _tcscat(str_, str);
-        } else {
-            str_ = static_cast<LPTSTR>
-                (realloc(str_, (len + 1) * sizeof(TCHAR)));
-            _tcscat(str_, str);
-        }
-    } else {
-        if (str_ != buffer_) {
-            free(str_);
-            str_ = buffer_;
-        }
-        _tcscat(buffer_, str);
-    }
+    buffer_.append(str);
 }
 
-void UIString::Assign(LPCTSTR str, int len) {
-    if (str == NULL)
-        str = _T("");
-    len = (len < 0 ? static_cast<int>(_tcslen(str)) : len);
-    if (len < kMax_String_Length) {
-        if (str_ != buffer_) {
-            free(str_);
-            str_ = buffer_;
-        }
-    } else if (len > GetLength() || str_ == buffer_) {
-        if (str_ == buffer_) str_ = NULL;
-        str_ = static_cast<LPTSTR>(realloc(str_, (len + 1) * sizeof(TCHAR)));
-    }
-    _tcsncpy(str_, str, len);
-    str_[len] = _T('\0');
+void UIString::Assign(LPCTSTR str, int len /*= -1*/) {
+    if (len == -1)
+        buffer_.assign(str);
+    else
+        buffer_.assign(str, len);
 }
 
 bool UIString::IsEmpty() const {
-    return str_[0] == _T('\0');
+    return buffer_.empty();
 }
 
 void UIString::Empty() {
-    if (str_ != buffer_) free(str_);
-    str_ = buffer_;
-    buffer_[0] = _T('\0');
+    buffer_.clear();
 }
 
 LPCTSTR UIString::GetData() const {
-    return str_;
+    return buffer_.c_str();
 }
 
 TCHAR UIString::GetAt(int index) const {
-    return str_[index];
+    return buffer_[index];
 }
 
 TCHAR UIString::operator[] (int index) const {
-    return str_[index];
-}
-
-const UIString& UIString::operator=(const UIString& src) {
-    Assign(src);
-    return *this;
+    return GetAt(index);
 }
 
 const UIString& UIString::operator=(LPCTSTR str) {
-    if (str) {
-        assert(!IsBadStringPtr(str, -1));
-        Assign(str);
-    } else {
-        Empty();
-    }
+    Assign(str);
     return *this;
 }
 
 const UIString& UIString::operator=(const TCHAR ch) {
-    Empty();
-    buffer_[0] = ch;
-    buffer_[1] = _T('\0');
+    buffer_ = ch;
     return *this;
-}
-
-UIString UIString::operator+(const UIString& src) const {
-    UIString sTemp = *this;
-    sTemp.Append(src);
-    return sTemp;
 }
 
 UIString UIString::operator+(LPCTSTR str) const {
-    if (str) {
-        assert(!IsBadStringPtr(str, -1));
-        UIString tmp = *this;
-        tmp.Append(str);
-        return tmp;
-    }
-
-    return *this;
-}
-
-const UIString& UIString::operator+=(const UIString& src) {
-    Append(src);
-    return *this;
+    UIString tmp = *this;
+    tmp.Append(str);
+    return tmp;
 }
 
 const UIString& UIString::operator+=(LPCTSTR str) {
-    if (str) {
-        assert(!IsBadStringPtr(str, -1));
-        Append(str);
-    }
-
+    Append(str);
     return *this;
 }
 
@@ -170,42 +110,31 @@ bool UIString::operator >= (LPCTSTR str) const { return (Compare(str) >= 0); }
 bool UIString::operator >  (LPCTSTR str) const { return (Compare(str) > 0); }
 
 void UIString::SetAt(int index, TCHAR ch) {
-    assert(index >= 0 && index < GetLength());
-    str_[index] = ch;
+    buffer_[index] = ch;
 }
 
 int UIString::Compare(LPCTSTR str) const {
-    return _tcscmp(str_, str);
+    return buffer_.compare(str);
 }
 
 int UIString::CompareNoCase(LPCTSTR str) const {
-    return _tcsicmp(str_, str);
+    return _tcsicmp(buffer_.c_str(), str);
 }
 
 void UIString::MakeUpper() {
-    _tcsupr(str_);
+    std::transform(buffer_.begin(), buffer_.end(), buffer_.begin(), ::toupper);
 }
 
 void UIString::MakeLower() {
-    _tcslwr(str_);
+    std::transform(buffer_.begin(), buffer_.end(), buffer_.begin(), ::tolower);
 }
 
 UIString UIString::Left(int len) const {
-    if (len < 0)
-        len = 0;
-    if (len > GetLength())
-        len = GetLength();
-    return UIString(str_, len);
+    return UIString(buffer_.c_str(), len);
 }
 
 UIString UIString::Mid(int pos, int len) const {
-    if (len < 0)
-        len = GetLength() - pos;
-    if (pos + len > GetLength())
-        len = GetLength() - pos;
-    if (len <= 0)
-        return UIString();
-    return UIString(str_ + pos, len);
+    return UIString(buffer_.substr(pos, len).c_str());
 }
 
 UIString UIString::Right(int len) const {
@@ -214,54 +143,28 @@ UIString UIString::Right(int len) const {
         pos = 0;
         len = GetLength();
     }
-    return UIString(str_ + pos, len);
+    return Mid(pos, len);
 }
 
 int UIString::Find(TCHAR ch, int pos /*= 0*/) const {
-    assert(pos >= 0 && pos <= GetLength());
-    if (pos != 0 && (pos < 0 || pos >= GetLength()))
-        return -1;
-    LPCTSTR tmp = _tcschr(str_ + pos, ch);
-    if (tmp == NULL)
-        return -1;
-    return static_cast<int>(tmp - str_);
+    return buffer_.find(ch, pos);
 }
 
 int UIString::Find(LPCTSTR str, int pos /*= 0*/) const {
-    assert(!IsBadStringPtr(str, -1));
-    assert(pos >= 0 && pos <= GetLength());
-    if (pos != 0 && (pos < 0 || pos > GetLength()))
-        return -1;
-    LPCTSTR tmp = _tcsstr(str_ + pos, str);
-    if (tmp == NULL)
-        return -1;
-    return static_cast<int>(tmp - str_);
-}
-
-int UIString::ReverseFind(TCHAR ch) const {
-    LPCTSTR tmp = _tcsrchr(str_, ch);
-    if (tmp == NULL)
-        return -1;
-    return static_cast<int>(tmp - str_);
+    return buffer_.find(str, pos);
 }
 
 int UIString::Replace(LPCTSTR str_from, LPCTSTR str_to) {
-    UIString tmp;
-    int count = 0;
-    int pos = Find(str_from);
-    if (pos < 0)
-        return 0;
-    int chfrom = static_cast<int>(_tcslen(str_from));
-    int chto = static_cast<int>(_tcslen(str_to));
-    while (pos >= 0) {
-        tmp = Left(pos);
-        tmp += str_to;
-        tmp += Mid(pos + chfrom);
-        Assign(tmp);
-        pos = Find(str_from, pos + chto);
-        count++;
+    int cnt = 0;
+    for (tstring::size_type pos(0); pos != tstring::npos; pos += _tcslen(str_to)) {
+        if ((pos = buffer_.find(str_from, pos)) != tstring::npos) {
+            buffer_.replace(pos, _tcslen(str_from), str_to);
+            ++cnt;
+        }
+        else
+            break;
     }
-    return count;
+    return cnt;
 }
 
 int UIString::Format(LPCTSTR str, ...) {
