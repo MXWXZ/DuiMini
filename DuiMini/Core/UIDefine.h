@@ -1,12 +1,12 @@
-// ****************************************
-// Copyright (c) 2017-2050
-// All rights reserved.
-//
-// Author:MXWXZ
-// Date:2017/09/05
-//
-// Description:The defination file of UI library
-// ****************************************
+/**
+ * Copyright (c) 2017-2050
+ * All rights reserved.
+ *
+ * @Author:MXWXZ
+ * @Date:2017/10/17
+ *
+ * @Description:The defination file of UI library
+ */
 #pragma once
 
 // Library export/import define
@@ -23,8 +23,6 @@
 #endif
 
 #define DUIMINI_VERSION _T("1.0")           // UI library version
-
-const int kMax_XML_Attributes = 64;         // Max attributes in XML files
 
 #define RESOURCE_KIND _T("ZIP")             // Custom resource type
 

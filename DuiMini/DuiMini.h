@@ -1,12 +1,12 @@
-// ****************************************
-// Copyright (c) 2017-2050
-// All rights reserved.
-//
-// Author:MXWXZ
-// Date:2017/09/05
-//
-// Description:DuiMini public header files
-// ****************************************
+/**
+ * Copyright (c) 2017-2050
+ * All rights reserved.
+ *
+ * @Author:MXWXZ
+ * @Date:2017/10/17
+ *
+ * @Description:
+ */
 #pragma once
 
 // system header files
@@ -41,17 +41,17 @@
 #include "Utils/UIRecLog.h"
 #include "Core/UIResource.h"
 #include "Core/UISystem.h"
+//#include "Core/UIManager.h"
+//#include "Core/UIDlgBuilder.h"
 
 /*
 #include "Utils/Utils.h"
 #include "Utils/UIDelegate.h"
 #include "Core/UIDefine.h"
-#include "Core/UIManager.h"
 #include "Core/UIBase.h"
 #include "Core/UIControl.h"
 #include "Core/UIContainer.h"
 #include "Core/UIMarkup.h"
-#include "Core/UIDlgBuilder.h"
 #include "Core/UIRender.h"
 #include "Utils/WinImplBase.h"
 

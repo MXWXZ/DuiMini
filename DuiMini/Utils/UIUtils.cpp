@@ -1,12 +1,12 @@
-// ****************************************
-// Copyright (c) 2017-2050
-// All rights reserved.
-//
-// Author:MXWXZ
-// Date:2017/09/05
-//
-// Description:
-// ****************************************
+/**
+ * Copyright (c) 2017-2050
+ * All rights reserved.
+ *
+ * @Author:MXWXZ
+ * @Date:2017/10/17
+ *
+ * @Description:
+ */
 #include "stdafx.h"
 #include "DuiMini.h"
 #include "UIUtils.h"
