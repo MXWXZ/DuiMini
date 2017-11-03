@@ -1555,7 +1555,7 @@ extern int ZEXPORT unzOpenCurrentFile3 (unzFile file, int* method,
       pfile_in_zip_read_info->bstream.opaque = (voidpf)0;
       pfile_in_zip_read_info->bstream.state = (voidpf)0;
 
-      pfile_in_zip_read_info->stream.zalloc = (alloc_func)0;
+      pfile_in_zip_read_info->stream.zalloc = (alloc_func_zlib)0;
       pfile_in_zip_read_info->stream.zfree = (free_func)0;
       pfile_in_zip_read_info->stream.opaque = (voidpf)0;
       pfile_in_zip_read_info->stream.next_in = (voidpf)0;
@@ -1575,7 +1575,7 @@ extern int ZEXPORT unzOpenCurrentFile3 (unzFile file, int* method,
     }
     else if ((s->cur_file_info.compression_method==Z_DEFLATED) && (!raw))
     {
-      pfile_in_zip_read_info->stream.zalloc = (alloc_func)0;
+      pfile_in_zip_read_info->stream.zalloc = (alloc_func_zlib)0;
       pfile_in_zip_read_info->stream.zfree = (free_func)0;
       pfile_in_zip_read_info->stream.opaque = (voidpf)0;
       pfile_in_zip_read_info->stream.next_in = 0;

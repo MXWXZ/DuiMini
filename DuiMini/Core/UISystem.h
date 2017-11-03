@@ -32,7 +32,7 @@ public:
      * Safely exit the program
      * @param    const int code: exit code(default:0)
      * this function will call Cleanup() automatically
-     * you should NOT use this function as the way to exit safely
+     * you should use this function as the way to exit safely
     */
     static void Exit(const int code = 0);
 
@@ -48,19 +48,17 @@ public:
     */
     static HINSTANCE GetInstance() { return instance_; }
 
-public:
     /**
-     * Get the current path
-     * @return   current dir
-     * the path does NOT include the \\ and file name at the end
-     * e.g. C:\\windows\\system32
-     * WARNING!return value is temporary object and should be transfer to
-     * another UStr object if you want to use it later
-    */
-    static CUStr GetCurrentDir();
+     * Load global config
+     * @param    LPCTSTR path:resource path(default:uires.xml)
+     * @return   true success  false failed
+     */
+    static bool LoadConfig(LPCTSTR path = DEFAULT_RESFILE);
 
-protected:
+private:
     static HINSTANCE instance_;     // program instance
+
+    static UINode cfg_lang_;    // language config
 };
 
 }   // namespace DuiMini

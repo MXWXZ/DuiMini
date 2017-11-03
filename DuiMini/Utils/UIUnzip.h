@@ -32,7 +32,7 @@ public:
      * Locate file in zip
      * @param    ZFile fp: opened file pointer
      * @param    LPCTSTR path: relative path (e.g. abc/123.txt)
-     * @return   -1 when file do not exist or damaged,otherwise is the file size
+     * @return   -1 when file dcan't access,otherwise is the file size
      * WARNING: Please better to use '/' to divide in relative path,this function
      * will AUTOMATICALLY turn '\\' to '/' (zlib ONLY allows '/')
      */
@@ -43,7 +43,7 @@ public:
      * @param    ZFile fp:opened file pointer
      * @param    BYTE* data: buffer to recive data(please call 'LocateZipItem' to get the
      *           size and apply for memory space)
-     * @return   false - fail     true - succeed
+     * @return   true - succeed
      * WARNING: this function MUST be used after calling 'LocateZipItem' and
      * WILL NOT check if there is enough space in the buffer.
      */

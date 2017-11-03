@@ -40,6 +40,12 @@
     <Filter Include="源文件\thirdpart\zlib">
       <UniqueIdentifier>{917a2c94-3b55-44b4-ab23-43edbbf8abf2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\Core\Resource">
+      <UniqueIdentifier>{232c6e0e-8cf7-4d9b-bdbc-b18bab18f6c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Core\Resource">
+      <UniqueIdentifier>{c4fe8ee9-b038-496c-a6db-6c4dc44aeac1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DuiMini.h">
@@ -51,14 +57,8 @@
     <ClInclude Include="Core\UIDefine.h">
       <Filter>头文件\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Core\UIResource.h">
-      <Filter>头文件\Core</Filter>
-    </ClInclude>
     <ClInclude Include="Core\UISystem.h">
       <Filter>头文件\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\UIUnzip.h">
-      <Filter>头文件\Utils</Filter>
     </ClInclude>
     <ClInclude Include="Utils\UIUtils.h">
       <Filter>头文件\Utils</Filter>
@@ -93,6 +93,27 @@
     <ClInclude Include="resource.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Utils\UIException.h">
+      <Filter>头文件\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\UIInterface.h">
+      <Filter>头文件\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Resource\UIResFile.h">
+      <Filter>头文件\Core\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Resource\UIResZip.h">
+      <Filter>头文件\Core\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\UIUnzip.h">
+      <Filter>头文件\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Resource\UIResRC.h">
+      <Filter>头文件\Core\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Resource\UIResource.h">
+      <Filter>头文件\Core\Resource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StdAfx.cpp">
@@ -101,16 +122,10 @@
     <ClCompile Include="DuiMini.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Core\UIResource.cpp">
-      <Filter>源文件\Core</Filter>
-    </ClCompile>
     <ClCompile Include="Core\UISystem.cpp">
       <Filter>源文件\Core</Filter>
     </ClCompile>
     <ClCompile Include="Utils\UIRecLog.cpp">
-      <Filter>源文件\Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils\UIUnzip.cpp">
       <Filter>源文件\Utils</Filter>
     </ClCompile>
     <ClCompile Include="Utils\UIUtils.cpp">
@@ -124,6 +139,24 @@
     </ClCompile>
     <ClCompile Include="thirdpart\zlib\unzip.c">
       <Filter>源文件\thirdpart\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\UIException.cpp">
+      <Filter>源文件\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Resource\UIResFile.cpp">
+      <Filter>源文件\Core\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Resource\UIResZip.cpp">
+      <Filter>源文件\Core\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\UIUnzip.cpp">
+      <Filter>源文件\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Resource\UIResRC.cpp">
+      <Filter>源文件\Core\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Resource\UIResource.cpp">
+      <Filter>源文件\Core\Resource</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

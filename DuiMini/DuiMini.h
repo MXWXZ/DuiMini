@@ -19,9 +19,10 @@
 #include "windows.h"
 #include "windowsx.h"
 #include "tchar.h"
+#include <map>
+#include <utility>
 
 // third-part
-// Compile fails if it is befind zlib header files
 #include "thirdpart/rapidxml/rapidxml.hpp"      // rapidxml 1.13
 #include "thirdpart/rapidxml/rapidxml_utils.hpp"
 #include "thirdpart/rapidxml/rapidxml_print.hpp"
@@ -37,10 +38,13 @@
 // DuiMini
 #include "Core/UIDefine.h"
 #include "Utils/UIUtils.h"
-#include "Utils/UIUnzip.h"
 #include "Utils/UIRecLog.h"
-#include "Core/UIResource.h"
+#include "Utils/UIException.h"
+#include "Utils/UIUnzip.h"
+#include "Core/UIInterface.h"
+#include "Core/Resource/UIResource.h"
 #include "Core/UISystem.h"
+
 //#include "Core/UIManager.h"
 //#include "Core/UIDlgBuilder.h"
 

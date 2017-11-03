@@ -140,7 +140,7 @@
 /* all zlib typedefs in zlib.h and zconf.h */
 #  define Byte                  z_Byte
 #  define Bytef                 z_Bytef
-#  define alloc_func            z_alloc_func
+#  define alloc_func_zlib            z_alloc_func
 #  define charf                 z_charf
 #  define free_func             z_free_func
 #  ifndef Z_SOLO

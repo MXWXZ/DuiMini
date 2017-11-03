@@ -34,65 +34,35 @@ enum Reclevel {
     kReclevel_Release = 2,
 };
 
-/**
- * Log recorder
- */
 class DUIMINI_API UIRecLog {
 public:
-    /**
-     * Set wanted log level
-     * @param    Reclevel level: log level
-     */
     static void SetLogLevel(Reclevel level) { reclevel_ = level; }
-
-    /**
-     * Get wanted log level
-     * @return   log level
-     */
     static Reclevel GetLogLevel() { return reclevel_; }
 
     /**
      * Record log(custom)
      * @param    LPCTSTR text: the message
-     * @param    const int isexit: if is positive number,exit using this number
-     *           as code,otherwise, stay running(default: -1)
-     * @return   false - access file fail     true - record succeed
+     * @return   true - record succeed
      * WARNING: this function WILL NOT add '\n' at the end of log
      */
-    static bool RecordLog(LPCTSTR text, const int code = -1);
+    static bool RecordLog(LPCTSTR text);
 
     /**
      * Record log(according to format)
      * @param    Loglevel level: log level
      * @param    LPCTSTR text: the message
-     * @param    const int isexit: if is positive number,exit using this number
-     *           as code,otherwise, stay running(default: -1)
-     * @return   false - access file fail     true - record succeed
+     * @return   true - record succeed
      * WARNING: this function WILL AUTOMATICALLY add '\n' at the end
      */
-    static bool RecordLog(Loglevel level, LPCTSTR text, const int code = -1);
+    static bool RecordLog(Loglevel level, LPCTSTR text, ...);
 
-    /**
-     * Set log file path
-     * @param    LPCTSTR path:file path
-     * if this function is not called log file will DEFAULT to logfile.txt
-     */
-    static void SetLogFilePath(LPCTSTR path) { logfilepath_ = path; }
+    static void SetLogFilePath(LPCTSTR path) { fullpath_ = path; }
+    static LPCTSTR GetLogFilePath() { return fullpath_; }
+    static void StopRecordLog() { fullpath_ = _T(""); }
 
-    /**
-     * Stop record the log
-     */
-    static void StopRecordLog() { logfilepath_ = _T(""); }
-
-    /**
-     * Get log file path
-     * @return   log file path
-     */
-    static LPCTSTR GetLogFilePath() { return logfilepath_; }
-
-protected:
+private:
     static Reclevel reclevel_;
-    static UStr logfilepath_;
+    static UStr fullpath_;
 };
 
 }   // namespace DuiMini

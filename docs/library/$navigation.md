@@ -18,5 +18,9 @@
 - [创建一个新的DuiMini程序](?file=002-开始使用DuiMini/03-创建一个新的DuiMini程序 "创建一个新的DuiMini程序")
 - [初始化或退出DuiMini环境](?file=002-开始使用DuiMini/04-初始化或退出DuiMini环境 "初始化或退出DuiMini环境")
 - [设定资源文件](?file=002-开始使用DuiMini/05-设定资源文件 "设定资源文件")
-- [程序退出](?file=002-开始使用DuiMini/06-程序退出 "程序退出")
+- [异常处理](?file=002-开始使用DuiMini/06-异常处理 "异常处理")
 - [日志记录器](?file=002-开始使用DuiMini/07-日志记录器 "日志记录器")
+- [UIUtils通用类](?file=002-开始使用DuiMini/08-UIUtils通用类 "UIUtils通用类")
+- [uires主配置文件](?file=002-开始使用DuiMini/09-uires主配置文件 "uires主配置文件")
+
+##### Hello world

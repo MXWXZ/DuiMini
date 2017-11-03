@@ -12,6 +12,36 @@
 #include "UIUtils.h"
 
 namespace DuiMini {
+CUStr UIUtils::GetCurrentDir() {
+    TCHAR path[MAX_PATH] = { _T('\0') };
+    GetCurrentDirectory(MAX_PATH, path);
+    return CUStr(path);
+}
+
+CUStr UIUtils::GetTimeStr(LPCTSTR str) {
+    time_t tm;
+    time(&tm);
+    TCHAR tmpstr[64];
+    _tcsftime(tmpstr, sizeof(tmpstr), str, localtime(&tm));
+    return CUStr(tmpstr);
+}
+
+////////////////////////////////////////
+
+UStr& UINode::operator[](CUStr name) {
+    return attr_[name];
+}
+
+bool UINode::IsExist(LPCTSTR name) {
+    SSMap::iterator it = attr_.find(name);
+    if (it != attr_.end())
+        return true;
+    else
+        return false;
+}
+
+////////////////////////////////////////
+
 UIString::UIString() {
     buffer_ = _T("");
 }
@@ -65,6 +95,10 @@ void UIString::Empty() {
 
 LPCTSTR UIString::GetData() const {
     return buffer_.c_str();
+}
+
+int UIString::Str2Int() {
+    return _ttoi(buffer_.c_str());
 }
 
 TCHAR UIString::GetAt(int index) const {
@@ -156,13 +190,14 @@ int UIString::Find(LPCTSTR str, int pos /*= 0*/) const {
 
 int UIString::Replace(LPCTSTR str_from, LPCTSTR str_to) {
     int cnt = 0;
-    for (tstring::size_type pos(0); pos != tstring::npos; pos += _tcslen(str_to)) {
+    for (tstring::size_type pos(0); pos != tstring::npos;
+         pos += _tcslen(str_to)) {
         if ((pos = buffer_.find(str_from, pos)) != tstring::npos) {
             buffer_.replace(pos, _tcslen(str_from), str_to);
             ++cnt;
-        }
-        else
+        } else {
             break;
+        }
     }
     return cnt;
 }

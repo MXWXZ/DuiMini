@@ -26,6 +26,7 @@ class DUIMINI_API UIString {
     void Append(LPCTSTR str);
     void Assign(LPCTSTR str, int len = -1);
     LPCTSTR GetData() const;
+    int Str2Int();
 
     void SetAt(int index, TCHAR ch);
     operator LPCTSTR() const;
@@ -65,5 +66,40 @@ class DUIMINI_API UIString {
 };
 typedef UIString UStr;
 typedef const UIString CUStr;
+
+////////////////////////////////////////
+
+typedef std::map<UStr, UStr> SSMap;
+typedef std::pair<UStr, UStr> SSPair;
+class DUIMINI_API UINode {
+public:
+    UStr& operator[] (CUStr name);
+    bool IsExist(LPCTSTR name);
+
+private:
+    SSMap attr_;
+};
+
+////////////////////////////////////////
+
+class DUIMINI_API UIUtils {
+public:
+    /**
+    * Get the current path
+    * @return   current dir
+    * the path does NOT include the \\ and file name at the end
+    * e.g. C:\\windows\\system32
+    * WARNING!return value is temporary object and should be transfer to
+    * another UStr object if you want to use it later
+    */
+    static CUStr GetCurrentDir();
+
+    /**
+     * Get formated time string
+     * @param    LPCTSTR str:time format string (%Y %m %d %H %M %S)
+     * @return   formated time string
+     */
+    static CUStr GetTimeStr(LPCTSTR str);
+};
 
 }   // namespace DuiMini

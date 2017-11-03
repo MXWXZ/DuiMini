@@ -17,10 +17,14 @@ using namespace DuiMini;    // NOLINT
 
 int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
                       _In_opt_ HINSTANCE hPrevInstance,
-                      _In_ LPWSTR    lpCmdLine,
+                      _In_ LPTSTR    lpCmdLine,
                       _In_ int       nCmdShow) {
-    UISystem::Init(hInstance);
+    UISystem::Init(hInstance);      // Initialize UI library
 
-    UISystem::Cleanup();
+    UIXmlLoader lod(_T("uires.xml"));
+    xmlnode node = lod.GetRoot();
+    MessageBox(NULL, node->first_attribute()->value(), _T("123"), MB_OK);
+
+    UISystem::Cleanup();            // Clean up UI library
     return 0;
 }

@@ -78,7 +78,7 @@ extern "C" {
   even in the case of corrupted input.
 */
 
-typedef voidpf (*alloc_func) OF((voidpf opaque, uInt items, uInt size));
+typedef voidpf (*alloc_func_zlib) OF((voidpf opaque, uInt items, uInt size));
 typedef void   (*free_func)  OF((voidpf opaque, voidpf address));
 
 struct internal_state;
@@ -95,7 +95,7 @@ typedef struct z_stream_s {
     z_const char *msg;  /* last error message, NULL if no error */
     struct internal_state FAR *state; /* not visible by applications */
 
-    alloc_func zalloc;  /* used to allocate the internal state */
+    alloc_func_zlib zalloc;  /* used to allocate the internal state */
     free_func  zfree;   /* used to free the internal state */
     voidpf     opaque;  /* private data object passed to zalloc and zfree */
 

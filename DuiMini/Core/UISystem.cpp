@@ -28,11 +28,14 @@ void UISystem::Exit(const int code /*= 0*/) {
     exit(code);
 }
 
-CUStr UISystem::GetCurrentDir() {
-    TCHAR path[MAX_PATH] = { _T('\0') };
-    GetCurrentDirectory(MAX_PATH, path);
-    UStr ret = path;
-    return ret;
+bool DuiMini::UISystem::LoadConfig(LPCTSTR path/* = DEFAULT_RESFILE*/) {
+    // BYTE* buf = UIResource::GetFile(path);
+   //  if (buf != NULL) {
+         //xmldoc doc;
+         //doc.parse<0>(buf);
+   //  }
+     //UIResource::FreeBuffer(buf);
+    return false;
 }
 
 }   // namespace DuiMini
