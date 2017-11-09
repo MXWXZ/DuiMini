@@ -16,7 +16,7 @@ class DUIMINI_API UIString {
     explicit UIString(const TCHAR ch);
     explicit UIString(const int val);
     UIString(const UIString& src);
-    UIString(LPCTSTR str, int len = -1);    // NOLINT
+    UIString(LPCTSTR str, int len = -1);
     ~UIString();
 
     void Empty();
@@ -71,13 +71,30 @@ typedef const UIString CUStr;
 
 typedef std::map<UStr, UStr> SSMap;
 typedef std::pair<UStr, UStr> SSPair;
-class DUIMINI_API UINode {
+typedef std::map<UStr, UStr>::iterator SSMapIt;
+class DUIMINI_API UIAttr {
 public:
     UStr& operator[] (CUStr name);
     bool IsExist(LPCTSTR name);
+    SSMapIt GetBegin();
+    SSMapIt GetEnd();
 
 private:
     SSMap attr_;
+};
+
+////////////////////////////////////////
+
+class DUIMINI_API UIXmlNode {
+public:
+    explicit UIXmlNode(xmlnode node);
+    void SetNode(xmlnode node);
+    CUStr GetAttrValue(LPCTSTR name);
+    bool CmpAttrValue(LPCTSTR name, LPCTSTR value);
+    bool CmpNodeName(LPCTSTR name);
+
+private:
+    xmlnode node_;
 };
 
 ////////////////////////////////////////

@@ -80,13 +80,6 @@ UIXmlLoader::~UIXmlLoader() {
     buf = NULL;
 }
 
-bool UIXmlLoader::IsValid() const {
-    if (buf != NULL)
-        return true;
-    else
-        return false;
-}
-
 void UIXmlLoader::Loadxml(LPCTSTR path) {
     if (buf != NULL)
         delete[]buf;
@@ -107,10 +100,7 @@ void UIXmlLoader::Loadxml(LPCTSTR path) {
 }
 
 xmlnode UIXmlLoader::GetRoot() const {
-    if (IsValid())
-        return doc.first_node();
-    else
-        return NULL;
+    return doc.first_node();
 }
 
 }   // namespace DuiMini

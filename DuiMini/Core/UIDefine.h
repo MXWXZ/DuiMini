@@ -31,13 +31,14 @@
 // rapidxml
 typedef rapidxml::xml_document<TCHAR> xmldoc;
 typedef rapidxml::xml_node<TCHAR>* xmlnode;
+typedef rapidxml::xml_attribute<TCHAR>* xmlattr;
 // zlib
 typedef unzFile ZFile;
 
 #ifdef _UNICODE
-typedef std::wstring tstring;    // NOLINT
+typedef std::wstring tstring;
 #else
-typedef std::string tstring;     // NOLINT
+typedef std::string tstring;
 #endif  // _UNICODE
 
 #pragma warning(disable: 4251)            // warnings when exporting string

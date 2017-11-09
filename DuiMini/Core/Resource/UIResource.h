@@ -14,7 +14,7 @@ namespace DuiMini {
  * resource type
  * kRestype_File:normal file
  * kRestype_Package:zip file
- * kRestype_Self:pe resource
+ * kRestype_RC:rc resource
  */
 enum Restype {
     kRestype_File = 0,
@@ -85,11 +85,9 @@ public:
     explicit UIXmlLoader(LPCTSTR path);
     ~UIXmlLoader();
 
-    bool IsValid() const;
-
     /**
      * [SAFE]Load xml file
-     * @param    LPCTSTR path:xml path(reletive to resource)
+     * @param    LPCTSTR path:xml path(relative to resource)
      */
     void Loadxml(LPCTSTR path);
 

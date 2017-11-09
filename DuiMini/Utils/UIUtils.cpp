@@ -28,16 +28,50 @@ CUStr UIUtils::GetTimeStr(LPCTSTR str) {
 
 ////////////////////////////////////////
 
-UStr& UINode::operator[](CUStr name) {
+UStr& UIAttr::operator[](CUStr name) {
     return attr_[name];
 }
 
-bool UINode::IsExist(LPCTSTR name) {
+bool UIAttr::IsExist(LPCTSTR name) {
     SSMap::iterator it = attr_.find(name);
     if (it != attr_.end())
         return true;
     else
         return false;
+}
+
+SSMapIt UIAttr::GetBegin() {
+    return attr_.begin();
+}
+
+SSMapIt UIAttr::GetEnd() {
+    return attr_.end();
+}
+
+////////////////////////////////////////
+
+UIXmlNode::UIXmlNode(xmlnode node) {
+    SetNode(node);
+}
+
+void UIXmlNode::SetNode(xmlnode node) {
+    node_ = node;
+}
+
+CUStr UIXmlNode::GetAttrValue(LPCTSTR name) {
+    xmlattr attr = node_->first_attribute(name);
+    if (attr == NULL)
+        return CUStr(_T(""));
+    else
+        return CUStr(attr->value());
+}
+
+bool UIXmlNode::CmpAttrValue(LPCTSTR name, LPCTSTR value) {
+    return GetAttrValue(name) == value;
+}
+
+bool UIXmlNode::CmpNodeName(LPCTSTR name) {
+    return _tcscmp(node_->name(), name) == 0;
 }
 
 ////////////////////////////////////////

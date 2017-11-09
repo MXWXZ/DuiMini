@@ -51,14 +51,18 @@ public:
     /**
      * Load global config
      * @param    LPCTSTR path:resource path(default:uires.xml)
-     * @return   true success  false failed
      */
-    static bool LoadConfig(LPCTSTR path = DEFAULT_RESFILE);
+    static void LoadConfig(LPCTSTR path = DEFAULT_RESFILE);
+
+    static void SetDefaultSkin(LPCTSTR name) { defaultskin_ = name };
 
 private:
     static HINSTANCE instance_;     // program instance
 
-    static UINode cfg_lang_;    // language config
+    static UIAttr cfg_lang_;        // language config
+    static UStr   defaultskin_;     // default skin;
+    static UIAttr cfg_skin_;        // skin config
+    static UIAttr cfg_sysskin_;     // sysskin config
 };
 
 }   // namespace DuiMini
