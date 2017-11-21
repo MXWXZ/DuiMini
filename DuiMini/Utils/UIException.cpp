@@ -15,6 +15,7 @@ namespace DuiMini {
 ErrorCode UIException::errorcode_ = kErrorCode_Success;
 UStr UIException::errormsg_ = _T("");
 Loglevel UIException::errorloglevel_ = kLoglevel_Info;
+ExtraHandleFun UIException::fun_ = NULL;
 
 void UIException::SetError(Loglevel level, ErrorCode code, LPCTSTR msg, ...) {
     LPTSTR tmpstr = NULL;
@@ -36,15 +37,25 @@ void UIException::SetError(Loglevel level, ErrorCode code, LPCTSTR msg, ...) {
 void UIException::HandleError() {
     if (errorcode_ == kErrorCode_Success)
         return;
-    if (!UIRecLog::RecordLog(errorloglevel_,
-                             UStr(_T("Code %d ")) + errormsg_, errorcode_)) {
-        MessageBox(NULL, _T("Log record failed!"), _T("ERROR"), MB_OK);
-        errorcode_ = kErrorCode_LogFileFail;
+    
+    bool ishandled = false;
+    if (fun_ != NULL)
+        ishandled = fun_(errorloglevel_, errorcode_, errormsg_);
+    if (!ishandled) {
+        if (!UIRecLog::RecordLog(errorloglevel_,
+                                 UStr(_T("Code %d ")) + errormsg_, errorcode_)) {
+            MessageBox(NULL, _T("Log record failed!"), _T("ERROR"), MB_OK);
+            errorcode_ = kErrorCode_LogFileFail;
+        }
+        if (errorcode_ >= kErrorCode_Fatal)
+            UISystem::Exit(errorcode_);
     }
-    if (errorcode_ >= kErrorCode_Fatal)
-        UISystem::Exit(errorcode_);
     errorcode_ = kErrorCode_Success;
     errormsg_.Empty();
+}
+
+void UIException::SetExtraHandleFun(ExtraHandleFun fun) {
+    fun_ = fun;
 }
 
 }  // namespace DuiMini

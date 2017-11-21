@@ -48,22 +48,45 @@ SSMapIt UIAttr::GetEnd() {
     return attr_.end();
 }
 
+UIAttr& UIAttrSet::operator[] (int pos) {
+    return attrset_[pos];
+}
+
+void UIAttrSet::AddAttr(const UIAttr &val) {
+    attrset_[size_++] = val;
+}
+
+int UIAttrSet::GetSize() {
+    return size_;
+}
+
+int UIAttrSet::FindNextAttr(int start, LPCTSTR attr, LPCTSTR val) {
+    for (int i = start; i < size_; ++i)
+        if (attrset_[i][attr] == val)
+            return i;
+    return -1;
+}
+
 ////////////////////////////////////////
 
-UIXmlNode::UIXmlNode(xmlnode node) {
+UIXmlNode::UIXmlNode(const xmlnode node) {
     SetNode(node);
 }
 
-void UIXmlNode::SetNode(xmlnode node) {
+void UIXmlNode::SetNode(const xmlnode node) {
     node_ = node;
 }
 
-CUStr UIXmlNode::GetAttrValue(LPCTSTR name) {
+CUStr UIXmlNode::GetAttrValue(LPCTSTR name, LPCTSTR def/* = _T("")*/) {
     xmlattr attr = node_->first_attribute(name);
     if (attr == NULL)
-        return CUStr(_T(""));
+        return CUStr(def);
     else
         return CUStr(attr->value());
+}
+
+CUStr DuiMini::UIXmlNode::GetAttrValue(LPCTSTR name, const int def) {
+    return GetAttrValue(name, CUStr(def));
 }
 
 bool UIXmlNode::CmpAttrValue(LPCTSTR name, LPCTSTR value) {

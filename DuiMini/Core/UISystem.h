@@ -41,11 +41,6 @@ public:
      * @param    HINSTANCE inst:program HINSTANCE,usually the param of WinMain
     */
     static void SetInstance(HINSTANCE inst) { instance_ = inst; }
-
-    /**
-     * Get program Instance
-     * @return   the instance set before
-    */
     static HINSTANCE GetInstance() { return instance_; }
 
     /**
@@ -54,15 +49,29 @@ public:
      */
     static void LoadConfig(LPCTSTR path = DEFAULT_RESFILE);
 
-    static void SetDefaultSkin(LPCTSTR name) { defaultskin_ = name };
+    /**
+     * Get config
+     * @param    UINT id:config id
+     * @return   UIAttr structure
+     * WARNING:The function WILL NOT check whether id is valid!
+     */
+    static const UIAttr& GetCFGLang(UINT id) { return cfg_lang_[id]; }
+    static const UIAttr& GetCFGFont(UINT id) { return cfg_font_[id]; }
+    static const UIAttr& GetCFGSkin(UINT id) { return cfg_skin_[id]; }
+
+    static UINT GetCFGShownLang() { return cfg_shownlang_; }
+    static UINT GetCFGShownFont() { return cfg_shownfont_; }
+    static UINT GetCFGShownSkin() { return cfg_shownskin_; }
 
 private:
     static HINSTANCE instance_;     // program instance
 
-    static UIAttr cfg_lang_;        // language config
-    static UStr   defaultskin_;     // default skin;
-    static UIAttr cfg_skin_;        // skin config
-    static UIAttr cfg_sysskin_;     // sysskin config
+    static UINT cfg_shownlang_;       // shown lang
+    static UINT cfg_shownskin_;       // shown skin
+    static UINT cfg_shownfont_;       // shown font
+    static UIAttrSet cfg_lang_;       // language config
+    static UIAttrSet cfg_skin_;       // skin config
+    static UIAttrSet cfg_font_;       // font config
 };
 
 }   // namespace DuiMini

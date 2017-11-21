@@ -10,6 +10,9 @@
 #pragma once
 
 namespace DuiMini {
+
+typedef unzFile ZFile;
+
 /**
  * unzip interface class
  */

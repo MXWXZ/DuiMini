@@ -70,7 +70,6 @@ typedef const UIString CUStr;
 ////////////////////////////////////////
 
 typedef std::map<UStr, UStr> SSMap;
-typedef std::pair<UStr, UStr> SSPair;
 typedef std::map<UStr, UStr>::iterator SSMapIt;
 class DUIMINI_API UIAttr {
 public:
@@ -83,18 +82,45 @@ private:
     SSMap attr_;
 };
 
+typedef std::map<int, UIAttr> IAMap;
+class DUIMINI_API UIAttrSet {
+public:
+    UIAttr& operator[] (int pos);
+    void AddAttr(const UIAttr &val);
+    int GetSize();
+    int FindNextAttr(int start, LPCTSTR attr, LPCTSTR val);    // -1 not find
+
+private:
+    IAMap attrset_;
+    int size_ = 0;
+};
+
 ////////////////////////////////////////
 
 class DUIMINI_API UIXmlNode {
 public:
-    explicit UIXmlNode(xmlnode node);
-    void SetNode(xmlnode node);
-    CUStr GetAttrValue(LPCTSTR name);
+    explicit UIXmlNode(const xmlnode node);
+    void SetNode(const xmlnode node);
+    CUStr GetAttrValue(LPCTSTR name, LPCTSTR def = _T(""));
+    CUStr GetAttrValue(LPCTSTR name, const int def);
     bool CmpAttrValue(LPCTSTR name, LPCTSTR value);
     bool CmpNodeName(LPCTSTR name);
 
 private:
     xmlnode node_;
+};
+
+////////////////////////////////////////
+
+struct DUIMINI_API UIFont {
+    UStr name_;
+    UStr lang_;
+    UStr font_;
+    UINT size_;
+    bool bold_;
+    bool italic_;
+    bool underline_;
+    bool strikeout_;
 };
 
 ////////////////////////////////////////
