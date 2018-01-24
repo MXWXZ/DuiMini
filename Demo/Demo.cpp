@@ -8,19 +8,19 @@
  * @Description:
  */
 #include "stdafx.h"
-#include "DuiMini.h"
 #include "Demo.h"
-
-#pragma comment(lib, "Bin/DuiMini.lib")
-
-using namespace DuiMini;
+#include "MainDlg.h"
 
 int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
                       _In_opt_ HINSTANCE hPrevInstance,
                       _In_ LPTSTR    lpCmdLine,
                       _In_ int       nCmdShow) {
     UISystem::Init(hInstance);      // Initialize UI library
-    UISystem::LoadConfig();
+    UIConfig::LoadConfig();         // Load main config
+    UIRender::Init();               // Init render
+
+    MainDlg dlg;        // Show main dlg
+    dlg.Run();
 
     UISystem::Cleanup();            // Clean up UI library
     return 0;

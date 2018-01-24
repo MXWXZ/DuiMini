@@ -51,13 +51,20 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Control\Layout\UIContainer.h" />
+    <ClInclude Include="Control\UIControl.h" />
+    <ClInclude Include="Core\Render\UIRender.h" />
+    <ClInclude Include="Core\Render\UIRenderGDIP.h" />
     <ClInclude Include="Core\Resource\UIResFile.h" />
     <ClInclude Include="Core\Resource\UIResource.h" />
     <ClInclude Include="Core\Resource\UIResRC.h" />
     <ClInclude Include="Core\Resource\UIResZip.h" />
-    <ClInclude Include="Core\UIDefine.h" />
+    <ClInclude Include="Core\UIConfig.h" />
+    <ClInclude Include="Core\UIDlgBuilder.h" />
     <ClInclude Include="Core\UIInterface.h" />
     <ClInclude Include="Core\UISystem.h" />
+    <ClInclude Include="Core\UIDialog.h" />
+    <ClInclude Include="Core\UIWindow.h" />
     <ClInclude Include="DuiMini.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="StdAfx.h" />
@@ -69,17 +76,26 @@
     <ClInclude Include="thirdpart\zlib\unzip.h" />
     <ClInclude Include="thirdpart\zlib\zconf.h" />
     <ClInclude Include="thirdpart\zlib\zlib.h" />
+    <ClInclude Include="UIDefine.h" />
     <ClInclude Include="Utils\UIException.h" />
     <ClInclude Include="Utils\UIRecLog.h" />
     <ClInclude Include="Utils\UIUnzip.h" />
     <ClInclude Include="Utils\UIUtils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Control\Layout\UIContainer.cpp" />
+    <ClCompile Include="Control\UIControl.cpp" />
+    <ClCompile Include="Core\Render\UIRender.cpp" />
+    <ClCompile Include="Core\Render\UIRenderGDIP.cpp" />
     <ClCompile Include="Core\Resource\UIResFile.cpp" />
     <ClCompile Include="Core\Resource\UIResource.cpp" />
     <ClCompile Include="Core\Resource\UIResRC.cpp" />
     <ClCompile Include="Core\Resource\UIResZip.cpp" />
+    <ClCompile Include="Core\UIConfig.cpp" />
+    <ClCompile Include="Core\UIDlgBuilder.cpp" />
     <ClCompile Include="Core\UISystem.cpp" />
+    <ClCompile Include="Core\UIDialog.cpp" />
+    <ClCompile Include="Core\UIWindow.cpp" />
     <ClCompile Include="DuiMini.cpp" />
     <ClCompile Include="StdAfx.cpp" />
     <ClCompile Include="thirdpart\zlib\ioapi.c">
@@ -112,18 +128,12 @@
   </ItemGroup>
   <ItemGroup>
     <Library Include="thirdpart\zlib\zlib_x64.lib">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release-Static|Win32'">
-      </ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release-StaticUnicode|Win32'">
-      </ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release-Unicode|Win32'">
-      </ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-      </ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug-Unicode|Win32'">
-      </ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release-Static|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release-StaticUnicode|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release-Unicode|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug-Unicode|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release-Static|x64'">
       </ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -150,18 +160,12 @@
       </ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug-Unicode|Win32'">
       </ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release-Static|x64'">
-      </ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release-StaticUnicode|x64'">
-      </ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release-Unicode|x64'">
-      </ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-      </ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug-Unicode|x64'">
-      </ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release-Static|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release-StaticUnicode|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release-Unicode|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug-Unicode|x64'">true</ExcludedFromBuild>
     </Library>
   </ItemGroup>
   <PropertyGroup Label="Globals">

@@ -22,5 +22,14 @@
 - [日志记录器](?file=002-开始使用DuiMini/07-日志记录器 "日志记录器")
 - [UIUtils通用类](?file=002-开始使用DuiMini/08-UIUtils通用类 "UIUtils通用类")
 - [uires主配置文件](?file=002-开始使用DuiMini/09-uires主配置文件 "uires主配置文件")
+- [渲染方式的选择](?file=002-开始使用DuiMini/10-渲染方式的选择 "渲染方式的选择")
+- [布局定位](?file=002-开始使用DuiMini/11-布局定位 "布局定位")
+- [resid资源id文件](?file=002-开始使用DuiMini/12-resid资源id文件 "resid资源id文件")
 
 ##### Hello world
+
+##### 控件属性
+- [属性综述](?file=004-控件属性/01-属性综述 "属性综述")
+- [UIControl](?file=004-控件属性/02-UIControl "UIControl")
+- [UIContainer](?file=004-控件属性/03-UIContainer "UIContainer")
+- [UIDialog](?file=004-控件属性/04-UIDialog "UIDialog")

@@ -12,14 +12,14 @@
 namespace DuiMini {
 /**
  * resource type
- * kRestype_File:normal file
- * kRestype_Package:zip file
- * kRestype_RC:rc resource
+ * kFile:normal file
+ * kPackage:zip file
+ * kRC:rc resource
  */
 enum Restype {
-    kRestype_File = 0,
-    kRestype_Package = 1,
-    kRestype_RC = 2,
+    kFile = 0,
+    kPackage = 1,
+    kRC = 2,
 };
 
 /**
@@ -28,29 +28,30 @@ enum Restype {
  */
 class DUIMINI_API UIResource {
 public:
+    UIResource();
     ~UIResource();
 
-    static void SetResType(Restype type);
-    static Restype GetResType() { return restype_; }
+    static Restype SetResType(Restype v_type);
+    static Restype GetResType();
 
     /**
      * [SAFE]Get resource file size
-     * @param    LPCTSTR path: relative path
+     * @param    LPCTSTR v_path: relative path
      * @return   the file size
      */
-    static long GetFileSize(LPCTSTR path);
+    static long GetFileSize(LPCTSTR v_path);
 
     /**
      * [SAFE]Get resource file
-     * @param    LPCTSTR path: relative path
-     * @param    BYTE* buf: buffer(please call 'GetFileSize' to get the
+     * @param    LPCTSTR v_path: relative path
+     * @param    BYTE* v_buffer: buffer(please call 'GetFileSize' to get the
      *           size and apply for memory space.)
-     * @param    long size: buffer size
+     * @param    long v_size: buffer size
      * @return   buf itself
      * WARNING: this function WILL NOT check if there is enough space
      * in the buffer.
      */
-    static BYTE* GetFile(LPCTSTR path, BYTE* buf, long size);
+    static BYTE* GetFile(LPCTSTR v_path, BYTE* v_buffer, long v_size);
 
     /**
      * Set resource info
@@ -59,7 +60,7 @@ public:
      *     For kRestype_Package is the zip full path
      *     For kRestype_RC is the RC id in resource.h
      */
-    static void SetResInfo(LPCTSTR info);
+    static void SetResInfo(LPCTSTR v_info);
 
     /**
      * Get resource info
@@ -82,14 +83,14 @@ private:
 class DUIMINI_API UIXmlLoader {
 public:
     UIXmlLoader();
-    explicit UIXmlLoader(LPCTSTR path);
+    explicit UIXmlLoader(LPCTSTR v_path);
     ~UIXmlLoader();
 
     /**
      * [SAFE]Load xml file
      * @param    LPCTSTR path:xml path(relative to resource)
      */
-    void Loadxml(LPCTSTR path);
+    void Loadxml(LPCTSTR v_path);
 
     /**
      * Get root node
@@ -98,10 +99,10 @@ public:
     xmlnode GetRoot() const;
 
 private:
-    BYTE* buf;
-    xmldoc doc;
+    BYTE* buffer_ = nullptr;
+    xmldoc doc_;
 
-    UStr path;
+    UStr relativepath_;
 };
 
 }   // namespace DuiMini

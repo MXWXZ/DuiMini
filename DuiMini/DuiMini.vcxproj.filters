@@ -46,6 +46,24 @@
     <Filter Include="源文件\Core\Resource">
       <UniqueIdentifier>{c4fe8ee9-b038-496c-a6db-6c4dc44aeac1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\Control">
+      <UniqueIdentifier>{b61fe966-428d-42f8-9ed2-7d42925461af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Control">
+      <UniqueIdentifier>{a5e92202-1ae5-4dc3-8f56-f4fd0dcb2a71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Control\Layout">
+      <UniqueIdentifier>{56214bc2-bc31-4bca-b14d-164186795b24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Control\Layout">
+      <UniqueIdentifier>{4be2e7b6-62fe-49c7-a8a0-837d46d516c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Core\Render">
+      <UniqueIdentifier>{038fdc5f-3f07-4ff7-aa5c-3f5ba5d27fdc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Core\Render">
+      <UniqueIdentifier>{34cfba69-3721-42cc-aa6c-56680d361e29}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DuiMini.h">
@@ -53,9 +71,6 @@
     </ClInclude>
     <ClInclude Include="StdAfx.h">
       <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\UIDefine.h">
-      <Filter>头文件\Core</Filter>
     </ClInclude>
     <ClInclude Include="Core\UISystem.h">
       <Filter>头文件\Core</Filter>
@@ -114,6 +129,33 @@
     <ClInclude Include="Core\Resource\UIResource.h">
       <Filter>头文件\Core\Resource</Filter>
     </ClInclude>
+    <ClInclude Include="Core\UIDialog.h">
+      <Filter>头文件\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="UIDefine.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Control\Layout\UIContainer.h">
+      <Filter>头文件\Control\Layout</Filter>
+    </ClInclude>
+    <ClInclude Include="Control\UIControl.h">
+      <Filter>头文件\Control</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\UIDlgBuilder.h">
+      <Filter>头文件\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\UIWindow.h">
+      <Filter>头文件\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Render\UIRender.h">
+      <Filter>头文件\Core\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Render\UIRenderGDIP.h">
+      <Filter>头文件\Core\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\UIConfig.h">
+      <Filter>头文件\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StdAfx.cpp">
@@ -157,6 +199,30 @@
     </ClCompile>
     <ClCompile Include="Core\Resource\UIResource.cpp">
       <Filter>源文件\Core\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\UIDialog.cpp">
+      <Filter>源文件\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Control\Layout\UIContainer.cpp">
+      <Filter>源文件\Control\Layout</Filter>
+    </ClCompile>
+    <ClCompile Include="Control\UIControl.cpp">
+      <Filter>源文件\Control</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\UIDlgBuilder.cpp">
+      <Filter>源文件\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\UIWindow.cpp">
+      <Filter>源文件\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Render\UIRender.cpp">
+      <Filter>源文件\Core\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Render\UIRenderGDIP.cpp">
+      <Filter>源文件\Core\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\UIConfig.cpp">
+      <Filter>源文件\Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -12,56 +12,51 @@
 namespace DuiMini {
 /**
  * Loglevel definition
- * kLoglevel_Info:some information(will NOT affect the program)
- * kLoglevel_Warning:some warning(NOT fatal error)
- * kLoglevel_Error:fatal error(usually cause exit)
+ * kInfo:some information(will NOT affect the program)
+ * kWarning:some warning(NOT fatal error)
+ * kError:fatal error(usually cause exit)
  */
 enum Loglevel {
-    kLoglevel_Info = 0,
-    kLoglevel_Warning = 1,
-    kLoglevel_Error = 2,
+    kInfo = 0,
+    kWarning = 1,
+    kError = 2,
 };
 
 /**
  * log level wanted to record
- * kReclevel_Debug:record all logs
- * kReclevel_Beta:ignore kLoglevel_Info logs
- * kReclevel_Release:record ONLY kLoglevel_Error logs
+ * kDebug:record all logs
+ * kBeta:ignore kLoglevel_Info logs
+ * kRelease:record ONLY kLoglevel_Error logs
  */
 enum Reclevel {
-    kReclevel_Debug = 0,
-    kReclevel_Beta = 1,
-    kReclevel_Release = 2,
+    kDebug = 0,
+    kBeta = 1,
+    kRelease = 2,
 };
 
 class DUIMINI_API UIRecLog {
 public:
-    static void SetLogLevel(Reclevel level) { reclevel_ = level; }
-    static Reclevel GetLogLevel() { return reclevel_; }
+    static Reclevel SetLogLevel(Reclevel v_record_level);
+    static Reclevel GetLogLevel();
 
     /**
      * Record log(custom)
-     * @param    LPCTSTR text: the message
-     * @return   true - record succeed
-     * WARNING: this function WILL NOT add '\n' at the end of log
+     * WARNING: this function will NOT add '\n' at the end of log
      */
-    static bool RecordLog(LPCTSTR text);
+    static bool RecordLog(LPCTSTR v_text);
 
     /**
      * Record log(according to format)
-     * @param    Loglevel level: log level
-     * @param    LPCTSTR text: the message
-     * @return   true - record succeed
      * WARNING: this function WILL AUTOMATICALLY add '\n' at the end
      */
-    static bool RecordLog(Loglevel level, LPCTSTR text, ...);
+    static bool RecordLog(Loglevel v_level, LPCTSTR v_text, ...);
 
-    static void SetLogFilePath(LPCTSTR path) { fullpath_ = path; }
-    static LPCTSTR GetLogFilePath() { return fullpath_; }
-    static void StopRecordLog() { fullpath_ = _T(""); }
+    static LPCTSTR SetLogFilePath(LPCTSTR v_fullpath);
+    static LPCTSTR GetLogFilePath();
+    static void StopRecordLog();
 
 private:
-    static Reclevel reclevel_;
+    static Reclevel record_level_;
     static UStr fullpath_;
 };
 

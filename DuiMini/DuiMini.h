@@ -36,17 +36,24 @@
 #endif
 
 // DuiMini
-#include "Core/UIDefine.h"
+#include "UIDefine.h"
+
 #include "Utils/UIUtils.h"
 #include "Utils/UIRecLog.h"
 #include "Utils/UIException.h"
 #include "Utils/UIUnzip.h"
+
 #include "Core/UIInterface.h"
 #include "Core/Resource/UIResource.h"
+#include "Core/Render/UIRender.h"
+#include "Core/UIConfig.h"
 #include "Core/UISystem.h"
+#include "Core/UIDialog.h"
+#include "Core/UIDlgBuilder.h"
+#include "Core/UIWindow.h"
 
-//#include "Core/UIManager.h"
-//#include "Core/UIDlgBuilder.h"
+#include "Control/UIControl.h"
+#include "Control/Layout/UIContainer.h"
 
 /*
 #include "Utils/Utils.h"

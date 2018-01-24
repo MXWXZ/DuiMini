@@ -8,55 +8,52 @@
  * @Description:
  */
 #include "stdafx.h"
-#include "DuiMini.h"
 #include "UIResRC.h"
 
 namespace DuiMini {
-UIResRC::UIResRC() {
-    zipcache_ = NULL;
-}
+UIResRC::UIResRC() {}
 
-UIResRC::UIResRC(LPCTSTR info) {
-    zipcache_ = NULL;
-    SetResInfo(info);
+UIResRC::UIResRC(LPCTSTR v_info) {
+    SetResInfo(v_info);
 }
 
 UIResRC::~UIResRC() {
-    if (zipcache_ != NULL)
+    if (zipcache_)
         UIUnzip::CloseZip(zipcache_);
 }
 
-void UIResRC::SetResInfo(LPCTSTR info) {
-    resid_ = _ttoi(info);
+LPCTSTR UIResRC::SetResInfo(LPCTSTR v_info) {
+    resid_ = _ttoi(v_info);
     tmpfullpath_ = _T("");
-    if (zipcache_ != NULL)
+    if (zipcache_)
         UIUnzip::CloseZip(zipcache_);
+    return UStr(static_cast<int>(resid_));
 }
 
-LPCTSTR UIResRC::GetResInfo() {
-    return UStr(static_cast<int>(resid_)).GetData();
+LPCTSTR UIResRC::GetResInfo() const {
+    return UStr(static_cast<int>(resid_));
 }
 
-long UIResRC::GetFileSize(LPCTSTR path) {
-    if (zipcache_ == NULL)
-        if (OpenZip() == NULL)
+long UIResRC::GetFileSize(LPCTSTR v_path) {
+    if (!zipcache_)
+        if (!OpenZip())
             return -1;
-    long ret = UIUnzip::LocateZipItem(zipcache_, path);
+    long ret = UIUnzip::LocateZipItem(zipcache_, v_path);
     if (ret == -1)
-        UIException::SetError(kLoglevel_Error, kErrorCode_FileFail,
-                              _T("File \"%s\" in \"%s\" can't access!"),
-                              path, tmpfullpath_.GetData());
+        UISetError(kError, kFileFail,
+                   _T("File \"%s\" in \"%s\" can't access!"),
+                   v_path, tmpfullpath_.GetData());
     return ret;
 }
 
-bool UIResRC::GetFile(LPCTSTR path, BYTE* buf, long size) {
-    if (zipcache_ == NULL)
-        if (OpenZip() == NULL)
+bool UIResRC::GetFile(LPCTSTR v_path, BYTE* v_buffer, long v_size) {
+    if (!zipcache_)
+        if (!OpenZip())
             return false;
-    if (!UIUnzip::UnZipData(zipcache_, buf)) {
-        UIException::SetError(kLoglevel_Error, kErrorCode_FileFail,
-                              _T("File \"%s\" in \"%s\" can't access!"),
-                              path, tmpfullpath_.GetData());
+    if (!UIUnzip::UnZipData(zipcache_, v_buffer)) {
+        UISetError(kError, kFileFail,
+                   _T("File \"%s\" in \"%s\" can't access!"),
+                   v_path, tmpfullpath_.GetData());
         return false;
     }
     return true;
@@ -74,10 +71,10 @@ ZFile UIResRC::OpenZip() {
 
     FILE* fp;
     _tfopen_s(&fp, tmpfile, _T("wb"));
-    if (fp == NULL) {
-        UIException::SetError(kLoglevel_Error, kErrorCode_FileFail,
-                              _T("Temp path permission denied!"));
-        return NULL;
+    if (!fp) {
+        UISetError(kError, kFileFail,
+                   _T("Temp v_path permission denied!"));
+        return nullptr;
     }
     fwrite(file, (UINT)SizeofResource(UISystem::GetInstance(),
                                       srcsys), 1, fp);
@@ -87,10 +84,10 @@ ZFile UIResRC::OpenZip() {
     tmpfullpath_ = tmpfile;
 
     zipcache_ = UIUnzip::OpenZip(tmpfullpath_);
-    if (zipcache_ == NULL)
-        UIException::SetError(kLoglevel_Error, kErrorCode_FileFail,
-                              _T("File \"%s\" can't access!"),
-                              tmpfullpath_.GetData());
+    if (!zipcache_)
+        UISetError(kError, kFileFail,
+                   _T("File \"%s\" can't access!"),
+                   tmpfullpath_.GetData());
     return zipcache_;
 }
 

@@ -11,32 +11,40 @@
 
 namespace DuiMini {
 enum ErrorCode {
-    kErrorCode_Success = 0,
+    kSuccess = 0,
+    kIDInvalid,
+    kCtrlKindInvalid,
+    kRegWndFailed,
 
-    kErrorCode_Fatal,       // greater than this will quit the program
+    kFatalError,       // greater than this will quit the program
 
-    kErrorCode_FileFail,
-    kErrorCode_FileFormat,
+    kFileFail,
 
-    kErrorCode_LogFileFail,
+    kLogFileFail,     // keep this value at the end
 };
 
-typedef bool(*ExtraHandleFun)(Loglevel errorloglevel,
-                                          ErrorCode errorcode,
-                                          UStr errormsg);
+typedef bool(*ExtraHandleFun)(Loglevel v_log_level,
+                              ErrorCode v_error_code,
+                              UStr v_error_msg);
 
 class DUIMINI_API UIException {
 public:
-    static void SetError(Loglevel level, ErrorCode code, LPCTSTR msg, ...);
-    static ErrorCode GetLastError() { return errorcode_; }
-    static void SetExtraHandleFun(ExtraHandleFun fun);
+    static void SetError(Loglevel v_log_level, ErrorCode v_error_code,
+                         LPCTSTR v_error_msg, ...);
+    static ErrorCode GetLastError();
+    static ExtraHandleFun SetExtraHandleFun(ExtraHandleFun v_extra_fun);
     static void HandleError();
+    static void HandleError(Loglevel v_log_level, ErrorCode v_error_code,
+                            LPCTSTR v_error_msg, ...);
 
 private:
-    static Loglevel errorloglevel_;
-    static ErrorCode errorcode_;
-    static UStr errormsg_;
-    static ExtraHandleFun fun_;
+    static Loglevel log_level_;
+    static ErrorCode error_code_;
+    static UStr error_msg_;
+    static ExtraHandleFun extra_fun_;
 };
-#define HandleError UIException::HandleError
+
+#define UIHandleError UIException::HandleError
+#define UISetError UIException::SetError
+
 }  // namespace DuiMini

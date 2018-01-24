@@ -11,3 +11,7 @@
 #include <malloc.h>
 #include <memory.h>
 #include <tchar.h>
+
+#include "DuiMini.h"
+#pragma comment(lib, "Bin/DuiMini.lib")
+using namespace DuiMini;

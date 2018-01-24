@@ -8,54 +8,51 @@
  * @Description:
  */
 #include "stdafx.h"
-#include "DuiMini.h"
 #include "UIResZip.h"
 
 namespace DuiMini {
-UIResZip::UIResZip() {
-    zipcache_ = NULL;
-}
+UIResZip::UIResZip() {}
 
-UIResZip::UIResZip(LPCTSTR info) {
-    zipcache_ = NULL;
-    SetResInfo(info);
+UIResZip::UIResZip(LPCTSTR v_info) {
+    SetResInfo(v_info);
 }
 
 UIResZip::~UIResZip() {
-    if (zipcache_ != NULL)
+    if (zipcache_)
         UIUnzip::CloseZip(zipcache_);
 }
 
-void UIResZip::SetResInfo(LPCTSTR info) {
-    fullpath_ = info;
-    if (zipcache_ != NULL)
+LPCTSTR UIResZip::SetResInfo(LPCTSTR v_info) {
+    fullpath_ = v_info;
+    if (zipcache_)
         UIUnzip::CloseZip(zipcache_);
+    return fullpath_;
 }
 
-LPCTSTR UIResZip::GetResInfo() {
+LPCTSTR UIResZip::GetResInfo() const {
     return fullpath_.GetData();
 }
 
-long UIResZip::GetFileSize(LPCTSTR path) {
-    if (zipcache_ == NULL)
-        if (OpenZip() == NULL)
+long UIResZip::GetFileSize(LPCTSTR v_path) {
+    if (!zipcache_)
+        if (!OpenZip())
             return -1;
-    long ret = UIUnzip::LocateZipItem(zipcache_, path);
+    long ret = UIUnzip::LocateZipItem(zipcache_, v_path);
     if (ret == -1)
-        UIException::SetError(kLoglevel_Error, kErrorCode_FileFail,
-                              _T("File \"%s\" in \"%s\" can't access!"),
-                              path, fullpath_.GetData());
+        UISetError(kError, kFileFail,
+                   _T("File \"%s\" in \"%s\" can't access!"),
+                   v_path, fullpath_.GetData());
     return ret;
 }
 
-bool UIResZip::GetFile(LPCTSTR path, BYTE* buf, long size) {
-    if (zipcache_ == NULL)
-        if (OpenZip() == NULL)
+bool UIResZip::GetFile(LPCTSTR v_path, BYTE* v_buffer, long v_size) {
+    if (!zipcache_)
+        if (!OpenZip())
             return false;
-    if (!UIUnzip::UnZipData(zipcache_, buf)) {
-        UIException::SetError(kLoglevel_Error, kErrorCode_FileFail,
-                              _T("File \"%s\" in \"%s\" can't access!"),
-                              path, fullpath_.GetData());
+    if (!UIUnzip::UnZipData(zipcache_, v_buffer)) {
+        UISetError(kError, kFileFail,
+                   _T("File \"%s\" in \"%s\" can't access!"),
+                   v_path, fullpath_.GetData());
         return false;
     }
     return true;
@@ -63,10 +60,10 @@ bool UIResZip::GetFile(LPCTSTR path, BYTE* buf, long size) {
 
 ZFile UIResZip::OpenZip() {
     zipcache_ = UIUnzip::OpenZip(fullpath_);
-    if (zipcache_ == NULL)
-        UIException::SetError(kLoglevel_Error, kErrorCode_FileFail,
-                              _T("File \"%s\" can't access!"),
-                              fullpath_.GetData());
+    if (!zipcache_)
+        UISetError(kError, kFileFail,
+                   _T("File \"%s\" can't access!"),
+                   fullpath_.GetData());
     return zipcache_;
 }
 

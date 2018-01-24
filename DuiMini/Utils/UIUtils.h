@@ -11,58 +11,59 @@
 
 namespace DuiMini {
 class DUIMINI_API UIString {
- public:
+public:
     UIString();
-    explicit UIString(const TCHAR ch);
-    explicit UIString(const int val);
-    UIString(const UIString& src);
-    UIString(LPCTSTR str, int len = -1);
+    explicit UIString(const TCHAR v_ch);
+    explicit UIString(const int v_digit);
+    UIString(const UIString& v_src);
+    UIString(LPCTSTR v_str, int v_len = -1);
     ~UIString();
 
+public:
     void Empty();
     int GetLength() const;
     bool IsEmpty() const;
-    TCHAR GetAt(int index) const;
-    void Append(LPCTSTR str);
-    void Assign(LPCTSTR str, int len = -1);
+    TCHAR GetAt(int v_index) const;
+    void Append(LPCTSTR v_str);
+    void Assign(LPCTSTR v_str, int v_len = -1);
     LPCTSTR GetData() const;
-    int Str2Int();
+    int Str2Int() const;
 
-    void SetAt(int index, TCHAR ch);
+    void SetAt(int v_index, TCHAR v_ch);
     operator LPCTSTR() const;
 
-    TCHAR operator[] (int index) const;
-    const UIString& operator=(const TCHAR ch);
-    const UIString& operator=(LPCTSTR str);
-    UIString operator+(LPCTSTR str) const;
-    const UIString& operator+=(LPCTSTR str);
-    const UIString& operator+=(const TCHAR ch);
+    TCHAR operator[] (int v_index) const;
+    const UIString& operator=(const TCHAR v_ch);
+    const UIString& operator=(LPCTSTR v_str);
+    UIString operator+(LPCTSTR v_str) const;
+    const UIString& operator+=(LPCTSTR v_str);
+    const UIString& operator+=(const TCHAR v_ch);
 
-    bool operator == (LPCTSTR str) const;
-    bool operator != (LPCTSTR str) const;
-    bool operator <= (LPCTSTR str) const;
-    bool operator <  (LPCTSTR str) const;
-    bool operator >= (LPCTSTR str) const;
-    bool operator >  (LPCTSTR str) const;
+    bool operator == (LPCTSTR v_str) const;
+    bool operator != (LPCTSTR v_str) const;
+    bool operator <= (LPCTSTR v_str) const;
+    bool operator <  (LPCTSTR v_str) const;
+    bool operator >= (LPCTSTR v_str) const;
+    bool operator >  (LPCTSTR v_str) const;
 
-    int Compare(LPCTSTR str) const;
-    int CompareNoCase(LPCTSTR str) const;
+    int Compare(LPCTSTR v_str) const;
+    int CompareNoCase(LPCTSTR v_str) const;
 
     void MakeUpper();
     void MakeLower();
 
-    UIString Left(int len) const;
-    UIString Mid(int pos, int len) const;
-    UIString Right(int len) const;
+    UIString Left(int v_len) const;
+    UIString Mid(int v_pos, int v_len) const;
+    UIString Right(int v_len) const;
 
-    int Find(TCHAR ch, int pos = 0) const;
-    int Find(LPCTSTR str, int pos = 0) const;
-    int Replace(LPCTSTR str_from, LPCTSTR str_to);
+    int Find(TCHAR v_ch, int v_pos = 0) const;
+    int Find(LPCTSTR v_str, int v_pos = 0) const;
+    int Replace(LPCTSTR v_str_from, LPCTSTR v_str_to);
 
-    int __cdecl Format(LPCTSTR str, ...);
+    int __cdecl Format(LPCTSTR v_str, ...);
 
- protected:
-    tstring buffer_;
+protected:
+    tstring buffer_ = _T("");
 };
 typedef UIString UStr;
 typedef const UIString CUStr;
@@ -71,27 +72,74 @@ typedef const UIString CUStr;
 
 typedef std::map<UStr, UStr> SSMap;
 typedef std::map<UStr, UStr>::iterator SSMapIt;
+typedef std::map<UStr, UStr>::const_iterator SSMapCIt;
 class DUIMINI_API UIAttr {
 public:
-    UStr& operator[] (CUStr name);
-    bool IsExist(LPCTSTR name);
+    UIAttr();
+    ~UIAttr();
+
+public:
+    /**
+     * Get attribute value
+     * @return   value, empty string for not find
+     * Warning!This function will NOT check if v_name is valid, if not, it will
+     * add an empty string value.
+     */
+    UStr& operator[] (CUStr v_name);
+
+    /**
+     * SAFELY Get attribute value
+     * @return   value, empty string for not find
+     * This function will check if v_name is valid and will NOT add anything
+     */
+    CUStr GetValue(LPCTSTR v_name) const;
+
     SSMapIt GetBegin();
     SSMapIt GetEnd();
 
 private:
-    SSMap attr_;
+    SSMap attribute_;
 };
 
+typedef const UIAttr CUIAttr;
+
 typedef std::map<int, UIAttr> IAMap;
+typedef std::map<int, UStr>::iterator IAMapIt;
+typedef std::map<int, UStr>::const_iterator IAMapCIt;
 class DUIMINI_API UIAttrSet {
 public:
-    UIAttr& operator[] (int pos);
-    void AddAttr(const UIAttr &val);
-    int GetSize();
-    int FindNextAttr(int start, LPCTSTR attr, LPCTSTR val);    // -1 not find
+    UIAttrSet();
+    ~UIAttrSet();
+
+public:
+    /**
+     * WARNING!Make sure v_pos is valid!
+     * ONLY use this to modify or get UIAttr value,
+     * DO NOT use this to add new value!!!  
+     */
+    UIAttr& operator[] (const int v_pos);
+
+    /**
+     * SAFELY get value
+     */
+    CUIAttr GetValue(const int v_pos);
+
+    void AddAttr(const UIAttr &v_value);
+    int GetSize() const;
+    void Clear();
+
+    /**
+     * Find attribute name and value
+     * @param    int v_start:start pos(include)
+     * @param    LPCTSTR v_attr:attribute name
+     * @param    LPCTSTR v_value:attribute value, stay empty for anything
+     *                           existing. 
+     * @return   -1 for not find,otherwise is the positon
+     */
+    int FindNextAttr(int v_start, LPCTSTR v_attr, LPCTSTR v_value = _T(""));
 
 private:
-    IAMap attrset_;
+    IAMap attribute_set_;
     int size_ = 0;
 };
 
@@ -99,15 +147,19 @@ private:
 
 class DUIMINI_API UIXmlNode {
 public:
-    explicit UIXmlNode(const xmlnode node);
-    void SetNode(const xmlnode node);
-    CUStr GetAttrValue(LPCTSTR name, LPCTSTR def = _T(""));
-    CUStr GetAttrValue(LPCTSTR name, const int def);
-    bool CmpAttrValue(LPCTSTR name, LPCTSTR value);
-    bool CmpNodeName(LPCTSTR name);
+    UIXmlNode();
+    explicit UIXmlNode(const xmlnode v_node);
+    ~UIXmlNode();
+
+public:
+    void SetNode(const xmlnode v_node);
+    CUStr GetAttrValue(LPCTSTR v_name, LPCTSTR v_default = _T("")) const;
+    CUStr GetAttrValue(LPCTSTR v_name, const int v_default) const;
+    bool CmpAttrValue(LPCTSTR v_name, LPCTSTR v_value) const;
+    bool CmpNodeName(LPCTSTR v_name) const;
 
 private:
-    xmlnode node_;
+    xmlnode node_ = nullptr;
 };
 
 ////////////////////////////////////////
@@ -125,24 +177,50 @@ struct DUIMINI_API UIFont {
 
 ////////////////////////////////////////
 
+class UIPtrArray {
+public:
+    explicit UIPtrArray(UINT v_size = 0);
+    ~UIPtrArray();
+
+public:
+    void Empty();
+    void Resize(UINT v_size);
+    bool IsEmpty() const;
+    int Find(LPVOID v_index) const;
+    bool Add(LPVOID v_data);
+    bool SetAt(UINT v_index, LPVOID v_data);
+    bool InsertAt(UINT v_index, LPVOID v_data);
+    bool Remove(UINT v_index);
+    UINT GetSize() const;
+    LPVOID* GetData();
+
+    LPVOID GetAt(UINT v_index) const;
+    LPVOID operator[] (UINT v_index) const;
+
+protected:
+    LPVOID* ptrvoid_ = nullptr;
+    UINT count_ = 0;
+    UINT allocated_ = 0;
+};
+
+////////////////////////////////////////
+
 class DUIMINI_API UIUtils {
 public:
     /**
-    * Get the current path
+    * Get current path
     * @return   current dir
     * the path does NOT include the \\ and file name at the end
     * e.g. C:\\windows\\system32
-    * WARNING!return value is temporary object and should be transfer to
-    * another UStr object if you want to use it later
     */
     static CUStr GetCurrentDir();
 
     /**
      * Get formated time string
-     * @param    LPCTSTR str:time format string (%Y %m %d %H %M %S)
+     * @param    LPCTSTR v_str:time format string (%Y %m %d %H %M %S)
      * @return   formated time string
      */
-    static CUStr GetTimeStr(LPCTSTR str);
+    static CUStr GetTimeStr(LPCTSTR v_str);
 };
 
 }   // namespace DuiMini

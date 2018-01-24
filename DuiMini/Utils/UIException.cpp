@@ -8,54 +8,85 @@
  * @Description:
  */
 #include "stdafx.h"
-#include "DuiMini.h"
 #include "UIException.h"
 
 namespace DuiMini {
-ErrorCode UIException::errorcode_ = kErrorCode_Success;
-UStr UIException::errormsg_ = _T("");
-Loglevel UIException::errorloglevel_ = kLoglevel_Info;
-ExtraHandleFun UIException::fun_ = NULL;
+ErrorCode UIException::error_code_ = kSuccess;
+UStr      UIException::error_msg_ = _T("");
+Loglevel  UIException::log_level_ = kInfo;
+ExtraHandleFun UIException::extra_fun_ = nullptr;
 
-void UIException::SetError(Loglevel level, ErrorCode code, LPCTSTR msg, ...) {
-    LPTSTR tmpstr = NULL;
+void UIException::SetError(Loglevel v_log_level, ErrorCode v_error_code,
+                           LPCTSTR v_error_msg, ...) {
+    LPTSTR tmpstr = nullptr;
     va_list argList;
-    int len;
-    va_start(argList, msg);
-    len = _vsntprintf(NULL, 0, msg, argList);
+    int len = 0;
+
+    va_start(argList, v_error_msg);
+    len = _vsntprintf(NULL, 0, v_error_msg, argList);
     tmpstr = new TCHAR[len + 1];
-    _vsntprintf(tmpstr, len + 1, msg, argList);
+    _vsntprintf(tmpstr, len + 1, v_error_msg, argList);
     va_end(argList);
 
-    errormsg_ = tmpstr;
-    errorloglevel_ = level;
-    errorcode_ = code;
+    error_msg_ = tmpstr;
+    log_level_ = v_log_level;
+    error_code_ = v_error_code;
 
     delete[]tmpstr;
+    tmpstr = nullptr;
+}
+
+ErrorCode UIException::GetLastError() {
+    return error_code_;
 }
 
 void UIException::HandleError() {
-    if (errorcode_ == kErrorCode_Success)
+    if (error_code_ == kSuccess)
         return;
-    
+
     bool ishandled = false;
-    if (fun_ != NULL)
-        ishandled = fun_(errorloglevel_, errorcode_, errormsg_);
+    if (extra_fun_)
+        ishandled = extra_fun_(log_level_, error_code_, error_msg_);
     if (!ishandled) {
-        if (!UIRecLog::RecordLog(errorloglevel_,
-                                 UStr(_T("Code %d ")) + errormsg_, errorcode_)) {
+        if (!UIRecLog::RecordLog(log_level_,
+                                 UStr(_T("Code %d ")) + error_msg_,
+                                 error_code_)) {
             MessageBox(NULL, _T("Log record failed!"), _T("ERROR"), MB_OK);
-            errorcode_ = kErrorCode_LogFileFail;
+            error_code_ = kLogFileFail;
         }
-        if (errorcode_ >= kErrorCode_Fatal)
-            UISystem::Exit(errorcode_);
+        if (error_code_ >= kFatalError)
+            UISystem::Exit(error_code_);
     }
-    errorcode_ = kErrorCode_Success;
-    errormsg_.Empty();
+    error_code_ = kSuccess;
+    error_msg_.Empty();
 }
 
-void UIException::SetExtraHandleFun(ExtraHandleFun fun) {
-    fun_ = fun;
+void UIException::HandleError(Loglevel v_log_level, ErrorCode v_error_code,
+                              LPCTSTR v_error_msg, ...) {
+    // Oh I dont know how to pass ... to SetError function so that is it.
+    LPTSTR tmpstr = nullptr;
+    va_list argList;
+    int len = 0;
+
+    va_start(argList, v_error_msg);
+    len = _vsntprintf(NULL, 0, v_error_msg, argList);
+    tmpstr = new TCHAR[len + 1];
+    _vsntprintf(tmpstr, len + 1, v_error_msg, argList);
+    va_end(argList);
+
+    error_msg_ = tmpstr;
+    log_level_ = v_log_level;
+    error_code_ = v_error_code;
+
+    delete[]tmpstr;
+    tmpstr = nullptr;
+
+    HandleError();
+}
+
+ExtraHandleFun UIException::SetExtraHandleFun(ExtraHandleFun v_extra_fun) {
+    extra_fun_ = v_extra_fun;
+    return extra_fun_;
 }
 
 }  // namespace DuiMini

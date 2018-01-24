@@ -8,7 +8,6 @@
  * @Description:
  */
 #include "stdafx.h"
-#include "DuiMini.h"
 #include "Core/Resource/UIResFile.h"
 #include "Core/Resource/UIResZip.h"
 #include "Core/Resource/UIResRC.h"
@@ -16,47 +15,52 @@
 
 namespace DuiMini {
 IUIRes* UIResource::resclass_ = new UIResFile(DEFAULT_RESFOLDER);
-Restype UIResource::restype_ = kRestype_File;
+Restype UIResource::restype_ = kFile;
+
+UIResource::UIResource() {}
 
 UIResource::~UIResource() {
     delete resclass_;
-    resclass_ = NULL;
+    resclass_ = nullptr;
 }
 
-void UIResource::SetResType(Restype type) {
-    restype_ = type;
-    if (resclass_ != NULL)
+Restype UIResource::SetResType(Restype v_type) {
+    restype_ = v_type;
+    if (resclass_)
         delete resclass_;
-    switch (type) {
-    case kRestype_File:
+    switch (v_type) {
+    case kFile:
         resclass_ = new UIResFile();
         break;
-    case kRestype_Package:
+    case kPackage:
         resclass_ = new UIResZip();
         break;
-    case kRestype_RC:
+    case kRC:
         resclass_ = new UIResRC();
         break;
-    default:
-        break;
     }
+    return restype_;
 }
 
-long UIResource::GetFileSize(LPCTSTR path) {
-    int ret = resclass_->GetFileSize(path);
+Restype UIResource::GetResType() {
+    return restype_;
+}
+
+long UIResource::GetFileSize(LPCTSTR v_path) {
+    int ret = resclass_->GetFileSize(v_path);
     if (ret < 0)
-        HandleError();
+        UIHandleError();
     return ret;
 }
 
-BYTE* UIResource::GetFile(LPCTSTR path, BYTE* buf, long size) {
-    if (!resclass_->GetFile(path, buf, size))
-        HandleError();
-    return buf;
+BYTE* UIResource::GetFile(LPCTSTR v_path, BYTE* v_buffer, long v_size) {
+    if (!resclass_->GetFile(v_path, v_buffer, v_size))
+        UIHandleError();
+    return v_buffer;
 }
 
-void UIResource::SetResInfo(LPCTSTR info) {
-    resclass_->SetResInfo(info);
+void UIResource::SetResInfo(LPCTSTR v_info) {
+    resclass_->SetResInfo(v_info);
 }
 
 LPCTSTR UIResource::GetResInfo() {
@@ -66,41 +70,39 @@ LPCTSTR UIResource::GetResInfo() {
 
 ////////////////////////////////////////
 
-UIXmlLoader::UIXmlLoader() {
-    buf = NULL;
-}
+UIXmlLoader::UIXmlLoader() {}
 
-UIXmlLoader::UIXmlLoader(LPCTSTR path) {
-    buf = NULL;
-    Loadxml(path);
+UIXmlLoader::UIXmlLoader(LPCTSTR v_path) {
+    buffer_ = nullptr;
+    Loadxml(v_path);
 }
 
 UIXmlLoader::~UIXmlLoader() {
-    delete[]buf;
-    buf = NULL;
+    delete[]buffer_;
+    buffer_ = nullptr;
 }
 
-void UIXmlLoader::Loadxml(LPCTSTR path) {
-    if (buf != NULL)
-        delete[]buf;
-    long buflen = UIResource::GetFileSize(path);
-    buf = new BYTE[buflen + 1];
-    UIResource::GetFile(path, buf, buflen);
-    buf[buflen] = '\0';
+void UIXmlLoader::Loadxml(LPCTSTR v_path) {
+    if (buffer_)
+        delete[]buffer_;
+    long buflen = UIResource::GetFileSize(v_path);
+    buffer_ = new BYTE[buflen + 1];
+    UIResource::GetFile(v_path, buffer_, buflen);
+    buffer_[buflen] = '\0';
 #ifdef _UNICODE
-    int len = MultiByteToWideChar(CP_UTF8, 0, (LPCSTR)buf, -1, NULL, 0);
+    int len = MultiByteToWideChar(CP_UTF8, 0, (LPCSTR)buffer_, -1, NULL, 0);
     LPWSTR str = new wchar_t[len];
-    MultiByteToWideChar(CP_UTF8, 0, (LPCSTR)buf, -1, str, len);
-    delete[]buf;
-    buf = reinterpret_cast<BYTE*>(str);
-    doc.parse<0>((LPWSTR)buf);
+    MultiByteToWideChar(CP_UTF8, 0, (LPCSTR)buffer_, -1, str, len);
+    delete[]buffer_;
+    buffer_ = reinterpret_cast<BYTE*>(str);
+    doc_.parse<0>((LPWSTR)buffer_);
 #else
-    doc.parse<0>((LPSTR)buf);
+    doc_.parse<0>((LPSTR)buffer_);
 #endif  // _UNICODE
 }
 
 xmlnode UIXmlLoader::GetRoot() const {
-    return doc.first_node();
+    return doc_.first_node();
 }
 
 }   // namespace DuiMini

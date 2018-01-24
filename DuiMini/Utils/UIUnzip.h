@@ -20,37 +20,30 @@ class DUIMINI_API UIUnzip {
 public:
     /**
      * Open zip file
-     * @param    LPCTSTR path: The full path of file
+     * @param    LPCTSTR v_fullpath: MUST be full path of file
      * @return   opened ZFile pointer
      */
-    static ZFile OpenZip(LPCTSTR path);
+    static ZFile OpenZip(LPCTSTR v_fullpath);
 
-    /**
-     * Close zip file
-     * @param    ZFile fp: file pointer you want to close
-     */
-    static void CloseZip(ZFile fp);
+    static void CloseZip(ZFile v_fp);
 
     /**
      * Locate file in zip
-     * @param    ZFile fp: opened file pointer
-     * @param    LPCTSTR path: relative path (e.g. abc/123.txt)
-     * @return   -1 when file dcan't access,otherwise is the file size
-     * WARNING: Please better to use '/' to divide in relative path,this function
-     * will AUTOMATICALLY turn '\\' to '/' (zlib ONLY allows '/')
+     * @param    LPCTSTR v_relativepath: relative path (e.g. abc/123.txt)
+     * @return   -1 when file can't access,otherwise is the file size
+     * WARNING: Please better to use '/' to divide in relative path,
+     * this function will AUTOMATICALLY turn '\\' to '/' (zlib ONLY allows '/')
      */
-    static long LocateZipItem(ZFile fp, LPCTSTR path);
+    static long LocateZipItem(ZFile v_fp, LPCTSTR v_relativepath);
 
     /**
      * Unzip file
-     * @param    ZFile fp:opened file pointer
-     * @param    BYTE* data: buffer to recive data(please call 'LocateZipItem' to get the
-     *           size and apply for memory space)
-     * @return   true - succeed
-     * WARNING: this function MUST be used after calling 'LocateZipItem' and
-     * WILL NOT check if there is enough space in the buffer.
+     * @param    BYTE* v_buffer: buffer to recive data(please call
+     * [LocateZipItem] to get the size and apply for memory space)
+     * WARNING: this function MUST be used after calling [LocateZipItem] and
+     * will NOT check if there is enough space in the buffer.
      */
-    static bool UnZipData(ZFile fp, BYTE* data);
+    static bool UnZipData(ZFile v_fp, BYTE* v_buffer);
 };
 
 }   // namespace DuiMini

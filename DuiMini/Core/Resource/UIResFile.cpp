@@ -8,34 +8,36 @@
  * @Description:
  */
 #include "stdafx.h"
-#include "DuiMini.h"
 #include "UIResFile.h"
 
 namespace DuiMini {
 UIResFile::UIResFile() {}
 
-UIResFile::UIResFile(LPCTSTR info) {
-    SetResInfo(info);
+UIResFile::~UIResFile() {}
+
+UIResFile::UIResFile(LPCTSTR v_info) {
+    SetResInfo(v_info);
 }
 
-void UIResFile::SetResInfo(LPCTSTR info) {
-    folderpath_ = info;
+LPCTSTR UIResFile::SetResInfo(LPCTSTR v_info) {
+    folderpath_ = v_info;
+    return folderpath_;
 }
 
-LPCTSTR UIResFile::GetResInfo() {
+LPCTSTR UIResFile::GetResInfo() const {
     return folderpath_.GetData();
 }
 
-long UIResFile::GetFileSize(LPCTSTR path) {
+long UIResFile::GetFileSize(LPCTSTR v_path) {
     UStr fullpath;
-    fullpath.Format(_T("%s\\%s"), folderpath_.GetData(), path);
+    fullpath.Format(_T("%s\\%s"), folderpath_.GetData(), v_path);
 
     FILE* fp;
     fp = _tfopen(fullpath, _T("rb"));
-    if (fp == NULL) {
-        UIException::SetError(kLoglevel_Error, kErrorCode_FileFail,
-                              _T("File \"%s\" can't access!"),
-                              fullpath.GetData());
+    if (!fp) {
+        UISetError(kError, kFileFail,
+                   _T("File \"%s\" can't access!"),
+                   fullpath.GetData());
         return -1;
     }
     fseek(fp, 0, SEEK_END);
@@ -44,19 +46,19 @@ long UIResFile::GetFileSize(LPCTSTR path) {
     return size;
 }
 
-bool UIResFile::GetFile(LPCTSTR path, BYTE* buf, long size) {
+bool UIResFile::GetFile(LPCTSTR v_path, BYTE* v_buffer, long v_size) {
     UStr fullpath;
-    fullpath.Format(_T("%s\\%s"), folderpath_.GetData(), path);
+    fullpath.Format(_T("%s\\%s"), folderpath_.GetData(), v_path);
 
     FILE* fp;
     fp = _tfopen(fullpath, _T("rb"));
-    if (fp == NULL) {
-        UIException::SetError(kLoglevel_Error, kErrorCode_FileFail,
-                              _T("File \"%s\" can't access!"),
-                              fullpath.GetData());
+    if (!fp) {
+        UISetError(kError, kFileFail,
+                   _T("File \"%s\" can't access!"),
+                   fullpath.GetData());
         return false;
     }
-    fread(buf, 1, size, fp);
+    fread(v_buffer, 1, v_size, fp);
     fclose(fp);
     return true;
 }

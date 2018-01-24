@@ -13,12 +13,13 @@ namespace DuiMini {
 class DUIMINI_API UIResFile :public IUIRes {
 public:
     UIResFile();
-    explicit UIResFile(LPCTSTR info);
+    explicit UIResFile(LPCTSTR v_info);
+    ~UIResFile();
 
-    void SetResInfo(LPCTSTR info) override;
-    LPCTSTR GetResInfo() override;
-    long GetFileSize(LPCTSTR path) override;
-    bool GetFile(LPCTSTR path, BYTE* buf, long size) override;
+    LPCTSTR SetResInfo(LPCTSTR v_info) override;
+    LPCTSTR GetResInfo() const override;
+    long GetFileSize(LPCTSTR v_path) override;
+    bool GetFile(LPCTSTR v_path, BYTE* v_buffer, long v_size) override;
 
 private:
     UStr folderpath_;
