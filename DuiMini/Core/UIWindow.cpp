@@ -50,7 +50,7 @@ UIDlgBuilder* UIWindow::SetDlgBuilder() {
     return builder_;
 }
 
-UIDlgBuilder* UIWindow::GetBuilder() {
+UIDlgBuilder* UIWindow::GetDlgBuilder() {
     return builder_;
 }
 

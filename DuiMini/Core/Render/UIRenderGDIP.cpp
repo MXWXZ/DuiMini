@@ -35,7 +35,7 @@ bool UIRenderGDIP::Paint() {
     RECT rcwindow;
     GetWindowRect(hwnd, &rcwindow);
     SIZE sizewindow;
-    UIDialog* dlg = (UIDialog*)(parent_->GetBuilder()->GetCtrlRoot());
+    UIDialog* dlg = (UIDialog*)(parent_->GetDlgBuilder()->GetCtrlRoot());
 
     RECT pos = dlg->GetPos();
     sizewindow.cx = pos.right - pos.left;
@@ -82,7 +82,7 @@ bool UIRenderGDIP::Paint() {
                background_, 0, 0, sizewindow.cx, sizewindow.cy, blendfunc);
 
     graph_ = new Gdiplus::Graphics(hdctmp);
-    parent_->GetBuilder()->GetCtrlRoot()->DoPaint(hwnd, this);
+    parent_->GetDlgBuilder()->GetCtrlRoot()->DoPaint(hwnd, this);
     graph_->ReleaseHDC(hdctmp);
     delete graph_;
     graph_ = nullptr;

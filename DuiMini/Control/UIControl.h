@@ -17,15 +17,23 @@ public:
     virtual ~UIControl();
 
 public:
-    // Attribute
-    virtual void SetDefaultAttr();
-    virtual void SetAttribute(LPCTSTR v_name, LPCTSTR v_value);
-    virtual void AfterSetAttribute();
+    // User interface
+    RECT SetPos(LPCTSTR v_pos);
+    RECT GetPos() const;
+    void Invalidate() const;
     CUStr GetAttribute(LPCTSTR v_name) const;
 
-    // Paint
+public:
+    // Attribute
+    virtual void SetDefaultAttr();
+    /**
+     * DO NOT call it manually! If you must do, call AfterSetAttribute()
+     * to prevent some strange act.
+     */
+    virtual void SetAttribute(LPCTSTR v_name, LPCTSTR v_value);
+    virtual void AfterSetAttribute();
+
     virtual void DoPaint(HWND v_hwnd, IUIRender* v_render) = 0;
-    void Invalidate() const;
 
     // Parent&Base
     virtual void SetParent(UIControl* v_parent);
@@ -34,10 +42,7 @@ public:
     virtual UIWindow* GetBaseWindow() const;
     virtual LPVOID GetInterface(LPCTSTR v_name);
 
-    // Pos
     RECT UpdatePos();   // Update pos from attribute
-    RECT SetPos(LPCTSTR v_pos);
-    RECT GetPos() const;
 
     /**
      * fint ctrl cover pt
