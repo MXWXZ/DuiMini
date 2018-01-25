@@ -18,9 +18,10 @@ public:
     UIRenderGDIP();
     ~UIRenderGDIP();
 
-    bool Init() override;
-    bool Release() override;
+    bool GlobalInit() override;
+    bool GlobalRelease() override;
     bool Paint() override;
+    bool RedrawBackground() override;
 
     bool DrawImage(UIRenderImage* v_img, int v_left, int v_top,
                    int v_width, int v_height) override;
@@ -28,7 +29,7 @@ public:
 private:
     HDC background_ = NULL;         // background DC
     HBITMAP bg_bitmap_ = NULL;      // bitmap on DC
-    Gdiplus::Graphics* graph_ = nullptr;
+    Gdiplus::Graphics* graph_ = nullptr;    // always nullptr after used
     static ULONG_PTR gdiplus_token;
 };
 

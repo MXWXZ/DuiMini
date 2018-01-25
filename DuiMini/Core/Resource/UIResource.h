@@ -28,7 +28,6 @@ enum Restype {
  */
 class DUIMINI_API UIResource {
 public:
-    UIResource();
     ~UIResource();
 
     static Restype SetResType(Restype v_type);
@@ -56,11 +55,12 @@ public:
     /**
      * Set resource info
      * @param    LPCTSTR info:info passed to res class
+     * @return   setted info
      * TIP:For kRestype_File is the root folder of res
      *     For kRestype_Package is the zip full path
      *     For kRestype_RC is the RC id in resource.h
      */
-    static void SetResInfo(LPCTSTR v_info);
+    static LPCTSTR SetResInfo(LPCTSTR v_info);
 
     /**
      * Get resource info

@@ -38,16 +38,17 @@ public:
      * You ONLY need to call these ONCE at the beginning and the end of the
      * program.
      */
-    static bool Init();
-    static bool Init(RenderMode v_mode);
+    static bool GlobalInit();
+    static bool GlobalInit(RenderMode v_mode);
     // Release will be automatically called by UISystem::Cleanup
-    static bool Release();
+    static bool GlobalRelease();
 
     static RenderMode SetRenderMode(RenderMode v_mode);
     static RenderMode GetRenderMode();
 
     UIWindow* SetParent(UIWindow* v_parent);
     bool Paint();
+    bool RedrawBackground();
 
 private:
     static IUIRender* SelectRender(IUIRender** v_pointer);

@@ -16,8 +16,6 @@ UIDlgBuilder::UIDlgBuilder() {}
 UIDlgBuilder::~UIDlgBuilder() {
     delete ctrlroot_;
     ctrlroot_ = nullptr;
-    basewnd_ = nullptr;
-    xmlroot_ = nullptr;
 }
 
 UIControl* UIDlgBuilder::Init(xmlnode v_root, UIWindow* v_wnd) {
@@ -77,6 +75,7 @@ UIControl* UIDlgBuilder::_Parse(xmlnode v_root,
         }
         // Process attributes
         if (node->first_attribute()) {
+            tmpctrl->BeforeSetAttribute();
             for (xmlattr attr = node->first_attribute();
                  attr != nullptr;
                  attr = attr->next_attribute())

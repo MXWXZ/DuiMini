@@ -17,10 +17,12 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
                       _In_ int       nCmdShow) {
     UISystem::Init(hInstance);      // Initialize UI library
     UIConfig::LoadConfig();         // Load main config
-    UIRender::Init();               // Init render
+    UIRender::GlobalInit();         // Init render
 
-    MainDlg dlg;        // Show main dlg
-    dlg.Run();
+    {                       // Please write code between the brackets
+        MainDlg dlg;        // Show main dlg
+        dlg.Run();
+    }
 
     UISystem::Cleanup();            // Clean up UI library
     return 0;

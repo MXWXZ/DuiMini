@@ -17,8 +17,6 @@ namespace DuiMini {
 IUIRes* UIResource::resclass_ = new UIResFile(DEFAULT_RESFOLDER);
 Restype UIResource::restype_ = kFile;
 
-UIResource::UIResource() {}
-
 UIResource::~UIResource() {
     delete resclass_;
     resclass_ = nullptr;
@@ -47,23 +45,59 @@ Restype UIResource::GetResType() {
 }
 
 long UIResource::GetFileSize(LPCTSTR v_path) {
-    int ret = resclass_->GetFileSize(v_path);
-    if (ret < 0)
-        UIHandleError();
+    if (!resclass_)
+        return 0;
+    int ret = 0;
+    if (UStr(v_path).Find(_T(":")) != -1) {
+        FILE* fp;
+        fp = _tfopen(v_path, _T("rb"));
+        if (!fp) {
+            UIHandleError(kError, kFileFail,
+                          _T("File \"%s\" can't access!"),
+                          v_path);
+            return 0;
+        }
+        fseek(fp, 0, SEEK_END);
+        ret = ftell(fp);
+        fclose(fp);
+    } else {
+        ret = resclass_->GetFileSize(v_path);
+        if (ret < 0)
+            UIHandleError();
+    }
     return ret;
 }
 
 BYTE* UIResource::GetFile(LPCTSTR v_path, BYTE* v_buffer, long v_size) {
-    if (!resclass_->GetFile(v_path, v_buffer, v_size))
-        UIHandleError();
+    if (!resclass_)
+        return nullptr;
+    if (UStr(v_path).Find(_T(":")) != -1) {
+        FILE* fp;
+        fp = _tfopen(v_path, _T("rb"));
+        if (!fp) {
+            UIHandleError(kError, kFileFail,
+                          _T("File \"%s\" can't access!"),
+                          v_path);
+            return nullptr;
+        }
+        fread(v_buffer, 1, v_size, fp);
+        fclose(fp);
+    } else {
+        if (!resclass_->GetFile(v_path, v_buffer, v_size))
+            UIHandleError();
+    }
     return v_buffer;
 }
 
-void UIResource::SetResInfo(LPCTSTR v_info) {
-    resclass_->SetResInfo(v_info);
+LPCTSTR UIResource::SetResInfo(LPCTSTR v_info) {
+    if (!resclass_)
+        return _T("");
+    return resclass_->SetResInfo(v_info);
 }
 
 LPCTSTR UIResource::GetResInfo() {
+    if (!resclass_)
+        return _T("");
     return resclass_->GetResInfo();
 }
 

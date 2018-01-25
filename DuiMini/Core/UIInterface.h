@@ -67,9 +67,10 @@ class DUIMINI_API UIWindow;
 class DUIMINI_API UIRenderImage;
 class DUIMINI_API IUIRender {
 public:
-    virtual bool Init() = 0;
-    virtual bool Release() = 0;
+    virtual bool GlobalInit() = 0;
+    virtual bool GlobalRelease() = 0;
     virtual bool Paint() = 0;
+    virtual bool RedrawBackground() = 0;
 
     virtual bool DrawImage(UIRenderImage* v_img, int v_left, int v_top,
                            int v_width, int v_height) = 0;

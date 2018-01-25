@@ -53,6 +53,7 @@
   <ItemGroup>
     <ClInclude Include="Control\Layout\UIContainer.h" />
     <ClInclude Include="Control\UIControl.h" />
+    <ClInclude Include="Control\UIDialog.h" />
     <ClInclude Include="Core\Render\UIRender.h" />
     <ClInclude Include="Core\Render\UIRenderGDIP.h" />
     <ClInclude Include="Core\Resource\UIResFile.h" />
@@ -63,7 +64,6 @@
     <ClInclude Include="Core\UIDlgBuilder.h" />
     <ClInclude Include="Core\UIInterface.h" />
     <ClInclude Include="Core\UISystem.h" />
-    <ClInclude Include="Core\UIDialog.h" />
     <ClInclude Include="Core\UIWindow.h" />
     <ClInclude Include="DuiMini.h" />
     <ClInclude Include="resource.h" />
@@ -85,6 +85,7 @@
   <ItemGroup>
     <ClCompile Include="Control\Layout\UIContainer.cpp" />
     <ClCompile Include="Control\UIControl.cpp" />
+    <ClCompile Include="Control\UIDialog.cpp" />
     <ClCompile Include="Core\Render\UIRender.cpp" />
     <ClCompile Include="Core\Render\UIRenderGDIP.cpp" />
     <ClCompile Include="Core\Resource\UIResFile.cpp" />
@@ -94,7 +95,6 @@
     <ClCompile Include="Core\UIConfig.cpp" />
     <ClCompile Include="Core\UIDlgBuilder.cpp" />
     <ClCompile Include="Core\UISystem.cpp" />
-    <ClCompile Include="Core\UIDialog.cpp" />
     <ClCompile Include="Core\UIWindow.cpp" />
     <ClCompile Include="DuiMini.cpp" />
     <ClCompile Include="StdAfx.cpp" />

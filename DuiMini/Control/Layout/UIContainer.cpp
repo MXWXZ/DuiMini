@@ -77,9 +77,4 @@ LPVOID UIContainer::GetInterface(LPCTSTR v_name) {
         return this;
     return UIControl::GetInterface(v_name);
 }
-
-void UIContainer::AfterSetAttribute() {
-    UIControl::AfterSetAttribute();
-}
-
 }   // namespace DuiMini

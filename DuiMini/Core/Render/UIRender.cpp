@@ -18,7 +18,9 @@ UIRenderImage::UIRenderImage(LPCTSTR v_path) {
     Load(v_path);
 }
 
-UIRenderImage::~UIRenderImage() {}
+UIRenderImage::~UIRenderImage() {
+    Release();
+}
 
 bool UIRenderImage::Load(LPCTSTR v_path) {
     switch (UIRender::GetRenderMode()) {
@@ -30,12 +32,16 @@ bool UIRenderImage::Load(LPCTSTR v_path) {
 }
 
 bool UIRenderImage::Release() {
+    if (!renderimg_)
+        return false;
     bool ret = renderimg_->Release();
     renderimg_ = nullptr;
     return ret;
 }
 
 void* UIRenderImage::GetInterface() {
+    if (!renderimg_)
+        return nullptr;
     return renderimg_->GetInterface();
 }
 
@@ -57,26 +63,26 @@ UIRender::~UIRender() {
     render_ = nullptr;
 }
 
-bool UIRender::Init() {
+bool UIRender::GlobalInit() {
     // Using an new object for global init
     IUIRender *render = nullptr;
     SelectRender(&render);
-    bool ret = render->Init();
+    bool ret = render->GlobalInit();
     delete render;
     render = nullptr;
     return ret;
 }
 
-bool UIRender::Init(RenderMode v_mode) {
+bool UIRender::GlobalInit(RenderMode v_mode) {
     SetRenderMode(v_mode);
-    Init();
+    GlobalInit();
     return true;
 }
 
-bool UIRender::Release() {
+bool UIRender::GlobalRelease() {
     IUIRender *render = nullptr;
     SelectRender(&render);
-    bool ret = render->Release();
+    bool ret = render->GlobalRelease();
     delete render;
     render = nullptr;
     return ret;
@@ -102,6 +108,12 @@ bool UIRender::Paint() {
     if (!render_)
         return false;
     return render_->Paint();
+}
+
+bool UIRender::RedrawBackground() {
+    if (!render_)
+        return false;
+    return render_->RedrawBackground();
 }
 
 IUIRender* UIRender::SelectRender(IUIRender** v_pointer) {

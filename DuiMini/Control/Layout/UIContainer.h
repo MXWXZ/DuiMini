@@ -27,7 +27,6 @@ public:
     UIControl* FindCtrlFromPT(POINT v_pt) override;
     void SetBaseWindow(UIWindow* v_basewnd) override;
     LPVOID GetInterface(LPCTSTR v_name) override;
-    void AfterSetAttribute() override;
 
 protected:
     UIPtrArray item_;

@@ -17,7 +17,6 @@ public:
     virtual ~UIControl();
 
 public:
-    // User interface
     RECT SetPos(LPCTSTR v_pos);
     RECT GetPos() const;
     void Invalidate() const;
@@ -25,13 +24,13 @@ public:
 
 public:
     // Attribute
-    virtual void SetDefaultAttr();
     /**
      * DO NOT call it manually! If you must do, call AfterSetAttribute()
      * to prevent some strange act.
      */
+    virtual void BeforeSetAttribute();  // Init attribute
     virtual void SetAttribute(LPCTSTR v_name, LPCTSTR v_value);
-    virtual void AfterSetAttribute();
+    virtual void AfterSetAttribute();   // Init others which based on attribute
 
     virtual void DoPaint(HWND v_hwnd, IUIRender* v_render) = 0;
 
@@ -51,10 +50,13 @@ public:
      */
     virtual UIControl* FindCtrlFromPT(POINT v_pt);
 
+public:
     // Event
-    //virtual void Event(TEventUI& event);
+    // virtual void Event(TEventUI& event);
+    virtual void OnChangeSkin();      // skin changed
+    virtual void OnChangeLanguage();  // language changed
 
-private:
+protected:
     enum StrLoc {
         left, top, right, bottom
     };
@@ -64,12 +66,12 @@ private:
      * @param    StrLoc v_loc: pos location
      * @return   real pos value
      */
-    int GetPosFromStr(LPCTSTR v_str, StrLoc v_loc) const; 
+    virtual int GetPosFromStr(LPCTSTR v_str, StrLoc v_loc) const;
 
 protected:
     UIControl* parent_ = nullptr;        // control parent
     UIWindow* basewnd_ = nullptr;        // attatch the window
     UIAttr attr_;                        // attribute
-    RECT rect_;                          // control rect
+    RECT rect_{ 0, 0, 0, 0 };            // control rect
 };
 }   // namespace DuiMini

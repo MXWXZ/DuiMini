@@ -15,9 +15,14 @@ ULONG_PTR UIRenderGDIP::gdiplus_token = 0;
 
 UIRenderGDIP::UIRenderGDIP() {}
 
-UIRenderGDIP::~UIRenderGDIP() {}
+UIRenderGDIP::~UIRenderGDIP() {
+    DeleteDC(background_);
+    DeleteObject(bg_bitmap_);
+    background_ = NULL;
+    bg_bitmap_ = NULL;
+}
 
-bool UIRenderGDIP::Init() {
+bool UIRenderGDIP::GlobalInit() {
     Gdiplus::GdiplusStartupInput gdiplusStartupInput;
     if (Gdiplus::GdiplusStartup(&gdiplus_token,
                                 &gdiplusStartupInput, NULL) != Gdiplus::Ok)
@@ -25,7 +30,7 @@ bool UIRenderGDIP::Init() {
     return true;
 }
 
-bool UIRenderGDIP::Release() {
+bool UIRenderGDIP::GlobalRelease() {
     Gdiplus::GdiplusShutdown(gdiplus_token);
     return true;
 }
@@ -108,6 +113,12 @@ bool UIRenderGDIP::Paint() {
     return true;
 }
 
+bool UIRenderGDIP::RedrawBackground() {
+    DeleteObject(background_);
+    background_ = nullptr;
+    return true;
+}
+
 bool UIRenderGDIP::DrawImage(UIRenderImage* v_img, int v_left,
                              int v_top, int v_width, int v_height) {
     if (!graph_)
@@ -127,7 +138,9 @@ UIRenderImageGDIP::UIRenderImageGDIP(LPCTSTR v_path) {
     Load(v_path);
 }
 
-UIRenderImageGDIP::~UIRenderImageGDIP() {}
+UIRenderImageGDIP::~UIRenderImageGDIP() {
+    Release();
+}
 
 bool UIRenderImageGDIP::Load(LPCTSTR v_path) {
     long buflen = UIResource::GetFileSize(v_path);

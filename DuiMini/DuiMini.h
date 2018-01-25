@@ -48,12 +48,12 @@
 #include "Core/Render/UIRender.h"
 #include "Core/UIConfig.h"
 #include "Core/UISystem.h"
-#include "Core/UIDialog.h"
 #include "Core/UIDlgBuilder.h"
 #include "Core/UIWindow.h"
 
 #include "Control/UIControl.h"
 #include "Control/Layout/UIContainer.h"
+#include "Control/UIDialog.h"
 
 /*
 #include "Utils/Utils.h"

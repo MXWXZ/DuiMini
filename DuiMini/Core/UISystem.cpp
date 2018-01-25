@@ -19,7 +19,7 @@ void UISystem::Init(HINSTANCE v_instance) {
 }
 
 void UISystem::Cleanup() {
-    UIRender::Release();
+    UIRender::GlobalRelease();
 }
 
 void UISystem::Exit(const int v_code /*= 0*/) {

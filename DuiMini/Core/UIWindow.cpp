@@ -11,6 +11,8 @@
 #include "UIWindow.h"
 
 namespace DuiMini {
+int UIWindow::classnamecnt_ = 0;
+
 UIWindow::UIWindow() {
     render_ = new UIRender(this);
 }
@@ -41,6 +43,8 @@ LPCTSTR UIWindow::GetDlgName() const {
 }
 
 UIDlgBuilder* UIWindow::SetDlgBuilder() {
+    if (builder_)
+        delete builder_;
     builder_ = new UIDlgBuilder;
     UIAttr* dlgattr = UIConfig::FindDlg(dlgname_);
     if (!dlgattr)
@@ -52,6 +56,10 @@ UIDlgBuilder* UIWindow::SetDlgBuilder() {
 
 UIDlgBuilder* UIWindow::GetDlgBuilder() {
     return builder_;
+}
+
+UIRender* UIWindow::GetRender() {
+    return render_;
 }
 
 void UIWindow::Run(LPCTSTR v_classname/* = _T("DuiMini")*/) {
@@ -72,11 +80,6 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
     case WM_DESTROY:
     {
         PostQuitMessage(0);
-
-        //         ::SelectObject(hdcBKMemory, hBKBitmapOld); //不要把默认的位图选回来，如果选回来的话，我们新建的位图就被替换掉了，当然我们上面画的东东也就没有了
-        //         ::DeleteObject(hBKBitmapOld);//这三个在清除的时候，一块清除
-        //         ::DeleteObject(hBKBitmap); //先不要删除，先保存起来，后面再跟hmdmDC一起删除
-        //         ::DeleteDC(hdcBKMemory);
         break;
     }
     case WM_CLOSE:
@@ -217,13 +220,79 @@ void UIWindow::DoModal() {
     }
 }
 
+RECT UIWindow::GetWindowPos() const {
+    return rect_;
+}
+
+bool UIWindow::SetWindowSize(int v_width, int v_height) {
+    return SetWindowPos(NULL, rect_.left, rect_.top, v_width, v_height,
+                        SWP_NOMOVE | SWP_NOZORDER);
+}
+
+bool UIWindow::SetWindowPos(int v_x, int v_y) {
+    return SetWindowPos(NULL, v_x, v_y, rect_.right - rect_.left,
+                        rect_.bottom - rect_.top,
+                        SWP_NOSIZE | SWP_NOZORDER);
+}
+
+bool UIWindow::SetWindowPos(RECT v_rect) {
+    return SetWindowPos(NULL, v_rect.left, v_rect.top,
+                        v_rect.right - v_rect.left,
+                        v_rect.bottom - v_rect.top,
+                        SWP_NOZORDER);
+}
+
+bool UIWindow::SetWindowPos(int v_x, int v_y, int v_width, int v_height) {
+    return SetWindowPos(NULL, v_x, v_y, v_width, v_height,
+                        SWP_NOZORDER);
+}
+
 bool UIWindow::SetWindowPos(HWND v_insertafter, int v_x, int v_y,
                             int v_width, int v_height, UINT v_flags) {
+    rect_.left = v_x;
+    rect_.top = v_y;
+    rect_.right = v_x + v_width;
+    rect_.bottom = v_y + v_height;
     return ::SetWindowPos(hwnd_, v_insertafter, v_x, v_y,
                           v_width, v_height, v_flags);
 }
 
+bool UIWindow::CenterWindow() {
+    RECT newpos;
+    int screenwidth = GetSystemMetrics(SM_CXSCREEN);
+    int screenheight = GetSystemMetrics(SM_CYSCREEN);
+    int width = rect_.right - rect_.left;
+    int height = rect_.bottom - rect_.top;
+    newpos.left = (screenwidth - width) / 2;
+    newpos.top = (screenheight - height) / 2;
+    newpos.right = newpos.left + width;
+    newpos.bottom = newpos.top + height;
+    return SetWindowPos(newpos);
+}
+
+void UIWindow::ShowTaskBar(bool v_show/* = true*/) const {
+    LONG style = GetWindowLong(hwnd_, GWL_EXSTYLE);
+    if (v_show) {
+        style &= ~WS_EX_TOOLWINDOW;
+        style |= WS_EX_APPWINDOW;
+    } else {
+        style |= WS_EX_TOOLWINDOW;
+        style &= ~WS_EX_APPWINDOW;
+    }
+    SetWindowLong(hwnd_, GWL_EXSTYLE, style);
+}
+
+void UIWindow::SetTitle(LPCTSTR v_title) {
+    SetWindowText(hwnd_, v_title);
+}
+
 HWND UIWindow::Create(LPCTSTR v_classname) {
+    if (hwnd_)
+        return hwnd_;
+
+    UStr classname = v_classname;
+    if (classname == _T("DuiMini"))
+        classname += UStr(++classnamecnt_);
     WNDCLASSEX wce = { 0 };
     wce.cbSize = sizeof(wce);
     wce.style = CS_HREDRAW | CS_VREDRAW;
@@ -235,7 +304,7 @@ HWND UIWindow::Create(LPCTSTR v_classname) {
     wce.hCursor = LoadCursor(NULL, IDC_ARROW);
     wce.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
     wce.lpszMenuName = NULL;
-    wce.lpszClassName = v_classname;
+    wce.lpszClassName = classname;
     wce.hIconSm = NULL;
     ATOM nAtom = RegisterClassEx(&wce);
     if (!nAtom){
@@ -244,7 +313,7 @@ HWND UIWindow::Create(LPCTSTR v_classname) {
         return nullptr;
     }
 
-    hwnd_ = CreateWindowEx(WS_EX_LAYERED, v_classname, _T(""),
+    hwnd_ = CreateWindowEx(WS_EX_LAYERED, classname, _T(""),
                            WS_POPUP, CW_USEDEFAULT, CW_USEDEFAULT,
                            CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL,
                            UISystem::GetInstance(), this);

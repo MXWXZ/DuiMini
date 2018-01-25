@@ -177,7 +177,7 @@ struct DUIMINI_API UIFont {
 
 ////////////////////////////////////////
 
-class UIPtrArray {
+class DUIMINI_API UIPtrArray {
 public:
     explicit UIPtrArray(UINT v_size = 0);
     ~UIPtrArray();

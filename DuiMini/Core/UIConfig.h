@@ -28,6 +28,7 @@ public:
     static UIAttrSet* GetSkin();
     static UIAttrSet* GetDlg();
     static UIAttrSet* GetResid();
+    static UIAttrSet* GetLangstr();
 
     /**
     * Get Shown config
@@ -64,10 +65,35 @@ public:
      * [SAFE]Get real file path from str(resid or path)
      * @param    LPCTSTR v_str:resid or path
      * @return   relative path, empty for not find
-     * This function will find '.' to distinguish resid and path, so please
-     * ensure every path include '.' and every resid exclude '.'
+     * This function will check '[' at the beginning and ']' at the end
+     * to distinguish resid and path, please use "[resid]" to represent
+     * you want to use resid.
      */
     static CUStr GetStrFile(LPCTSTR v_str);
+
+    /**
+     * [SAFE]Find language str
+     * @param    LPCTSTR v_name:str name
+     * @return   langstr attr structure, nullptr for not find
+     */
+    static UIAttr* FindLangstr(LPCTSTR v_name);
+    static CUStr FindLangstrValue(LPCTSTR v_name);
+
+    /**
+    * [SAFE]Get real string from string(language string or string)
+    * @param    LPCTSTR v_str:langstr or str
+    * @return   real string, if langstr not find, return itself.
+    * This function will check '[' at the beginning and ']' at the end
+    * to distinguish langstr and str, please use "[langstr]" to represent
+    * you want to use langstr.
+    *
+    * If your string is like "[string]"(started with '[' and ends in ']')
+    * and you dont want to parse it as langstr, you must change the beginning
+    * '[' to "\[". 
+    * e.g. if you want to use "[[abc[def]" as a string other than langstr,
+    * you must write it like "\[[abc[def]"
+    */
+    static CUStr GetStrStr(LPCTSTR v_str);
 
 private:
     static UIAttrSet cfg_dlg_;        // dlg config
@@ -80,7 +106,9 @@ private:
     static UIAttrSet cfg_font_;       // font config
 
     static UIAttrSet res_id_;         // shown skin resid
+    static UIAttrSet lang_str_;       // shown language str
 };
 
 #define GetAttrFile(x) UIConfig::GetStrFile(GetAttribute(x))
+#define GetAttrStr(x) UIConfig::GetStrStr(GetAttribute(x))
 }   // namespace DuiMini

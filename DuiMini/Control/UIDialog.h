@@ -15,13 +15,25 @@ namespace DuiMini {
 class DUIMINI_API UIDialog :public UIContainer {
 public:
     UIDialog();
-    ~UIDialog();
+    virtual ~UIDialog();
 
+public:
+    virtual bool ChangeBackground(LPCTSTR v_path);
+
+public:
     LPVOID GetInterface(LPCTSTR v_name) override;
-    void DoPaintBackground(IUIRender* v_render);
+
+    virtual void DoPaintBackground(IUIRender* v_render);
+
+    void BeforeSetAttribute() override;
     void AfterSetAttribute() override;
-    
-    void LoadBackground();      // Load after SetAttribute
+
+public:
+    void OnChangeSkin() override;
+    void OnChangeLanguage() override;
+
+protected:
+    virtual bool LoadBackground(LPCTSTR v_path);
 
 private:
     UIRenderImage *bgimg_ = nullptr;

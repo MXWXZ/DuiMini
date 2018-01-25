@@ -11,13 +11,11 @@
 #include "UIControl.h"
 
 namespace DuiMini {
-UIControl::UIControl() {
-    SetDefaultAttr();
-}
+UIControl::UIControl() {}
 
 UIControl::~UIControl() {}
 
-void UIControl::SetDefaultAttr() {
+void UIControl::BeforeSetAttribute() {
     SetAttribute(_T("name"), _T("Static"));
     SetAttribute(_T("pos"), _T("0,0"));
     SetAttribute(_T("width"), _T("0"));
@@ -61,11 +59,16 @@ UIControl* UIControl::FindCtrlFromPT(POINT v_pt) {
 
 int UIControl::GetPosFromStr(LPCTSTR v_str, StrLoc v_loc) const {
     CUStr str = v_str;
+    RECT screen{ 0, 0, 0, 0 };
+    if (!parent_) {
+        screen.right = GetSystemMetrics(SM_CXSCREEN);
+        screen.bottom = GetSystemMetrics(SM_CYSCREEN);
+    }
     if (str[0] == '$') {
         return str.Right(str.GetLength() - 1).Str2Int();
     } else if (str[0] == '|') {
         int offset = str.Right(str.GetLength() - 1).Str2Int();
-        RECT parentrc = parent_->GetPos();
+        RECT parentrc = parent_ ? parent_->GetPos() : screen;
         int center;
         if (v_loc == left || v_loc == right)
             center = (parentrc.left + parentrc.right) / 2;
@@ -74,7 +77,7 @@ int UIControl::GetPosFromStr(LPCTSTR v_str, StrLoc v_loc) const {
         return center + offset;
     } else if (str[0] == '%') {
         int percent = str.Right(str.GetLength() - 1).Str2Int();
-        RECT parentrc = parent_->GetPos();
+        RECT parentrc = parent_ ? parent_->GetPos() : screen;
         int ret;
         if (v_loc == left || v_loc == right)
             ret = parentrc.left + (parentrc.right - parentrc.left)*percent / 100;
@@ -89,7 +92,7 @@ int UIControl::GetPosFromStr(LPCTSTR v_str, StrLoc v_loc) const {
 void UIControl::Invalidate() const {
     SendMessage(basewnd_->GetHWND(), WM_PAINT, NULL, NULL);
 }
-// 
+
 // void UIControl::Event(TEventUI& event) {
 // 
 // }
@@ -122,6 +125,10 @@ RECT UIControl::UpdatePos() {
     }
     return rect_;
 }
+
+void UIControl::OnChangeSkin() {}
+
+void UIControl::OnChangeLanguage() {}
 
 RECT UIControl::SetPos(LPCTSTR v_pos) {
     SetAttribute(_T("pos"), v_pos);
