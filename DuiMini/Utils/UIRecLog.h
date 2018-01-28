@@ -5,7 +5,7 @@
  * @Author:MXWXZ
  * @Date:2017/10/17
  *
- * @Description:Log file recorder class
+ * @Description:Log file recorder
  */
 #pragma once
 
@@ -36,8 +36,13 @@ enum Reclevel {
 
 class DUIMINI_API UIRecLog {
 public:
-    static Reclevel SetLogLevel(Reclevel v_record_level);
+    static void SetLogLevel(Reclevel v_record_level);
     static Reclevel GetLogLevel();
+
+    static void SetLogFilePath(LPCTSTR v_fullpath);
+    static CUStr GetLogFilePath();
+
+    static void StopRecordLog();
 
     /**
      * Record log(custom)
@@ -50,10 +55,6 @@ public:
      * WARNING: this function WILL AUTOMATICALLY add '\n' at the end
      */
     static bool RecordLog(Loglevel v_level, LPCTSTR v_text, ...);
-
-    static LPCTSTR SetLogFilePath(LPCTSTR v_fullpath);
-    static LPCTSTR GetLogFilePath();
-    static void StopRecordLog();
 
 private:
     static Reclevel record_level_;

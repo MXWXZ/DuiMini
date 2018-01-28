@@ -79,13 +79,16 @@ public:
     ~UIAttr();
 
 public:
+    SSMapIt GetBegin();
+    SSMapIt GetEnd();
+
     /**
      * Get attribute value
      * @return   value, empty string for not find
      * Warning!This function will NOT check if v_name is valid, if not, it will
      * add an empty string value.
      */
-    UStr& operator[] (CUStr v_name);
+    UStr& operator[] (LPCTSTR v_name);
 
     /**
      * SAFELY Get attribute value
@@ -94,14 +97,13 @@ public:
      */
     CUStr GetValue(LPCTSTR v_name) const;
 
-    SSMapIt GetBegin();
-    SSMapIt GetEnd();
-
 private:
     SSMap attribute_;
 };
 
 typedef const UIAttr CUIAttr;
+
+////////////////////////////////////////
 
 typedef std::map<int, UIAttr> IAMap;
 typedef std::map<int, UStr>::iterator IAMapIt;

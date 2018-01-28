@@ -25,7 +25,13 @@ public:
      */
     static ZFile OpenZip(LPCTSTR v_fullpath);
 
-    static void CloseZip(ZFile v_fp);
+    /**
+     * Close zip file
+     * @param    ZFile v_fp:ZFile pointer want to close
+     * @return   true for succeed
+     * ZFile pointer will be set to nullptr if succeed closed
+     */
+    static bool CloseZip(ZFile v_fp);
 
     /**
      * Locate file in zip

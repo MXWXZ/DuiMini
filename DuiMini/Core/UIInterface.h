@@ -22,7 +22,7 @@ public:
     * Called when setting the resource path or id or sth.
     * @param    LPCTSTR v_info:path or sth.
     */
-    virtual LPCTSTR SetResInfo(LPCTSTR v_info) = 0;
+    virtual void SetResInfo(LPCTSTR v_info) = 0;
 
     /**
     * Get resource information
@@ -70,6 +70,8 @@ public:
     virtual bool GlobalInit() = 0;
     virtual bool GlobalRelease() = 0;
     virtual bool Paint() = 0;
+
+    // For buffering drawing, renew background buffer, NO SYNC SCREEN
     virtual bool RedrawBackground() = 0;
 
     virtual bool DrawImage(UIRenderImage* v_img, int v_left, int v_top,
@@ -82,6 +84,6 @@ class DUIMINI_API IUIRenderImage {
 public:
     virtual bool Load(LPCTSTR v_path) = 0;
     virtual bool Release() = 0;
-    virtual void* GetInterface() = 0;
+    virtual void* GetInterface() const = 0;
 };
 }   // namespace DuiMini

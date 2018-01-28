@@ -30,18 +30,18 @@ class DUIMINI_API UIResource {
 public:
     ~UIResource();
 
-    static Restype SetResType(Restype v_type);
+    static void SetResType(Restype v_type);
     static Restype GetResType();
 
     /**
-     * [SAFE]Get resource file size
+     * Get resource file size
      * @param    LPCTSTR v_path: relative path
      * @return   the file size
      */
     static long GetFileSize(LPCTSTR v_path);
 
     /**
-     * [SAFE]Get resource file
+     * Get resource file
      * @param    LPCTSTR v_path: relative path
      * @param    BYTE* v_buffer: buffer(please call 'GetFileSize' to get the
      *           size and apply for memory space.)
@@ -55,12 +55,11 @@ public:
     /**
      * Set resource info
      * @param    LPCTSTR info:info passed to res class
-     * @return   setted info
      * TIP:For kRestype_File is the root folder of res
      *     For kRestype_Package is the zip full path
      *     For kRestype_RC is the RC id in resource.h
      */
-    static LPCTSTR SetResInfo(LPCTSTR v_info);
+    static void SetResInfo(LPCTSTR v_info);
 
     /**
      * Get resource info
@@ -87,7 +86,7 @@ public:
     ~UIXmlLoader();
 
     /**
-     * [SAFE]Load xml file
+     * Load xml file
      * @param    LPCTSTR path:xml path(relative to resource)
      */
     void Loadxml(LPCTSTR v_path);

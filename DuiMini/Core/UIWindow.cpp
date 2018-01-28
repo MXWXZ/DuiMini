@@ -11,7 +11,7 @@
 #include "UIWindow.h"
 
 namespace DuiMini {
-int UIWindow::classnamecnt_ = 0;
+int UIWindow::classname_cnt_ = 0;
 
 UIWindow::UIWindow() {
     render_ = new UIRender(this);
@@ -33,8 +33,8 @@ HWND UIWindow::GetHWND() const {
     return hwnd_;
 }
 
-LPCTSTR UIWindow::SetDlgName(LPCTSTR v_name) {
-    dlgname_ = v_name;
+LPCTSTR UIWindow::SetDlgName(LPCTSTR v_dlgname) {
+    dlgname_ = v_dlgname;
     return dlgname_;
 }
 
@@ -42,15 +42,16 @@ LPCTSTR UIWindow::GetDlgName() const {
     return dlgname_;
 }
 
-UIDlgBuilder* UIWindow::SetDlgBuilder() {
+UIDlgBuilder* UIWindow::SetDlgBuilder(LPCTSTR v_dlgname) {
     if (builder_)
-        delete builder_;
+        return nullptr;
     builder_ = new UIDlgBuilder;
-    UIAttr* dlgattr = UIConfig::FindDlg(dlgname_);
+    UIAttr* dlgattr = UIConfig::FindDlg(v_dlgname);
     if (!dlgattr)
         return nullptr;
     UIXmlLoader config(dlgattr->GetValue(_T("file")));
     builder_->Init(config.GetRoot(), this);
+    UIHandleError();
     return builder_;
 }
 
@@ -60,6 +61,16 @@ UIDlgBuilder* UIWindow::GetDlgBuilder() {
 
 UIRender* UIWindow::GetRender() {
     return render_;
+}
+
+UIControl* UIWindow::FindCtrlFromName(LPCTSTR v_name) {
+    if (!builder_)
+        return nullptr;
+    return builder_->GetCtrlRoot()->FindCtrlFromName(v_name);
+}
+
+void UIWindow::Invalidate() const {
+    SendMessage(hwnd_, WM_PAINT, NULL, NULL);
 }
 
 void UIWindow::Run(LPCTSTR v_classname/* = _T("DuiMini")*/) {
@@ -72,7 +83,7 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
     switch (v_msg) {
     case WM_CREATE:
     {
-        if (!SetDlgBuilder())
+        if (!SetDlgBuilder(dlgname_))
             break;
         SendMessage(GetHWND(), WM_PAINT, NULL, NULL);
         break;
@@ -201,15 +212,18 @@ LRESULT CALLBACK UIWindow::WinProc(HWND v_hwnd, UINT v_msg,
         return DefWindowProc(v_hwnd, v_msg, v_wparam, v_lparam);
 }
 
-void UIWindow::Paint() {
-    render_->Paint();
+bool UIWindow::Paint() {
+    if (!render_)
+        return false;
+    return render_->Paint();
 }
 
-void UIWindow::ShowWindow(bool v_show /*= true*/,
+bool UIWindow::ShowWindow(bool v_show /*= true*/,
                           bool v_focus /*= true*/) const {
     if (!IsWindow(hwnd_))
-        return;
+        return false;
     ::ShowWindow(hwnd_, v_show ? (v_focus ? SW_SHOWNORMAL : SW_SHOWNOACTIVATE) : SW_HIDE);
+    return true;
 }
 
 void UIWindow::DoModal() {
@@ -282,6 +296,12 @@ void UIWindow::ShowTaskBar(bool v_show/* = true*/) const {
     SetWindowLong(hwnd_, GWL_EXSTYLE, style);
 }
 
+CUStr UIWindow::GetTitle() const {
+    TCHAR buf[300];
+    GetWindowText(hwnd_, buf, 256);
+    return CUStr(buf);
+}
+
 void UIWindow::SetTitle(LPCTSTR v_title) {
     SetWindowText(hwnd_, v_title);
 }
@@ -292,7 +312,7 @@ HWND UIWindow::Create(LPCTSTR v_classname) {
 
     UStr classname = v_classname;
     if (classname == _T("DuiMini"))
-        classname += UStr(++classnamecnt_);
+        classname += UStr(++classname_cnt_);
     WNDCLASSEX wce = { 0 };
     wce.cbSize = sizeof(wce);
     wce.style = CS_HREDRAW | CS_VREDRAW;

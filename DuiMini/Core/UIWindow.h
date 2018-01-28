@@ -19,10 +19,8 @@ public:
 
 public:
     HWND GetHWND() const;
-    /**
-     * Please ONLY set before create
-     */
-    LPCTSTR SetDlgName(LPCTSTR v_name);
+
+    LPCTSTR SetDlgName(LPCTSTR v_dlgname);  // Please ONLY set before create
     LPCTSTR GetDlgName() const;
 
     /**
@@ -40,31 +38,31 @@ public:
     */
     HWND Create(LPCTSTR v_classname);
 
-    void ShowWindow(bool v_show = true, bool v_focus = true) const;
+    bool ShowWindow(bool v_show = true, bool v_focus = true) const;
 
-    /**
-    * Do modal loop
-    */
-    void DoModal();
+    void DoModal();     // Do modal loop
 
     RECT GetWindowPos() const;
     bool SetWindowSize(int v_width, int v_height);      // Set width&height
-    bool SetWindowPos(int v_x, int v_y);    // Set x&y
-    bool SetWindowPos(RECT v_rect);    // Set x&y&width&height
+    bool SetWindowPos(int v_x, int v_y);     // Set x&y
+    bool SetWindowPos(RECT v_rect);          // Set x&y&width&height
     bool SetWindowPos(int v_x, int v_y, int v_width, int v_height);
-    bool SetWindowPos(HWND v_insertafter, int v_x, int v_y,
+    bool SetWindowPos(HWND v_insert_after, int v_x, int v_y,
                       int v_width, int v_height, UINT v_flags);
     bool CenterWindow();
 
     void ShowTaskBar(bool v_show = true) const;
+
+    CUStr GetTitle() const;
     void SetTitle(LPCTSTR v_title);
 
-public:
-    // dlg builder
-    UIDlgBuilder* SetDlgBuilder();
-    UIDlgBuilder* GetDlgBuilder();
+    UIControl* FindCtrlFromName(LPCTSTR v_name);
 
+    void Invalidate() const;
+
+public:
     UIRender* GetRender();
+    UIDlgBuilder* GetDlgBuilder();
 
 protected:
     /**
@@ -73,14 +71,16 @@ protected:
     virtual LRESULT MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam);
     static LRESULT CALLBACK WinProc(HWND v_hwnd, UINT v_msg,
                                     WPARAM v_wparam, LPARAM v_lparam);
-    void Paint();
+    bool Paint();
+
+    UIDlgBuilder* SetDlgBuilder(LPCTSTR v_dlgname);
 
 protected:
     UStr dlgname_;                      // dlg name
     HWND hwnd_ = nullptr;               // main window hwnd
     UIDlgBuilder* builder_ = nullptr;   // dlg builder
     UIRender* render_ = nullptr;        // render
-    RECT rect_{ 0,0,0,0 };              // window rect
-    static int classnamecnt_;           // auto classname counter
+    RECT rect_{ 0, 0, 0, 0 };              // window rect
+    static int classname_cnt_;          // auto classname counter
 };
 }    // namespace DuiMini

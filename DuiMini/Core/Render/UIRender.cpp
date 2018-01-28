@@ -39,7 +39,7 @@ bool UIRenderImage::Release() {
     return ret;
 }
 
-void* UIRenderImage::GetInterface() {
+void* UIRenderImage::GetInterface() const {
     if (!renderimg_)
         return nullptr;
     return renderimg_->GetInterface();
@@ -75,8 +75,7 @@ bool UIRender::GlobalInit() {
 
 bool UIRender::GlobalInit(RenderMode v_mode) {
     SetRenderMode(v_mode);
-    GlobalInit();
-    return true;
+    return GlobalInit();
 }
 
 bool UIRender::GlobalRelease() {
@@ -88,16 +87,15 @@ bool UIRender::GlobalRelease() {
     return ret;
 }
 
-RenderMode UIRender::SetRenderMode(RenderMode v_mode) {
+void UIRender::SetRenderMode(RenderMode v_mode) {
     render_mode_ = v_mode;
-    return render_mode_;
 }
 
 RenderMode UIRender::GetRenderMode() {
     return render_mode_;
 }
 
-UIWindow* UIRender::SetParent(UIWindow * v_parent) {
+UIWindow* UIRender::SetParent(UIWindow* v_parent) {
     if (!render_)
         return nullptr;
     render_->parent_ = v_parent;
@@ -114,6 +112,12 @@ bool UIRender::RedrawBackground() {
     if (!render_)
         return false;
     return render_->RedrawBackground();
+}
+
+bool UIRender::DrawImage(UIRenderImage * v_img, int v_left, int v_top, int v_width, int v_height) {
+    if (!render_)
+        return false;
+    return render_->DrawImage(v_img, v_left, v_top, v_width, v_height);
 }
 
 IUIRender* UIRender::SelectRender(IUIRender** v_pointer) {

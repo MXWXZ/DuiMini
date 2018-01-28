@@ -150,11 +150,14 @@
     <ClInclude Include="Core\Render\UIRenderGDIP.h">
       <Filter>头文件\Core\Render</Filter>
     </ClInclude>
-    <ClInclude Include="Core\UIConfig.h">
-      <Filter>头文件\Core</Filter>
-    </ClInclude>
     <ClInclude Include="Control\UIDialog.h">
       <Filter>头文件\Control</Filter>
+    </ClInclude>
+    <ClInclude Include="Control\UIImage.h">
+      <Filter>头文件\Control</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\UIConfig.h">
+      <Filter>头文件\Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -222,6 +225,9 @@
       <Filter>源文件\Core</Filter>
     </ClCompile>
     <ClCompile Include="Control\UIDialog.cpp">
+      <Filter>源文件\Control</Filter>
+    </ClCompile>
+    <ClCompile Include="Control\UIImage.cpp">
       <Filter>源文件\Control</Filter>
     </ClCompile>
   </ItemGroup>

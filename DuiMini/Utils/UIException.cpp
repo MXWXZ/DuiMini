@@ -84,9 +84,8 @@ void UIException::HandleError(Loglevel v_log_level, ErrorCode v_error_code,
     HandleError();
 }
 
-ExtraHandleFun UIException::SetExtraHandleFun(ExtraHandleFun v_extra_fun) {
+void UIException::SetExtraHandleFun(ExtraHandleFun v_extra_fun) {
     extra_fun_ = v_extra_fun;
-    return extra_fun_;
 }
 
 }  // namespace DuiMini

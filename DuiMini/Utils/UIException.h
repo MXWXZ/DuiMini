@@ -31,11 +31,12 @@ class DUIMINI_API UIException {
 public:
     static void SetError(Loglevel v_log_level, ErrorCode v_error_code,
                          LPCTSTR v_error_msg, ...);
-    static ErrorCode GetLastError();
-    static ExtraHandleFun SetExtraHandleFun(ExtraHandleFun v_extra_fun);
     static void HandleError();
     static void HandleError(Loglevel v_log_level, ErrorCode v_error_code,
                             LPCTSTR v_error_msg, ...);
+
+    static ErrorCode GetLastError();
+    static void SetExtraHandleFun(ExtraHandleFun v_extra_fun);
 
 private:
     static Loglevel log_level_;
@@ -46,5 +47,5 @@ private:
 
 #define UIHandleError UIException::HandleError
 #define UISetError UIException::SetError
-
+#define UIGetLastError UIException::GetLastError
 }  // namespace DuiMini

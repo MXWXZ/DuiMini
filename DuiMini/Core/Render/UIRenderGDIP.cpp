@@ -67,7 +67,7 @@ bool UIRenderGDIP::Paint() {
         SelectObject(background_, bg_bitmap_);
 
         graph_ = new Gdiplus::Graphics(background_);
-        dlg->DoPaintBackground(this);
+        dlg->PaintBackground();
         graph_->ReleaseHDC(background_);
         delete graph_;
         graph_ = nullptr;
@@ -87,7 +87,7 @@ bool UIRenderGDIP::Paint() {
                background_, 0, 0, sizewindow.cx, sizewindow.cy, blendfunc);
 
     graph_ = new Gdiplus::Graphics(hdctmp);
-    parent_->GetDlgBuilder()->GetCtrlRoot()->DoPaint(hwnd, this);
+    parent_->GetDlgBuilder()->GetCtrlRoot()->Paint();
     graph_->ReleaseHDC(hdctmp);
     delete graph_;
     graph_ = nullptr;
@@ -124,8 +124,7 @@ bool UIRenderGDIP::DrawImage(UIRenderImage* v_img, int v_left,
     if (!graph_)
         return false;
     if (graph_->DrawImage((Gdiplus::Image*)v_img->GetInterface(),
-                          v_left, v_top,
-                          v_width, v_height) != Gdiplus::Ok)
+                          v_left, v_top, v_width, v_height) != Gdiplus::Ok)
         return false;
     return true;
 }
@@ -162,7 +161,7 @@ bool UIRenderImageGDIP::Release() {
     return true;
 }
 
-void* UIRenderImageGDIP::GetInterface() {
+void* UIRenderImageGDIP::GetInterface() const {
     return reinterpret_cast<void*>(img_);
 }
 }    // namespace DuiMini

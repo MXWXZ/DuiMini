@@ -19,9 +19,8 @@ UIResFile::UIResFile(LPCTSTR v_info) {
     SetResInfo(v_info);
 }
 
-LPCTSTR UIResFile::SetResInfo(LPCTSTR v_info) {
+void UIResFile::SetResInfo(LPCTSTR v_info) {
     folderpath_ = v_info;
-    return folderpath_;
 }
 
 LPCTSTR UIResFile::GetResInfo() const {

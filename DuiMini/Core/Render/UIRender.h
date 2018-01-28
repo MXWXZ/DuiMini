@@ -22,7 +22,7 @@ public:
 
     bool Load(LPCTSTR v_path);
     bool Release();
-    void* GetInterface();
+    void* GetInterface() const;
 
 private:
     IUIRenderImage* renderimg_ = nullptr;
@@ -43,12 +43,15 @@ public:
     // Release will be automatically called by UISystem::Cleanup
     static bool GlobalRelease();
 
-    static RenderMode SetRenderMode(RenderMode v_mode);
+    static void SetRenderMode(RenderMode v_mode);
     static RenderMode GetRenderMode();
 
     UIWindow* SetParent(UIWindow* v_parent);
+
     bool Paint();
     bool RedrawBackground();
+    bool DrawImage(UIRenderImage* v_img, int v_left, int v_top,
+                   int v_width, int v_height);
 
 private:
     static IUIRender* SelectRender(IUIRender** v_pointer);

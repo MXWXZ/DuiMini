@@ -14,79 +14,80 @@ namespace DuiMini {
 UIDlgBuilder::UIDlgBuilder() {}
 
 UIDlgBuilder::~UIDlgBuilder() {
-    delete ctrlroot_;
-    ctrlroot_ = nullptr;
+    delete ctrl_root_;
+    ctrl_root_ = nullptr;
 }
 
 UIControl* UIDlgBuilder::Init(xmlnode v_root, UIWindow* v_wnd) {
-    delete ctrlroot_;
-    ctrlroot_ = nullptr;
-    xmlroot_ = v_root;
+    delete ctrl_root_;
+    ctrl_root_ = nullptr;
+    xml_root_ = v_root;
     basewnd_ = v_wnd;
-    return _Parse(xmlroot_);
+    return _Parse(xml_root_);
 }
 
-UIControl * UIDlgBuilder::GetCtrlRoot() {
-    return ctrlroot_;
+UIControl* UIDlgBuilder::GetCtrlRoot() {
+    return ctrl_root_;
 }
 
 UIControl* UIDlgBuilder::_Parse(xmlnode v_root,
                                 UIControl* v_parent/* = nullptr*/) {
-    for (xmlnode node = xmlroot_; node != nullptr;
+    for (xmlnode node = v_root; node != nullptr;
          node = node->next_sibling()) {
-        LPCTSTR ctrlname = node->name();
-        UINT namelen = _tcslen(ctrlname);
-        UIControl* tmpctrl = nullptr;
-        IUIContainer* container = nullptr;
-        switch (namelen) {
+        LPCTSTR ctrl_name = node->name();
+        UINT ctrl_namelen = _tcslen(ctrl_name);
+        UIControl* new_ctrl = nullptr;
+        switch (ctrl_namelen) {
         case 3:
         {
-            if (CmpStr(ctrlname, _T("Dlg")))
-                tmpctrl = new UIDialog;
-
+            if (CmpStr(ctrl_name, _T("dlg")))
+                new_ctrl = new UIDialog;
+            if (CmpStr(ctrl_name, _T("img")))
+                new_ctrl = new UIImage;
             break;
         }
         case 9:
         {
-            if (CmpStr(ctrlname, _T("Container")))
-                tmpctrl = new UIContainer;
+            if (CmpStr(ctrl_name, _T("container")))
+                new_ctrl = new UIContainer;
 
             break;
         }
         }
 
         // Invalid ctrl name
-        if (!tmpctrl) {
-            UIHandleError(kWarning, kCtrlKindInvalid,
-                          _T("Control Kind \"%s\" invalid"), ctrlname);
+        if (!new_ctrl) {
+            UISetError(kWarning, kCtrlKindInvalid,
+                       _T("Control Kind \"%s\" invalid"), ctrl_name);
             return nullptr;
         }
         // Set basewnd
-        tmpctrl->SetBaseWindow(basewnd_);
+        new_ctrl->SetBaseWindow(basewnd_);
         // Add children
         if (node->first_node())
-            _Parse(node, tmpctrl);
+            _Parse(node->first_node(), new_ctrl);
         // Attach to parent (parent must have container attribute)
         if (v_parent != nullptr) {
+            IUIContainer* container = reinterpret_cast<IUIContainer*>(v_parent->GetInterface(_T("container")));
             if (!container)
-                container = reinterpret_cast<IUIContainer*>(v_parent->GetInterface(_T("Container")));
-            container->Add(tmpctrl);
-            tmpctrl->SetParent(v_parent);
+                return nullptr;
+            container->Add(new_ctrl);
+            new_ctrl->SetParent(v_parent);
         }
         // Process attributes
         if (node->first_attribute()) {
-            tmpctrl->BeforeSetAttribute();
+            new_ctrl->BeforeSetAttribute();
             for (xmlattr attr = node->first_attribute();
                  attr != nullptr;
                  attr = attr->next_attribute())
-                tmpctrl->SetAttribute(attr->name(), attr->value());
-            tmpctrl->AfterSetAttribute();
+                new_ctrl->SetAttribute(attr->name(), attr->value());
+            new_ctrl->AfterSetAttribute();
         }
 
         // Return first item
-        if (!ctrlroot_)
-            ctrlroot_ = tmpctrl;
+        if (!ctrl_root_)
+            ctrl_root_ = new_ctrl;
     }
-    return ctrlroot_;
+    return ctrl_root_;
 }
 }    // namespace DuiMini

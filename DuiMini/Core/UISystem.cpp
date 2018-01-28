@@ -27,8 +27,8 @@ void UISystem::Exit(const int v_code /*= 0*/) {
     exit(v_code);
 }
 
-HINSTANCE UISystem::SetInstance(HINSTANCE v_instance) {
-    return instance_ = v_instance;
+void UISystem::SetInstance(HINSTANCE v_instance) {
+    instance_ = v_instance;
 }
 
 HINSTANCE UISystem::GetInstance() {

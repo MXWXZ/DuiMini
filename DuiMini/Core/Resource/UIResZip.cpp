@@ -22,11 +22,10 @@ UIResZip::~UIResZip() {
         UIUnzip::CloseZip(zipcache_);
 }
 
-LPCTSTR UIResZip::SetResInfo(LPCTSTR v_info) {
+void UIResZip::SetResInfo(LPCTSTR v_info) {
     fullpath_ = v_info;
     if (zipcache_)
         UIUnzip::CloseZip(zipcache_);
-    return fullpath_;
 }
 
 LPCTSTR UIResZip::GetResInfo() const {

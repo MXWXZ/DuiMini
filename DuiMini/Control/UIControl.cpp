@@ -28,7 +28,13 @@ void UIControl::SetAttribute(LPCTSTR v_name, LPCTSTR v_value) {
 
 void UIControl::AfterSetAttribute() {
     UpdatePos();
+    LoadTextAttr();
+    LoadResAttr();
 }
+
+void UIControl::LoadResAttr() {}
+
+void UIControl::LoadTextAttr() {}
 
 CUStr UIControl::GetAttribute(LPCTSTR v_name) const {
     return attr_.GetValue(v_name);
@@ -52,6 +58,13 @@ UIWindow* UIControl::GetBaseWindow() const {
 
 UIControl* UIControl::FindCtrlFromPT(POINT v_pt) {
     if (PtInRect(&rect_, v_pt))
+        return this;
+    else
+        return nullptr;
+}
+
+UIControl * UIControl::FindCtrlFromName(LPCTSTR v_name) {
+    if (GetAttribute(_T("name")) == v_name)
         return this;
     else
         return nullptr;
@@ -89,16 +102,12 @@ int UIControl::GetPosFromStr(LPCTSTR v_str, StrLoc v_loc) const {
     }
 }
 
-void UIControl::Invalidate() const {
-    SendMessage(basewnd_->GetHWND(), WM_PAINT, NULL, NULL);
-}
-
 // void UIControl::Event(TEventUI& event) {
 // 
 // }
 
 LPVOID UIControl::GetInterface(LPCTSTR v_name) {
-    if (CmpStr(v_name, _T("Control")))
+    if (CmpStr(v_name, _T("control")))
         return this;
     return nullptr;
 }
@@ -125,10 +134,6 @@ RECT UIControl::UpdatePos() {
     }
     return rect_;
 }
-
-void UIControl::OnChangeSkin() {}
-
-void UIControl::OnChangeLanguage() {}
 
 RECT UIControl::SetPos(LPCTSTR v_pos) {
     SetAttribute(_T("pos"), v_pos);

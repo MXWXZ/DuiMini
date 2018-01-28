@@ -18,22 +18,18 @@ public:
     virtual ~UIDialog();
 
 public:
-    virtual bool ChangeBackground(LPCTSTR v_path);
+    virtual bool SetBackground(LPCTSTR v_path);
 
 public:
     LPVOID GetInterface(LPCTSTR v_name) override;
 
-    virtual void DoPaintBackground(IUIRender* v_render);
+    virtual void PaintBackground();
 
     void BeforeSetAttribute() override;
     void AfterSetAttribute() override;
 
-public:
-    void OnChangeSkin() override;
-    void OnChangeLanguage() override;
-
-protected:
-    virtual bool LoadBackground(LPCTSTR v_path);
+    void LoadResAttr() override;
+    void LoadTextAttr() override;
 
 private:
     UIRenderImage *bgimg_ = nullptr;

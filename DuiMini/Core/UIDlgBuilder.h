@@ -18,7 +18,7 @@ public:
 
 public:
     /**
-     * Init from xmlnode and release the current one
+     * [ER]Init from xmlnode and release the current one
      * @param    xmlnode v_root:xml root
      * @return   first ctrl
      */
@@ -29,7 +29,7 @@ public:
 private:
     UIControl* _Parse(xmlnode v_root, UIControl* v_parent = nullptr);
     UIWindow* basewnd_ = nullptr;
-    UIControl* ctrlroot_ = nullptr;
-    xmlnode xmlroot_ = nullptr;
+    UIControl* ctrl_root_ = nullptr;
+    xmlnode xml_root_ = nullptr;
 };
 }    // namespace DuiMini

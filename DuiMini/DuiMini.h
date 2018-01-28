@@ -54,6 +54,7 @@
 #include "Control/UIControl.h"
 #include "Control/Layout/UIContainer.h"
 #include "Control/UIDialog.h"
+#include "Control/UIImage.h"
 
 /*
 #include "Utils/Utils.h"

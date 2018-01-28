@@ -47,10 +47,10 @@ void UIContainer::RemoveAll() {
     item_.Empty();
 }
 
-void UIContainer::DoPaint(HWND v_hwnd, IUIRender* v_render) {
+void UIContainer::Paint() {
     for (UINT it = 0; it < item_.GetSize(); ++it) {
         UIControl* ctrl = reinterpret_cast<UIControl*>(item_[it]);
-        ctrl->DoPaint(v_hwnd, v_render);
+        ctrl->Paint();
     }
 }
 UIControl* UIContainer::FindCtrlFromPT(POINT v_pt) {
@@ -73,8 +73,17 @@ void UIContainer::SetBaseWindow(UIWindow* v_basewnd) {
 }
 
 LPVOID UIContainer::GetInterface(LPCTSTR v_name) {
-    if (CmpStr(v_name, _T("Container")))
+    if (CmpStr(v_name, _T("container")))
         return this;
     return UIControl::GetInterface(v_name);
+}
+
+UIControl* UIContainer::FindCtrlFromName(LPCTSTR v_name) {
+    for (UINT it = 0; it != item_.GetSize(); ++it) {
+        UIControl* ctrl = ((UIControl*)item_[it])->FindCtrlFromName(v_name);
+        if (ctrl != nullptr)
+            return ctrl;
+    }
+    return UIControl::FindCtrlFromName(v_name);
 }
 }   // namespace DuiMini

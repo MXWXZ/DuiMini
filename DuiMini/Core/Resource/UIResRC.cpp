@@ -22,12 +22,11 @@ UIResRC::~UIResRC() {
         UIUnzip::CloseZip(zipcache_);
 }
 
-LPCTSTR UIResRC::SetResInfo(LPCTSTR v_info) {
+void UIResRC::SetResInfo(LPCTSTR v_info) {
     resid_ = _ttoi(v_info);
     tmpfullpath_ = _T("");
     if (zipcache_)
         UIUnzip::CloseZip(zipcache_);
-    return UStr(static_cast<int>(resid_));
 }
 
 LPCTSTR UIResRC::GetResInfo() const {

@@ -23,10 +23,11 @@ public:
     void RemoveAll() override;
 
 public:
-    void DoPaint(HWND v_hwnd, IUIRender* v_render) override;
-    UIControl* FindCtrlFromPT(POINT v_pt) override;
+    void Paint() override;
     void SetBaseWindow(UIWindow* v_basewnd) override;
     LPVOID GetInterface(LPCTSTR v_name) override;
+    UIControl* FindCtrlFromPT(POINT v_pt) override;
+    UIControl* FindCtrlFromName(LPCTSTR v_name) override;
 
 protected:
     UIPtrArray item_;

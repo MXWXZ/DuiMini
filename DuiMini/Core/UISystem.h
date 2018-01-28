@@ -42,7 +42,7 @@ public:
      * @param    HINSTANCE v_instance:program HINSTANCE,usually the param
      * of WinMain
     */
-    static HINSTANCE SetInstance(HINSTANCE v_instance);
+    static void SetInstance(HINSTANCE v_instance);
     static HINSTANCE GetInstance();
 
 private:

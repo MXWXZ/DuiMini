@@ -14,9 +14,8 @@ namespace DuiMini {
 Reclevel UIRecLog::record_level_ = kDebug;
 UStr UIRecLog::fullpath_ = UIUtils::GetCurrentDir() + UIUtils::GetTimeStr(_T("\\logfile_%Y-%m-%d_%H-%M-%S.txt"));
 
-Reclevel UIRecLog::SetLogLevel(Reclevel v_record_level) {
+void UIRecLog::SetLogLevel(Reclevel v_record_level) {
     record_level_ = v_record_level;
-    return record_level_;
 }
 
 Reclevel UIRecLog::GetLogLevel() {
@@ -81,12 +80,11 @@ bool UIRecLog::RecordLog(Loglevel v_level, LPCTSTR v_text, ...) {
     return true;
 }
 
-LPCTSTR UIRecLog::SetLogFilePath(LPCTSTR v_fullpath) {
+void UIRecLog::SetLogFilePath(LPCTSTR v_fullpath) {
     fullpath_ = v_fullpath;
-    return fullpath_;
 }
 
-LPCTSTR UIRecLog::GetLogFilePath() {
+CUStr UIRecLog::GetLogFilePath() {
     return fullpath_;
 }
 

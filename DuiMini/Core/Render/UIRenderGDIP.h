@@ -41,7 +41,7 @@ public:
 
     bool Load(LPCTSTR v_path) override;
     bool Release() override;
-    void* GetInterface() override;
+    void* GetInterface() const override;
 
 private:
     Gdiplus::Image* img_ = nullptr;

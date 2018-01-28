@@ -33,9 +33,11 @@ ZFile UIUnzip::OpenZip(LPCTSTR v_fullpath) {
     return fp;
 }
 
-void UIUnzip::CloseZip(ZFile v_fp) {
-    unzClose(v_fp);
+bool UIUnzip::CloseZip(ZFile v_fp) {
+    if (unzClose(v_fp) != UNZ_OK)
+        return false;
     v_fp = nullptr;
+    return true;
 }
 
 long UIUnzip::LocateZipItem(ZFile v_fp, LPCTSTR v_relativepath) {
@@ -75,7 +77,8 @@ bool UIUnzip::UnZipData(ZFile v_fp, BYTE* v_buffer) {
             return false;
         pos += err;
     } while (err > 0);
-    unzCloseCurrentFile(v_fp);
+    if (unzCloseCurrentFile(v_fp) != UNZ_OK)
+        return false;
     return true;
 }
 

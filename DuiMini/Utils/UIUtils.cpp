@@ -31,7 +31,7 @@ UIAttr::UIAttr() {}
 
 UIAttr::~UIAttr() {}
 
-UStr& UIAttr::operator[](CUStr v_name) {
+UStr& UIAttr::operator[](LPCTSTR v_name) {
     return attribute_[v_name];
 }
 
@@ -40,7 +40,7 @@ CUStr UIAttr::GetValue(LPCTSTR v_name) const {
     if (it != attribute_.end())
         return it->second;
     else
-        return UStr();
+        return CUStr();
 }
 
 SSMapIt UIAttr::GetBegin() {
@@ -50,6 +50,8 @@ SSMapIt UIAttr::GetBegin() {
 SSMapIt UIAttr::GetEnd() {
     return attribute_.end();
 }
+
+////////////////////////////////////////
 
 UIAttrSet::UIAttrSet() {}
 

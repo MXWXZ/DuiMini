@@ -22,10 +22,9 @@ UIResource::~UIResource() {
     resclass_ = nullptr;
 }
 
-Restype UIResource::SetResType(Restype v_type) {
+void UIResource::SetResType(Restype v_type) {
     restype_ = v_type;
-    if (resclass_)
-        delete resclass_;
+    delete resclass_;
     switch (v_type) {
     case kFile:
         resclass_ = new UIResFile();
@@ -37,7 +36,6 @@ Restype UIResource::SetResType(Restype v_type) {
         resclass_ = new UIResRC();
         break;
     }
-    return restype_;
 }
 
 Restype UIResource::GetResType() {
@@ -51,12 +49,10 @@ long UIResource::GetFileSize(LPCTSTR v_path) {
     if (UStr(v_path).Find(_T(":")) != -1) {
         FILE* fp;
         fp = _tfopen(v_path, _T("rb"));
-        if (!fp) {
+        if (!fp)
             UIHandleError(kError, kFileFail,
                           _T("File \"%s\" can't access!"),
                           v_path);
-            return 0;
-        }
         fseek(fp, 0, SEEK_END);
         ret = ftell(fp);
         fclose(fp);
@@ -89,10 +85,10 @@ BYTE* UIResource::GetFile(LPCTSTR v_path, BYTE* v_buffer, long v_size) {
     return v_buffer;
 }
 
-LPCTSTR UIResource::SetResInfo(LPCTSTR v_info) {
+void UIResource::SetResInfo(LPCTSTR v_info) {
     if (!resclass_)
-        return _T("");
-    return resclass_->SetResInfo(v_info);
+        return;
+    resclass_->SetResInfo(v_info);
 }
 
 LPCTSTR UIResource::GetResInfo() {
@@ -117,8 +113,7 @@ UIXmlLoader::~UIXmlLoader() {
 }
 
 void UIXmlLoader::Loadxml(LPCTSTR v_path) {
-    if (buffer_)
-        delete[]buffer_;
+    delete[]buffer_;
     long buflen = UIResource::GetFileSize(v_path);
     buffer_ = new BYTE[buflen + 1];
     UIResource::GetFile(v_path, buffer_, buflen);

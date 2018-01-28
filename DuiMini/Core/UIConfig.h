@@ -47,14 +47,14 @@ public:
     static UINT SetShownSkin(UINT v_id);
 
     /**
-    * [SAFE]Find dlg config
+    * Find dlg config
     * @param    LPCTSTR v_name:dlgname
     * @return   dlg attr structure, nullptr for not find
     */
     static UIAttr* FindDlg(LPCTSTR v_name);
 
     /**
-    * [SAFE]Find resid
+    * Find resid
     * @param    LPCTSTR v_name:resid name
     * @return   resid attr structure, nullptr for not find
     */
@@ -62,7 +62,7 @@ public:
     static CUStr FindResidFile(LPCTSTR v_name);     // return file directly
 
     /**
-     * [SAFE]Get real file path from str(resid or path)
+     * Get real file path from str(resid or path)
      * @param    LPCTSTR v_str:resid or path
      * @return   relative path, empty for not find
      * This function will check '[' at the beginning and ']' at the end
@@ -72,7 +72,7 @@ public:
     static CUStr GetStrFile(LPCTSTR v_str);
 
     /**
-     * [SAFE]Find language str
+     * Find language str
      * @param    LPCTSTR v_name:str name
      * @return   langstr attr structure, nullptr for not find
      */
@@ -80,7 +80,7 @@ public:
     static CUStr FindLangstrValue(LPCTSTR v_name);
 
     /**
-    * [SAFE]Get real string from string(language string or string)
+    * Get real string from string(language string or string)
     * @param    LPCTSTR v_str:langstr or str
     * @return   real string, if langstr not find, return itself.
     * This function will check '[' at the beginning and ']' at the end

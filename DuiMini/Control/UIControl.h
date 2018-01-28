@@ -19,7 +19,6 @@ public:
 public:
     RECT SetPos(LPCTSTR v_pos);
     RECT GetPos() const;
-    void Invalidate() const;
     CUStr GetAttribute(LPCTSTR v_name) const;
 
 public:
@@ -27,12 +26,20 @@ public:
     /**
      * DO NOT call it manually! If you must do, call AfterSetAttribute()
      * to prevent some strange act.
+     * Call base class function if you override them
      */
     virtual void BeforeSetAttribute();  // Init attribute
     virtual void SetAttribute(LPCTSTR v_name, LPCTSTR v_value);
     virtual void AfterSetAttribute();   // Init others which based on attribute
 
-    virtual void DoPaint(HWND v_hwnd, IUIRender* v_render) = 0;
+    /**
+    * Load attribute feature]
+    * Call base class function if you override them
+    */
+    virtual void LoadResAttr();
+    virtual void LoadTextAttr();
+
+    virtual void Paint() = 0;
 
     // Parent&Base
     virtual void SetParent(UIControl* v_parent);
@@ -50,11 +57,11 @@ public:
      */
     virtual UIControl* FindCtrlFromPT(POINT v_pt);
 
+    virtual UIControl* FindCtrlFromName(LPCTSTR v_name);
+
 public:
     // Event
     // virtual void Event(TEventUI& event);
-    virtual void OnChangeSkin();      // skin changed
-    virtual void OnChangeLanguage();  // language changed
 
 protected:
     enum StrLoc {

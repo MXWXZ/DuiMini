@@ -16,7 +16,7 @@ public:
     explicit UIResZip(LPCTSTR v_info);
     ~UIResZip();
 
-    LPCTSTR SetResInfo(LPCTSTR v_info) override;
+    void SetResInfo(LPCTSTR v_info) override;
     LPCTSTR GetResInfo() const override;
     long GetFileSize(LPCTSTR v_path) override;
     bool GetFile(LPCTSTR v_path, BYTE* v_buffer, long v_size) override;
