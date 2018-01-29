@@ -19,12 +19,17 @@ UIDialog::~UIDialog() {
 }
 
 bool UIDialog::SetBackground(LPCTSTR v_path) {
-    delete bgimg_;
-    bgimg_ = nullptr;
-    bgimg_ = new UIRenderImage();
-    int ret = bgimg_->Load(v_path);
-    ret += basewnd_->GetRender()->RedrawBackground();
-    return ret;
+    UIRenderImage* tmp = new UIRenderImage();
+    if (tmp->Load(v_path)) {
+        delete bgimg_;
+        bgimg_ = tmp;
+        SetAttribute(_T("background"), v_path);
+        // once failed, bgimg_ is still the new one(only redraw failed)
+        return basewnd_->GetRender()->RedrawBackground();
+    }
+    delete tmp;
+    tmp = nullptr;
+    return false;
 }
 
 void UIDialog::PaintBackground() {
@@ -59,7 +64,7 @@ void UIDialog::LoadTextAttr() {
 }
 
 LPVOID UIDialog::GetInterface(LPCTSTR v_name) {
-    if (CmpStr(v_name, _T("dlg")))
+    if (CmpStr(v_name, CTRLNAME_DIALOG))
         return this;
     return UIContainer::GetInterface(v_name);
 }

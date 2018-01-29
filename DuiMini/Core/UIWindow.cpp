@@ -14,7 +14,7 @@ namespace DuiMini {
 int UIWindow::classname_cnt_ = 0;
 
 UIWindow::UIWindow() {
-    render_ = new UIRender(this);
+    render_ = new UIRender;
 }
 
 UIWindow::UIWindow(LPCTSTR v_name)
@@ -215,7 +215,7 @@ LRESULT CALLBACK UIWindow::WinProc(HWND v_hwnd, UINT v_msg,
 bool UIWindow::Paint() {
     if (!render_)
         return false;
-    return render_->Paint();
+    return render_->Paint(this);
 }
 
 bool UIWindow::ShowWindow(bool v_show /*= true*/,
@@ -263,12 +263,19 @@ bool UIWindow::SetWindowPos(int v_x, int v_y, int v_width, int v_height) {
 
 bool UIWindow::SetWindowPos(HWND v_insertafter, int v_x, int v_y,
                             int v_width, int v_height, UINT v_flags) {
-    rect_.left = v_x;
-    rect_.top = v_y;
-    rect_.right = v_x + v_width;
-    rect_.bottom = v_y + v_height;
-    return ::SetWindowPos(hwnd_, v_insertafter, v_x, v_y,
-                          v_width, v_height, v_flags);
+    bool ret = ::SetWindowPos(hwnd_, v_insertafter, v_x, v_y,
+                              v_width, v_height, v_flags);
+    if (ret) {
+        rect_.left = v_x;
+        rect_.top = v_y;
+        rect_.right = v_x + v_width;
+        rect_.bottom = v_y + v_height;
+
+        UStr pos;
+        pos.Format(_T("0,0,%d,%d"), v_width, v_height);
+        builder_->GetCtrlRoot()->SetPos(pos);
+    }
+    return ret;
 }
 
 bool UIWindow::CenterWindow() {
@@ -294,16 +301,16 @@ void UIWindow::ShowTaskBar(bool v_show/* = true*/) const {
         style &= ~WS_EX_APPWINDOW;
     }
     SetWindowLong(hwnd_, GWL_EXSTYLE, style);
+    builder_->GetCtrlRoot()->SetAttribute(_T("appwin"), UStr(v_show));
 }
 
 CUStr UIWindow::GetTitle() const {
-    TCHAR buf[300];
-    GetWindowText(hwnd_, buf, 256);
-    return CUStr(buf);
+    return builder_->GetCtrlRoot()->GetAttribute(_T("title"));
 }
 
 void UIWindow::SetTitle(LPCTSTR v_title) {
     SetWindowText(hwnd_, v_title);
+    builder_->GetCtrlRoot()->SetAttribute(_T("title"), v_title);
 }
 
 HWND UIWindow::Create(LPCTSTR v_classname) {

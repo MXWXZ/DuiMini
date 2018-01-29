@@ -20,7 +20,7 @@ public:
 
     bool GlobalInit() override;
     bool GlobalRelease() override;
-    bool Paint() override;
+    bool Paint(UIWindow* v_wnd) override;
     bool RedrawBackground() override;
 
     bool DrawImage(UIRenderImage* v_img, int v_left, int v_top,

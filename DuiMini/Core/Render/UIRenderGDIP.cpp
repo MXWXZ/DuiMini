@@ -25,8 +25,11 @@ UIRenderGDIP::~UIRenderGDIP() {
 bool UIRenderGDIP::GlobalInit() {
     Gdiplus::GdiplusStartupInput gdiplusStartupInput;
     if (Gdiplus::GdiplusStartup(&gdiplus_token,
-                                &gdiplusStartupInput, NULL) != Gdiplus::Ok)
+                                &gdiplusStartupInput, NULL) != Gdiplus::Ok) {
+        UISetError(kWarning, kThirdPartFail,
+                   _T("GDI+ GdiplusStartup fail!"));
         return false;
+    }
     return true;
 }
 
@@ -35,12 +38,14 @@ bool UIRenderGDIP::GlobalRelease() {
     return true;
 }
 
-bool UIRenderGDIP::Paint() {
-    HWND hwnd = parent_->GetHWND();
+bool UIRenderGDIP::Paint(UIWindow* v_wnd) {
+    if (!v_wnd)
+        return false;
+    HWND hwnd = v_wnd->GetHWND();
     RECT rcwindow;
     GetWindowRect(hwnd, &rcwindow);
     SIZE sizewindow;
-    UIDialog* dlg = (UIDialog*)(parent_->GetDlgBuilder()->GetCtrlRoot());
+    UIDialog* dlg = v_wnd->GetDlgBuilder()->GetCtrlRoot();
 
     RECT pos = dlg->GetPos();
     sizewindow.cx = pos.right - pos.left;
@@ -87,7 +92,7 @@ bool UIRenderGDIP::Paint() {
                background_, 0, 0, sizewindow.cx, sizewindow.cy, blendfunc);
 
     graph_ = new Gdiplus::Graphics(hdctmp);
-    parent_->GetDlgBuilder()->GetCtrlRoot()->Paint();
+    v_wnd->GetDlgBuilder()->GetCtrlRoot()->Paint();
     graph_->ReleaseHDC(hdctmp);
     delete graph_;
     graph_ = nullptr;
@@ -124,8 +129,11 @@ bool UIRenderGDIP::DrawImage(UIRenderImage* v_img, int v_left,
     if (!graph_)
         return false;
     if (graph_->DrawImage((Gdiplus::Image*)v_img->GetInterface(),
-                          v_left, v_top, v_width, v_height) != Gdiplus::Ok)
+                          v_left, v_top, v_width, v_height) != Gdiplus::Ok) {
+        UISetError(kWarning, kThirdPartFail,
+                   _T("GDI+ DrawImage fail!"));
         return false;
+    }
     return true;
 }
 
@@ -148,8 +156,11 @@ bool UIRenderImageGDIP::Load(LPCTSTR v_path) {
     UIResource::GetFile(v_path, buffer, buflen);
     GlobalUnlock(mem);
     IStream *stream = nullptr;
-    if (CreateStreamOnHGlobal(buffer, TRUE, &stream) != S_OK)
+    if (CreateStreamOnHGlobal(buffer, TRUE, &stream) != S_OK) {
+        UISetError(kWarning, kThirdPartFail,
+                   _T("GDI+ CreateStreamOnHGlobal fail!"));
         return false;
+    }
     img_ = Gdiplus::Image::FromStream(stream);
     stream->Release();
     return true;

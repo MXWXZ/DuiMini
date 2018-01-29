@@ -10,7 +10,6 @@
 #pragma once
 
 namespace DuiMini {
-class UIWindow;
 class DUIMINI_API UIControl {
 public:
     UIControl();
@@ -31,13 +30,6 @@ public:
     virtual void BeforeSetAttribute();  // Init attribute
     virtual void SetAttribute(LPCTSTR v_name, LPCTSTR v_value);
     virtual void AfterSetAttribute();   // Init others which based on attribute
-
-    /**
-    * Load attribute feature]
-    * Call base class function if you override them
-    */
-    virtual void LoadResAttr();
-    virtual void LoadTextAttr();
 
     virtual void Paint() = 0;
 
@@ -62,6 +54,14 @@ public:
 public:
     // Event
     // virtual void Event(TEventUI& event);
+
+protected:
+    /**
+    * Load attribute feature]
+    * Call base class function if you override them
+    */
+    virtual void LoadResAttr();
+    virtual void LoadTextAttr();
 
 protected:
     enum StrLoc {

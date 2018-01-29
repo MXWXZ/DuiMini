@@ -10,7 +10,6 @@
 #pragma once
 
 namespace DuiMini {
-class UIWindow;
 class DUIMINI_API UIImage :public UIControl {
 public:
     UIImage();
@@ -22,13 +21,14 @@ public:
 public:
     void BeforeSetAttribute() override;
 
-    void LoadResAttr() override;
-
     LPVOID GetInterface(LPCTSTR v_name) override;
     void Paint() override;
 
 public:
     // virtual void Event(TEventUI& event);
+
+protected:
+    void LoadResAttr() override;
 
 private:
     UIRenderImage *img_ = nullptr;

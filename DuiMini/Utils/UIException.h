@@ -14,7 +14,9 @@ enum ErrorCode {
     kSuccess = 0,
     kIDInvalid,
     kCtrlKindInvalid,
+    kCtrlFormatInvalid,
     kRegWndFailed,
+    kThirdPartFail,
 
     kFatalError,       // greater than this will quit the program
 

@@ -80,7 +80,7 @@ protected:
     HWND hwnd_ = nullptr;               // main window hwnd
     UIDlgBuilder* builder_ = nullptr;   // dlg builder
     UIRender* render_ = nullptr;        // render
-    RECT rect_{ 0, 0, 0, 0 };              // window rect
+    RECT rect_{ 0, 0, 0, 0 };           // window rect
     static int classname_cnt_;          // auto classname counter
 };
 }    // namespace DuiMini

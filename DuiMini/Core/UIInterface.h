@@ -69,15 +69,13 @@ class DUIMINI_API IUIRender {
 public:
     virtual bool GlobalInit() = 0;
     virtual bool GlobalRelease() = 0;
-    virtual bool Paint() = 0;
+    virtual bool Paint(UIWindow* v_wnd) = 0;
 
     // For buffering drawing, renew background buffer, NO SYNC SCREEN
     virtual bool RedrawBackground() = 0;
 
     virtual bool DrawImage(UIRenderImage* v_img, int v_left, int v_top,
                            int v_width, int v_height) = 0;
-
-    UIWindow* parent_ = nullptr;
 };
 
 class DUIMINI_API IUIRenderImage {

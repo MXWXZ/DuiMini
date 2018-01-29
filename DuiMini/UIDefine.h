@@ -31,6 +31,11 @@
 #define DEFAULT_RESFILE     _T("uires.xml")   // Default res file
 #define DEFAULT_RESIDFILE   _T("resid.xml")   // Default resid file
 
+#define CTRLNAME_CONTROL        _T("control")
+#define CTRLNAME_CONTAINER      _T("container")
+#define CTRLNAME_DIALOG         _T("dlg")
+#define CTRLNAME_IMAGE          _T("img")
+
 // rapidxml
 typedef rapidxml::xml_document<TCHAR> xmldoc;
 typedef rapidxml::xml_node<TCHAR>* xmlnode;

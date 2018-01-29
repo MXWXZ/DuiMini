@@ -28,6 +28,7 @@ public:
     void BeforeSetAttribute() override;
     void AfterSetAttribute() override;
 
+protected:
     void LoadResAttr() override;
     void LoadTextAttr() override;
 

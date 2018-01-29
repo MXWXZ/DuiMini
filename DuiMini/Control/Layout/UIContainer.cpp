@@ -73,7 +73,7 @@ void UIContainer::SetBaseWindow(UIWindow* v_basewnd) {
 }
 
 LPVOID UIContainer::GetInterface(LPCTSTR v_name) {
-    if (CmpStr(v_name, _T("container")))
+    if (CmpStr(v_name, CTRLNAME_CONTAINER))
         return this;
     return UIControl::GetInterface(v_name);
 }

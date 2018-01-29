@@ -19,56 +19,66 @@ UIDlgBuilder::~UIDlgBuilder() {
 }
 
 UIControl* UIDlgBuilder::Init(xmlnode v_root, UIWindow* v_wnd) {
+    if (!v_wnd)
+        return nullptr;
     delete ctrl_root_;
     ctrl_root_ = nullptr;
     xml_root_ = v_root;
-    basewnd_ = v_wnd;
-    return _Parse(xml_root_);
+    return _Parse(v_wnd, xml_root_);
 }
 
-UIControl* UIDlgBuilder::GetCtrlRoot() {
+UIDialog* UIDlgBuilder::GetCtrlRoot() {
     return ctrl_root_;
 }
 
-UIControl* UIDlgBuilder::_Parse(xmlnode v_root,
+UIControl* UIDlgBuilder::_Parse(UIWindow* v_wnd, xmlnode v_root,
                                 UIControl* v_parent/* = nullptr*/) {
     for (xmlnode node = v_root; node != nullptr;
          node = node->next_sibling()) {
+        if (!v_parent && !CmpStr(node->name(), CTRLNAME_DIALOG)) {
+            UISetError(kWarning, kCtrlFormatInvalid,
+                       _T("Dialog control must be the root."));
+            return nullptr;
+        }
         LPCTSTR ctrl_name = node->name();
         UINT ctrl_namelen = _tcslen(ctrl_name);
         UIControl* new_ctrl = nullptr;
         switch (ctrl_namelen) {
         case 3:
         {
-            if (CmpStr(ctrl_name, _T("dlg")))
+            if (CmpStr(ctrl_name, CTRLNAME_DIALOG)) {
+                if (v_parent) {
+                    UISetError(kWarning, kCtrlFormatInvalid,
+                               _T("Dialog control do not allow nesting."));
+                    return nullptr;
+                }
                 new_ctrl = new UIDialog;
-            if (CmpStr(ctrl_name, _T("img")))
+                ctrl_root_ = reinterpret_cast<UIDialog*>(new_ctrl);
+            }
+            if (CmpStr(ctrl_name, CTRLNAME_IMAGE))
                 new_ctrl = new UIImage;
             break;
         }
         case 9:
         {
-            if (CmpStr(ctrl_name, _T("container")))
+            if (CmpStr(ctrl_name, CTRLNAME_CONTAINER))
                 new_ctrl = new UIContainer;
 
             break;
         }
         }
-
         // Invalid ctrl name
         if (!new_ctrl) {
             UISetError(kWarning, kCtrlKindInvalid,
                        _T("Control Kind \"%s\" invalid"), ctrl_name);
             return nullptr;
         }
+
         // Set basewnd
-        new_ctrl->SetBaseWindow(basewnd_);
-        // Add children
-        if (node->first_node())
-            _Parse(node->first_node(), new_ctrl);
+        new_ctrl->SetBaseWindow(v_wnd);
         // Attach to parent (parent must have container attribute)
         if (v_parent != nullptr) {
-            IUIContainer* container = reinterpret_cast<IUIContainer*>(v_parent->GetInterface(_T("container")));
+            IUIContainer* container = dynamic_cast<IUIContainer*>((UIControl*)v_parent->GetInterface(_T("container")));
             if (!container)
                 return nullptr;
             container->Add(new_ctrl);
@@ -83,10 +93,9 @@ UIControl* UIDlgBuilder::_Parse(xmlnode v_root,
                 new_ctrl->SetAttribute(attr->name(), attr->value());
             new_ctrl->AfterSetAttribute();
         }
-
-        // Return first item
-        if (!ctrl_root_)
-            ctrl_root_ = new_ctrl;
+        // Add children
+        if (node->first_node())
+            _Parse(v_wnd, node->first_node(), new_ctrl);
     }
     return ctrl_root_;
 }

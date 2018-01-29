@@ -73,7 +73,7 @@ UIControl * UIControl::FindCtrlFromName(LPCTSTR v_name) {
 int UIControl::GetPosFromStr(LPCTSTR v_str, StrLoc v_loc) const {
     CUStr str = v_str;
     RECT screen{ 0, 0, 0, 0 };
-    if (!parent_) {
+    if (!parent_) {     // default parent is screen
         screen.right = GetSystemMetrics(SM_CXSCREEN);
         screen.bottom = GetSystemMetrics(SM_CYSCREEN);
     }
@@ -81,6 +81,7 @@ int UIControl::GetPosFromStr(LPCTSTR v_str, StrLoc v_loc) const {
         return str.Right(str.GetLength() - 1).Str2Int();
     } else if (str[0] == '|') {
         int offset = str.Right(str.GetLength() - 1).Str2Int();
+        // ONLY 2nd layer control can be relative to parent
         RECT parentrc = parent_ ? parent_->GetPos() : screen;
         int center;
         if (v_loc == left || v_loc == right)
@@ -107,7 +108,7 @@ int UIControl::GetPosFromStr(LPCTSTR v_str, StrLoc v_loc) const {
 // }
 
 LPVOID UIControl::GetInterface(LPCTSTR v_name) {
-    if (CmpStr(v_name, _T("control")))
+    if (CmpStr(v_name, CTRLNAME_CONTROL))
         return this;
     return nullptr;
 }

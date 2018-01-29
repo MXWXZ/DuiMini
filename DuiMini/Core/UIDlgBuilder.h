@@ -10,7 +10,7 @@
 #pragma once
 
 namespace DuiMini {
-class UIWindow;
+class DUIMINI_API UIDialog;
 class DUIMINI_API UIDlgBuilder {
 public:
     UIDlgBuilder();
@@ -24,12 +24,12 @@ public:
      */
     UIControl* Init(xmlnode v_root, UIWindow* v_wnd);
 
-    UIControl* GetCtrlRoot();
+    UIDialog* GetCtrlRoot();
 
 private:
-    UIControl* _Parse(xmlnode v_root, UIControl* v_parent = nullptr);
-    UIWindow* basewnd_ = nullptr;
-    UIControl* ctrl_root_ = nullptr;
+    UIControl* _Parse(UIWindow* v_wnd, xmlnode v_root,
+                      UIControl* v_parent = nullptr);
+    UIDialog* ctrl_root_ = nullptr;
     xmlnode xml_root_ = nullptr;
 };
 }    // namespace DuiMini

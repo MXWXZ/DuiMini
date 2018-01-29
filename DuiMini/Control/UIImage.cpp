@@ -19,10 +19,16 @@ UIImage::~UIImage() {
 }
 
 bool UIImage::SetFile(LPCTSTR v_path) {
-    delete img_;
-    img_ = nullptr;
-    img_ = new UIRenderImage();
-    return img_->Load(v_path);
+    UIRenderImage* tmp = new UIRenderImage();
+    if (tmp->Load(v_path)) {
+        delete img_;
+        img_ = tmp;
+        SetAttribute(_T("file"), v_path);
+        return true;
+    }
+    delete tmp;
+    tmp = nullptr;
+    return false;
 }
 
 void UIImage::BeforeSetAttribute() {
@@ -31,7 +37,7 @@ void UIImage::BeforeSetAttribute() {
 }
 
 LPVOID UIImage::GetInterface(LPCTSTR v_name) {
-    if (CmpStr(v_name, _T("img")))
+    if (CmpStr(v_name, CTRLNAME_IMAGE))
         return this;
     return UIControl::GetInterface(v_name);
 }

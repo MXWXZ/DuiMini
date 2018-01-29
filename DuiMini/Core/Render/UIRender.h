@@ -31,7 +31,6 @@ private:
 class DUIMINI_API UIRender {
 public:
     UIRender();
-    explicit UIRender(UIWindow* v_parent);
     ~UIRender();
 
     /**
@@ -46,9 +45,7 @@ public:
     static void SetRenderMode(RenderMode v_mode);
     static RenderMode GetRenderMode();
 
-    UIWindow* SetParent(UIWindow* v_parent);
-
-    bool Paint();
+    bool Paint(UIWindow* v_wnd);
     bool RedrawBackground();
     bool DrawImage(UIRenderImage* v_img, int v_left, int v_top,
                    int v_width, int v_height);

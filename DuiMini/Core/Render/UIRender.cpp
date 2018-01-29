@@ -28,13 +28,18 @@ bool UIRenderImage::Load(LPCTSTR v_path) {
         renderimg_ = new UIRenderImageGDIP();
         break;
     }
-    return renderimg_->Load(v_path);
+    bool ret = renderimg_->Load(v_path);
+    if (!ret)
+        UIHandleError();
+    return ret;
 }
 
 bool UIRenderImage::Release() {
     if (!renderimg_)
         return false;
     bool ret = renderimg_->Release();
+    if (!ret)
+        UIHandleError();
     renderimg_ = nullptr;
     return ret;
 }
@@ -53,11 +58,6 @@ UIRender::UIRender() {
     SelectRender(&render_);
 }
 
-UIRender::UIRender(UIWindow * v_parent)
-    :UIRender() {
-    SetParent(v_parent);
-}
-
 UIRender::~UIRender() {
     delete render_;
     render_ = nullptr;
@@ -68,6 +68,8 @@ bool UIRender::GlobalInit() {
     IUIRender *render = nullptr;
     SelectRender(&render);
     bool ret = render->GlobalInit();
+    if (!ret)
+        UIHandleError();
     delete render;
     render = nullptr;
     return ret;
@@ -82,6 +84,8 @@ bool UIRender::GlobalRelease() {
     IUIRender *render = nullptr;
     SelectRender(&render);
     bool ret = render->GlobalRelease();
+    if (!ret)
+        UIHandleError();
     delete render;
     render = nullptr;
     return ret;
@@ -95,29 +99,31 @@ RenderMode UIRender::GetRenderMode() {
     return render_mode_;
 }
 
-UIWindow* UIRender::SetParent(UIWindow* v_parent) {
-    if (!render_)
-        return nullptr;
-    render_->parent_ = v_parent;
-    return render_->parent_;
-}
-
-bool UIRender::Paint() {
+bool UIRender::Paint(UIWindow* v_wnd) {
     if (!render_)
         return false;
-    return render_->Paint();
+    bool ret = render_->Paint(v_wnd);
+    if (!ret)
+        UIHandleError();
+    return ret;
 }
 
 bool UIRender::RedrawBackground() {
     if (!render_)
         return false;
-    return render_->RedrawBackground();
+    bool ret = render_->RedrawBackground();
+    if (!ret)
+        UIHandleError();
+    return ret;
 }
 
 bool UIRender::DrawImage(UIRenderImage * v_img, int v_left, int v_top, int v_width, int v_height) {
     if (!render_)
         return false;
-    return render_->DrawImage(v_img, v_left, v_top, v_width, v_height);
+    bool ret = render_->DrawImage(v_img, v_left, v_top, v_width, v_height);
+    if (!ret)
+        UIHandleError();
+    return ret;
 }
 
 IUIRender* UIRender::SelectRender(IUIRender** v_pointer) {
