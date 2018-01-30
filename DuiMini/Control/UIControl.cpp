@@ -20,6 +20,7 @@ void UIControl::BeforeSetAttribute() {
     SetAttribute(_T("pos"), _T("0,0"));
     SetAttribute(_T("width"), _T("0"));
     SetAttribute(_T("height"), _T("0"));
+    SetAttribute(_T("size"), _T("0,0"));
 }
 
 void UIControl::SetAttribute(LPCTSTR v_name, LPCTSTR v_value) {
@@ -116,13 +117,21 @@ LPVOID UIControl::GetInterface(LPCTSTR v_name) {
 RECT UIControl::UpdatePos() {
     UStr attr = GetAttribute(_T("pos"));
     int septimes = attr.Replace(_T(","), _T(","));
-    if (septimes == 1) {
+    if (septimes == 1) {    // pos=x,x
         int seppos = attr.Find(_T(","));
         rect_.left = GetPosFromStr(attr.Left(seppos), left);
         rect_.top = GetPosFromStr(attr.Right(attr.GetLength() - seppos - 1), top);
-        rect_.right = rect_.left + GetAttribute(_T("width")).Str2Int();
-        rect_.bottom = rect_.top + GetAttribute(_T("height")).Str2Int();
-    } else {
+        if (GetAttribute(_T("width")) == _T("0") &&
+            GetAttribute(_T("height")) == _T("0")) {
+            UStr size = GetAttribute(_T("size"));
+            int tmppos = size.Find(_T(","));
+            rect_.right = rect_.left + size.Left(tmppos).Str2Int();
+            rect_.bottom = rect_.top + size.Right(size.GetLength() - tmppos - 1).Str2Int();
+        } else {
+            rect_.right = rect_.left + GetAttribute(_T("width")).Str2Int();
+            rect_.bottom = rect_.top + GetAttribute(_T("height")).Str2Int();
+        }
+    } else {    // pos=x,x,x,x
         int seppos1 = attr.Find(_T(","));
         rect_.left = GetPosFromStr(attr.Left(seppos1), left);
         int seppos2 = attr.Find(_T(","), seppos1 + 1);
@@ -130,9 +139,12 @@ RECT UIControl::UpdatePos() {
         int seppos3 = attr.Find(_T(","), seppos2 + 1);
         rect_.right = GetPosFromStr(attr.Mid(seppos2 + 1, seppos3 - seppos2 - 1), right);
         rect_.bottom = GetPosFromStr(attr.Right(attr.GetLength() - seppos3 - 1), bottom);
-        SetAttribute(_T("width"), UStr(rect_.right - rect_.left));
-        SetAttribute(_T("height"), UStr(rect_.bottom - rect_.top));
     }
+    UStr width(rect_.right - rect_.left);
+    UStr height(rect_.bottom - rect_.top);
+    SetAttribute(_T("width"), width);
+    SetAttribute(_T("height"), height);
+    SetAttribute(_T("size"), width + _T(",") + height);
     return rect_;
 }
 

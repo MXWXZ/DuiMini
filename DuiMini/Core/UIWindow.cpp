@@ -59,6 +59,15 @@ UIDlgBuilder* UIWindow::GetDlgBuilder() {
     return builder_;
 }
 
+UIControl* UIWindow::CreateControl(UIControl* v_ctrl,
+                                   UIControl* v_parent/* = nullptr*/) {
+    return builder_->CreateControl(v_ctrl, this, v_parent);
+}
+
+void UIWindow::FinishCreateControl(UIControl* v_ctrl) {
+    builder_->FinishCreateControl(v_ctrl);
+}
+
 UIRender* UIWindow::GetRender() {
     return render_;
 }
@@ -69,7 +78,7 @@ UIControl* UIWindow::FindCtrlFromName(LPCTSTR v_name) {
     return builder_->GetCtrlRoot()->FindCtrlFromName(v_name);
 }
 
-void UIWindow::Invalidate() const {
+void UIWindow::UpdateWindow() const {
     SendMessage(hwnd_, WM_PAINT, NULL, NULL);
 }
 

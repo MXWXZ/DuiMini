@@ -27,6 +27,27 @@ UIControl* UIDlgBuilder::Init(xmlnode v_root, UIWindow* v_wnd) {
     return _Parse(v_wnd, xml_root_);
 }
 
+UIControl* UIDlgBuilder::CreateControl(UIControl* v_ctrl,
+                                       UIWindow* v_wnd,
+                                       UIControl* v_parent/* = nullptr*/) {
+    // Set basewnd
+    v_ctrl->SetBaseWindow(v_wnd);
+    // Attach to parent (parent must have container attribute)
+    if (v_parent) {
+        IUIContainer* container = dynamic_cast<IUIContainer*>((UIControl*)v_parent->GetInterface(_T("container")));
+        if (!container)
+            return nullptr;
+        container->Add(v_ctrl);
+        v_ctrl->SetParent(v_parent);
+    }
+    v_ctrl->BeforeSetAttribute();
+    return v_ctrl;
+}
+
+void UIDlgBuilder::FinishCreateControl(UIControl * v_ctrl) {
+    v_ctrl->AfterSetAttribute();
+}
+
 UIDialog* UIDlgBuilder::GetCtrlRoot() {
     return ctrl_root_;
 }
@@ -74,25 +95,14 @@ UIControl* UIDlgBuilder::_Parse(UIWindow* v_wnd, xmlnode v_root,
             return nullptr;
         }
 
-        // Set basewnd
-        new_ctrl->SetBaseWindow(v_wnd);
-        // Attach to parent (parent must have container attribute)
-        if (v_parent != nullptr) {
-            IUIContainer* container = dynamic_cast<IUIContainer*>((UIControl*)v_parent->GetInterface(_T("container")));
-            if (!container)
-                return nullptr;
-            container->Add(new_ctrl);
-            new_ctrl->SetParent(v_parent);
-        }
+        CreateControl(new_ctrl, v_wnd, v_parent);
         // Process attributes
-        if (node->first_attribute()) {
-            new_ctrl->BeforeSetAttribute();
-            for (xmlattr attr = node->first_attribute();
-                 attr != nullptr;
-                 attr = attr->next_attribute())
-                new_ctrl->SetAttribute(attr->name(), attr->value());
-            new_ctrl->AfterSetAttribute();
-        }
+        for (xmlattr attr = node->first_attribute();
+             attr != nullptr;
+             attr = attr->next_attribute())
+            new_ctrl->SetAttribute(attr->name(), attr->value());
+        FinishCreateControl(new_ctrl);
+
         // Add children
         if (node->first_node())
             _Parse(v_wnd, node->first_node(), new_ctrl);
