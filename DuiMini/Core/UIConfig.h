@@ -10,6 +10,19 @@
 #pragma once
 
 namespace DuiMini {
+struct DUIMINI_API UIFont {
+    UStr name_;
+    UStr lang_;
+    UStr font_;
+    UINT size_;
+    bool bold_;
+    bool italic_;
+    bool underline_;
+    bool strikeout_;
+};
+
+////////////////////////////////////////
+
 class DUIMINI_API UIConfig {
 public:
     /**

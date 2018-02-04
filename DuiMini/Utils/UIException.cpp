@@ -11,12 +11,12 @@
 #include "UIException.h"
 
 namespace DuiMini {
-ErrorCode UIException::error_code_ = kSuccess;
+ErrorCode UIException::error_code_ = kEC_Success;
 UStr      UIException::error_msg_ = _T("");
-Loglevel  UIException::log_level_ = kInfo;
+LogLevel  UIException::log_level_ = kLL_Info;
 ExtraHandleFun UIException::extra_fun_ = nullptr;
 
-void UIException::SetError(Loglevel v_log_level, ErrorCode v_error_code,
+void UIException::SetError(LogLevel v_log_level, ErrorCode v_error_code,
                            LPCTSTR v_error_msg, ...) {
     LPTSTR tmpstr = nullptr;
     va_list argList;
@@ -41,7 +41,7 @@ ErrorCode UIException::GetLastError() {
 }
 
 void UIException::HandleError() {
-    if (error_code_ == kSuccess)
+    if (error_code_ == kEC_Success)
         return;
 
     bool ishandled = false;
@@ -52,16 +52,16 @@ void UIException::HandleError() {
                                  UStr(_T("Code %d ")) + error_msg_,
                                  error_code_)) {
             MessageBox(NULL, _T("Log record failed!"), _T("ERROR"), MB_OK);
-            error_code_ = kLogFileFail;
+            error_code_ = kEC_LogFileFail;
         }
-        if (error_code_ >= kFatalError)
+        if (error_code_ >= kEC_FatalError_)
             UISystem::Exit(error_code_);
     }
-    error_code_ = kSuccess;
+    error_code_ = kEC_Success;
     error_msg_.Empty();
 }
 
-void UIException::HandleError(Loglevel v_log_level, ErrorCode v_error_code,
+void UIException::HandleError(LogLevel v_log_level, ErrorCode v_error_code,
                               LPCTSTR v_error_msg, ...) {
     // Oh I dont know how to pass ... to SetError function so that is it.
     LPTSTR tmpstr = nullptr;

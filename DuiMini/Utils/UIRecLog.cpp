@@ -11,14 +11,14 @@
 #include "UIRecLog.h"
 
 namespace DuiMini {
-Reclevel UIRecLog::record_level_ = kDebug;
+RecLevel UIRecLog::record_level_ = kRL_Debug;
 UStr UIRecLog::fullpath_ = UIUtils::GetCurrentDir() + UIUtils::GetTimeStr(_T("\\logfile_%Y-%m-%d_%H-%M-%S.txt"));
 
-void UIRecLog::SetLogLevel(Reclevel v_record_level) {
+void UIRecLog::SetLogLevel(RecLevel v_record_level) {
     record_level_ = v_record_level;
 }
 
-Reclevel UIRecLog::GetLogLevel() {
+RecLevel UIRecLog::GetLogLevel() {
     return record_level_;
 }
 
@@ -27,7 +27,7 @@ bool UIRecLog::RecordLog(LPCTSTR v_text) {
         return false;
 
     FILE* file;
-    _tfopen_s(&file, fullpath_, _T("w"));
+    _tfopen_s(&file, fullpath_, _T("a"));
     if (!file)
         return false;
     _ftprintf(file, v_text);
@@ -36,7 +36,7 @@ bool UIRecLog::RecordLog(LPCTSTR v_text) {
     return true;
 }
 
-bool UIRecLog::RecordLog(Loglevel v_level, LPCTSTR v_text, ...) {
+bool UIRecLog::RecordLog(LogLevel v_level, LPCTSTR v_text, ...) {
     LPTSTR tmpstr = nullptr;
     va_list argList;
     int len = 0;
@@ -54,20 +54,20 @@ bool UIRecLog::RecordLog(Loglevel v_level, LPCTSTR v_text, ...) {
 
     UStr strprefix;
     switch (v_level) {
-    case kInfo:
+    case kLL_Info:
         strprefix = _T("[Info]");
         break;
-    case kWarning:
+    case kLL_Warning:
         strprefix = _T("[Warning]");
         break;
-    case kError:
+    case kLL_Error:
         strprefix = _T("[Error]");
         break;
     }
     strprefix += UIUtils::GetTimeStr(_T("%Y-%m-%d %H:%M:%S: "));
 
     FILE* file;
-    _tfopen_s(&file, fullpath_, _T("w"));
+    _tfopen_s(&file, fullpath_, _T("a"));
     if (!file)
         return false;
     _ftprintf(file, strprefix);

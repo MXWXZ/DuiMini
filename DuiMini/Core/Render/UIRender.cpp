@@ -24,7 +24,7 @@ UIRenderImage::~UIRenderImage() {
 
 bool UIRenderImage::Load(LPCTSTR v_path) {
     switch (UIRender::GetRenderMode()) {
-    case kGDIPlus:
+    case kRM_GDIPlus:
         renderimg_ = new UIRenderImageGDIP();
         break;
     }
@@ -52,7 +52,7 @@ void* UIRenderImage::GetInterface() const {
 
 ////////////////////////////////////////
 
-RenderMode UIRender::render_mode_ = kGDIPlus;
+RenderMode UIRender::render_mode_ = kRM_GDIPlus;
 
 UIRender::UIRender() {
     SelectRender(&render_);
@@ -128,7 +128,7 @@ bool UIRender::DrawImage(UIRenderImage * v_img, int v_left, int v_top, int v_wid
 
 IUIRender* UIRender::SelectRender(IUIRender** v_pointer) {
     switch (render_mode_) {
-    case kGDIPlus:
+    case kRM_GDIPlus:
         *v_pointer = new UIRenderGDIP();
         break;
     }

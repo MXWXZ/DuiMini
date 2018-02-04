@@ -172,7 +172,7 @@ UIAttr* UIConfig::FindDlg(LPCTSTR v_name) {
     int ret = cfg_dlg_.FindNextAttr(0, _T("name"), v_name);
     if (ret != -1)
         return &cfg_dlg_[ret];
-    UIHandleError(kWarning, kIDInvalid,
+    UIHandleError(kLL_Warning, kEC_IDInvalid,
                   _T("Config dlg name %s invalid!"), v_name);
     return nullptr;
 }
@@ -181,7 +181,7 @@ UIAttr* UIConfig::FindResid(LPCTSTR v_name) {
     int ret = res_id_.FindNextAttr(0, _T("name"), v_name);
     if (ret != -1)
         return &res_id_[ret];
-    UIHandleError(kWarning, kIDInvalid,
+    UIHandleError(kLL_Warning, kEC_IDInvalid,
                   _T("Config resid name %s invalid!"), v_name);
     return nullptr;
 }
@@ -208,7 +208,7 @@ UIAttr* UIConfig::FindLangstr(LPCTSTR v_name) {
     int ret = lang_str_.FindNextAttr(0, _T("name"), v_name);
     if (ret != -1)
         return &lang_str_[ret];
-    UIHandleError(kWarning, kIDInvalid,
+    UIHandleError(kLL_Warning, kEC_IDInvalid,
                   _T("Config langstr name %s invalid!"), v_name);
     return nullptr;
 }

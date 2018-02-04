@@ -12,14 +12,14 @@
 namespace DuiMini {
 /**
  * resource type
- * kFile:normal file
- * kPackage:zip file
- * kRC:rc resource
+ * kRT_File:normal file
+ * kRT_Package:zip file
+ * kRT_RC:rc resource
  */
-enum Restype {
-    kFile = 0,
-    kPackage = 1,
-    kRC = 2,
+enum ResType {
+    kRT_File = 0,
+    kRT_Package = 1,
+    kRT_RC = 2,
 };
 
 /**
@@ -30,8 +30,8 @@ class DUIMINI_API UIResource {
 public:
     ~UIResource();
 
-    static void SetResType(Restype v_type);
-    static Restype GetResType();
+    static void SetResType(ResType v_type);
+    static ResType GetResType();
 
     /**
      * Get resource file size
@@ -72,7 +72,7 @@ public:
 
 private:
     static IUIRes  *resclass_;  // resource class
-    static Restype restype_;    // resource type
+    static ResType restype_;    // resource type
 };
 
 /**

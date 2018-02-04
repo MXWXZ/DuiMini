@@ -11,6 +11,22 @@
 #include "Core/UIDlgBuilder.h"
 
 namespace DuiMini {
+enum WindowMessage {
+    //      Msg                 WPARAM              LPARAM
+    kWM_START_,        // USELESS
+    kWM_MouseEnter,    //               WM_MOUSEMOVE
+    kWM_MouseLeave,    //                    ...
+    kWM_MouseMove,     //                    ...
+    kWM_LButtonDown,   //               WM_LBUTTONDOWN
+    kWM_LButtonUp,     //                    ...
+    kWM_LButtonClick,  //                    ...
+    kWM_LButtonDBClick,//                    ...
+    kWM_RButtonDown,   //                    ...
+    kWM_RButtonUp,     //                    ...
+    kWM_RButtonClick,  //                    ...
+    kWM_RButtonDBClick,//                    ...
+};
+
 class DUIMINI_API UIWindow {
 public:
     UIWindow();
@@ -94,11 +110,17 @@ protected:
     UIDlgBuilder* SetDlgBuilder(LPCTSTR v_dlgname);
 
 protected:
-    UStr dlgname_;                      // dlg name
-    HWND hwnd_ = nullptr;               // main window hwnd
-    UIDlgBuilder* builder_ = nullptr;   // dlg builder
-    UIRender* render_ = nullptr;        // render
-    RECT rect_{ 0, 0, 0, 0 };           // window rect
-    static int classname_cnt_;          // auto classname counter
+    UStr             dlgname_;                 // dlg name
+    HWND             hwnd_ = nullptr;          // main window hwnd
+    UIDlgBuilder*    builder_ = nullptr;       // dlg builder
+    UIRender*        render_ = nullptr;        // render
+    RECT             rect_{ 0, 0, 0, 0 };      // window rect
+    static int       classname_cnt_;           // auto classname counter
+
+    bool             mouse_tracking_ = false;  // mouse tracking state
+    POINT            last_mousepos_{ 0,0 };    // last mouse position
+    UIControl*       ctrl_lclick_ = nullptr;   // current left clicked ctrl
+    UIControl*       ctrl_rclick_ = nullptr;   // current right clicked ctrl
+    UIControl*       ctrl_hover_ = nullptr;    // current hovered ctrl
 };
 }    // namespace DuiMini

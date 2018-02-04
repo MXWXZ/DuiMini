@@ -34,7 +34,7 @@ long UIResFile::GetFileSize(LPCTSTR v_path) {
     FILE* fp;
     fp = _tfopen(fullpath, _T("rb"));
     if (!fp) {
-        UISetError(kError, kFileFail,
+        UISetError(kLL_Error, kEC_FileFail,
                    _T("File \"%s\" can't access!"),
                    fullpath.GetData());
         return -1;
@@ -52,7 +52,7 @@ bool UIResFile::GetFile(LPCTSTR v_path, BYTE* v_buffer, long v_size) {
     FILE* fp;
     fp = _tfopen(fullpath, _T("rb"));
     if (!fp) {
-        UISetError(kError, kFileFail,
+        UISetError(kLL_Error, kEC_FileFail,
                    _T("File \"%s\" can't access!"),
                    fullpath.GetData());
         return false;

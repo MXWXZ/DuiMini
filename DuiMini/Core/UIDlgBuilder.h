@@ -46,7 +46,7 @@ public:
     UIDialog* GetCtrlRoot();
 
 private:
-    UIControl* _Parse(UIWindow* v_wnd, xmlnode v_root,
+    UIControl* Parse(UIWindow* v_wnd, xmlnode v_root,
                       UIControl* v_parent = nullptr);
     UIDialog* ctrl_root_ = nullptr;
     xmlnode xml_root_ = nullptr;

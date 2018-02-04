@@ -30,7 +30,7 @@ public:
 protected:
     void LoadResAttr() override;
 
-private:
+protected:
     UIRenderImage *img_ = nullptr;
 };
 }   // namespace DuiMini

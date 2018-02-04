@@ -88,7 +88,33 @@ void UIWindow::Run(LPCTSTR v_classname/* = _T("DuiMini")*/) {
     DoModal();
 }
 
+#define WLPARAM v_wparam, v_lparam
 LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
+    // mouse msg:mouse position ctrl
+    UIControl *mousepos_ctrl = nullptr;
+    // mouse msg:ctrl_lclick_ or ctrl_rclick_
+    UIControl** ctrl_click_tmp = &ctrl_rclick_;
+    WindowMessage mouse_msg = kWM_START_;
+    switch (v_msg) {
+    case WM_LBUTTONDOWN:
+        if (!mouse_msg)mouse_msg = kWM_LButtonDown;
+    case WM_LBUTTONUP:
+        if (!mouse_msg)mouse_msg = kWM_LButtonUp;
+        ctrl_click_tmp = &ctrl_lclick_;  // change default value
+    case WM_RBUTTONDOWN:                 // default value,no need to change
+        if (!mouse_msg)mouse_msg = kWM_RButtonDown;
+    case WM_RBUTTONUP:
+        if (!mouse_msg)mouse_msg = kWM_RButtonUp;
+    case WM_LBUTTONDBLCLK:
+        if (!mouse_msg)mouse_msg = kWM_LButtonDBClick;
+    case WM_RBUTTONDBLCLK:
+        if (!mouse_msg)mouse_msg = kWM_RButtonDBClick;
+    case WM_MOUSEMOVE:
+        mousepos_ctrl = builder_->GetCtrlRoot()->FindCtrlFromPT(last_mousepos_);
+        break;
+    }
+    UIControl* &ctrl_click = *ctrl_click_tmp;
+
     switch (v_msg) {
     case WM_CREATE:
     {
@@ -104,15 +130,12 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
     }
     case WM_CLOSE:
     {
-        // Make sure all matching "closing" events are sent
-        //         TEventUI event = { 0 };
-        //         event.ptMouse = last_mousepos_;
-        //         event.dwTimestamp = ::GetTickCount();
-        //         if (event_click_ != NULL) {
-        //             event.Type = UIEVENT_BUTTONUP;
-        //             event.pSender = event_click_;
-        //             event_click_->Event(event);
-        //         }
+        DWORD lparam = MAKELONG(last_mousepos_.x, last_mousepos_.y);
+        // send btnup msg to current click ctrl
+        if (ctrl_lclick_)
+            ctrl_lclick_->Event(kWM_LButtonUp, NULL, lparam);
+        if (ctrl_rclick_)
+            ctrl_rclick_->Event(kWM_RButtonUp, NULL, lparam);
         break;
     }
     case WM_PAINT:
@@ -121,79 +144,84 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
         break;
     }
     case WM_LBUTTONDOWN:
+    case WM_RBUTTONDOWN:
     {
-        //         POINT pt = { GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam) };
-        //         last_mousepos_ = pt;
-        // 
-        //         UIControl* pControl = ctrlroot_->FindCtrlFromPT(pt);
-        //         if (pControl == NULL) break;
-        // 
-        //         event_click_ = pControl;
-        // 
-        //         TEventUI event = { 0 };
-        //         event.Type = UIEVENT_BUTTONDOWN;
-        //         event.wParam = wparam;
-        //         event.lParam = lparam;
-        //         event.ptMouse = pt;
-        //         event.wKeyState = wparam;
-        //         event.dwTimestamp = ::GetTickCount();
-        // 
-        //         pControl->Event(event);
-        //         // We always capture the mouse
-        //         ::SetCapture(hwnd_);//set capture of this control
+        if (!mousepos_ctrl)
+            break;
+        ctrl_click = mousepos_ctrl;
+        mousepos_ctrl->Event(mouse_msg, WLPARAM);
+        SetCapture(hwnd_);
         break;
     }
     case WM_LBUTTONUP:
+    case WM_RBUTTONUP:
     {
-        //         if (event_click_ == NULL) break;
-        // 
-        //         POINT pt = { GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam) };
-        //         ::ReleaseCapture();
-        //         TEventUI event = { 0 };
-        //         event.Type = UIEVENT_BUTTONUP;
-        //         event.wParam = wparam;
-        //         event.lParam = lparam;
-        //         event.ptMouse = pt;
-        //         event.wKeyState = wparam;
-        //         event.dwTimestamp = ::GetTickCount();
-        //         event_click_->Event(event);
-        //         event_click_ = NULL;
+        if (!ctrl_click)
+            break;
+
+        if (ctrl_click != mousepos_ctrl) {
+            ctrl_click = nullptr;
+            break;
+        }
+        ctrl_click->Event(mouse_msg, WLPARAM);
+        if (v_msg == WM_LBUTTONUP)
+            ctrl_click->Event(kWM_LButtonClick, WLPARAM);
+        else
+            ctrl_click->Event(kWM_RButtonClick, WLPARAM);
+        ctrl_click = nullptr;
+        ReleaseCapture();
+        break;
+    }
+    case WM_LBUTTONDBLCLK:
+    case WM_RBUTTONDBLCLK:
+    {
+        if (!mousepos_ctrl)
+            break;
+        mousepos_ctrl->Event(mouse_msg, WLPARAM);
         break;
     }
     case WM_MOUSEMOVE:
     {
-        //         POINT pt = { GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam) };
-        //         last_mousepos_ = pt;
-        // 
-        //         UIControl* pNewHover = ctrlroot_->FindCtrlFromPT(pt);
-        //         if (pNewHover != NULL && pNewHover->GetManager() != this) break;
-        //         TEventUI event = { 0 };
-        //         event.ptMouse = pt;
-        //         event.dwTimestamp = ::GetTickCount();
-        // 
-        //         //judge the event type
-        //         if (pNewHover != event_hover_ && pNewHover != NULL) {
-        //             event.Type = UIEVENT_MOUSEENTER;
-        //             event.pSender = event_hover_;
-        //             pNewHover->Event(event);
-        //             event_hover_ = pNewHover;
-        //         }
-        //         if (event_click_ != NULL) {
-        //             event.Type = UIEVENT_MOUSEMOVE;
-        //             event.pSender = NULL;
-        //             ::ReleaseCapture();///增加这个
-        //             event_click_->Event(event);
-        //         } else if (pNewHover != NULL) {
-        //             event.Type = UIEVENT_MOUSEMOVE;
-        //             event.pSender = NULL;
-        //             pNewHover->Event(event);
-        //         }
+        last_mousepos_.x = GET_X_LPARAM(v_lparam);
+        last_mousepos_.y = GET_Y_LPARAM(v_lparam);
+
+        // enter new ctrl
+        if (mousepos_ctrl != ctrl_hover_) {
+            if (ctrl_hover_)     // former ctrl leave
+                ctrl_hover_->Event(kWM_MouseLeave, WLPARAM);
+            if (mousepos_ctrl) {
+                mousepos_ctrl->Event(kWM_MouseEnter, WLPARAM);
+                ctrl_hover_ = mousepos_ctrl;
+            }
+        }
+        if (mousepos_ctrl)
+            mousepos_ctrl->Event(kWM_MouseMove, WLPARAM);
+
+        if (!mouse_tracking_) {
+            TRACKMOUSEEVENT tmp;
+            tmp.cbSize = sizeof(tmp);
+            tmp.dwFlags = TME_LEAVE | TME_HOVER;
+            tmp.hwndTrack = hwnd_;
+            tmp.dwHoverTime = 1000;     // 1000 delay time
+            ::TrackMouseEvent(&tmp);
+            mouse_tracking_ = true;
+        }
+        break;
+    }
+    case WM_MOUSELEAVE:
+    {
+        if (ctrl_hover_) {      // clear hover control
+            ctrl_hover_->Event(kWM_MouseLeave, WLPARAM);
+            ctrl_hover_ = nullptr;
+        }
+        mouse_tracking_ = false;
         break;
     }
     }
 
-    return CallWindowProc(DefWindowProc, hwnd_, v_msg, v_wparam, v_lparam);
+    return CallWindowProc(DefWindowProc, hwnd_, v_msg, WLPARAM);
 }
+#undef DEFPARAM
 
 LRESULT CALLBACK UIWindow::WinProc(HWND v_hwnd, UINT v_msg,
                                    WPARAM v_wparam, LPARAM v_lparam) {
@@ -331,7 +359,7 @@ HWND UIWindow::Create(LPCTSTR v_classname) {
         classname += UStr(++classname_cnt_);
     WNDCLASSEX wce = { 0 };
     wce.cbSize = sizeof(wce);
-    wce.style = CS_HREDRAW | CS_VREDRAW;
+    wce.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
     wce.lpfnWndProc = WinProc;
     wce.cbClsExtra = 0;
     wce.cbWndExtra = 0;
@@ -343,8 +371,8 @@ HWND UIWindow::Create(LPCTSTR v_classname) {
     wce.lpszClassName = classname;
     wce.hIconSm = NULL;
     ATOM nAtom = RegisterClassEx(&wce);
-    if (!nAtom){
-        UIHandleError(kWarning, kRegWndFailed,
+    if (!nAtom) {
+        UIHandleError(kLL_Warning, kEC_RegWndFailed,
                       _T("Register window class failed"));
         return nullptr;
     }

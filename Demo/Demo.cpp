@@ -16,6 +16,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
                       _In_ LPTSTR    lpCmdLine,
                       _In_ int       nCmdShow) {
     UISystem::Init(hInstance);      // Initialize UI library
+    //UIRecLog::SetLogLevel(kRL_Release);     // Set log level
     UIConfig::LoadConfig();         // Load main config
     UIRender::GlobalInit();         // Init render
 

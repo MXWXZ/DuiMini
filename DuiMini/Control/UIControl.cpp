@@ -58,7 +58,7 @@ UIWindow* UIControl::GetBaseWindow() const {
 }
 
 UIControl* UIControl::FindCtrlFromPT(POINT v_pt) {
-    if (PtInRect(&rect_, v_pt))
+    if (PtInRect(v_pt))
         return this;
     else
         return nullptr;
@@ -69,6 +69,22 @@ UIControl * UIControl::FindCtrlFromName(LPCTSTR v_name) {
         return this;
     else
         return nullptr;
+}
+
+void UIControl::Event(WindowMessage v_msg, WPARAM v_wparam, LPARAM v_lparam) {
+    switch (v_msg) {
+    case kWM_LButtonDown:
+    case kWM_LButtonUp:
+    case kWM_LButtonClick:
+    case kWM_LButtonDBClick:
+    case kWM_RButtonDown:
+    case kWM_RButtonUp:
+    case kWM_RButtonClick:
+    case kWM_RButtonDBClick:
+        UIRecLog::RecordLog(kLL_Info, _T("Message hit! Control name:\"%s\",Message:%d"),
+                            GetAttribute(_T("name")).GetData(), v_msg);
+        break;
+    }
 }
 
 int UIControl::GetPosFromStr(LPCTSTR v_str, StrLoc v_loc) const {
@@ -104,14 +120,14 @@ int UIControl::GetPosFromStr(LPCTSTR v_str, StrLoc v_loc) const {
     }
 }
 
-// void UIControl::Event(TEventUI& event) {
-// 
-// }
-
 LPVOID UIControl::GetInterface(LPCTSTR v_name) {
     if (CmpStr(v_name, CTRLNAME_CONTROL))
         return this;
     return nullptr;
+}
+
+bool UIControl::PtInRect(POINT v_pt) {
+    return ::PtInRect(&rect_, v_pt);
 }
 
 RECT UIControl::UpdatePos() {

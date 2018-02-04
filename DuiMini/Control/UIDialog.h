@@ -32,7 +32,7 @@ protected:
     void LoadResAttr() override;
     void LoadTextAttr() override;
 
-private:
+protected:
     UIRenderImage *bgimg_ = nullptr;
 };
 }   // namespace DuiMini

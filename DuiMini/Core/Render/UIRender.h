@@ -11,7 +11,7 @@
 
 namespace DuiMini {
 enum RenderMode {
-    kGDIPlus,
+    kRM_GDIPlus,
 };
 
 class DUIMINI_API UIRenderImage {

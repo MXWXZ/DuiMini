@@ -40,30 +40,41 @@ public:
     virtual UIWindow* GetBaseWindow() const;
     virtual LPVOID GetInterface(LPCTSTR v_name);
 
-    RECT UpdatePos();   // Update pos from attribute
+    /**
+     * Check if point in control rect
+     * @param    POINT v_pt:point
+     * @return   if ctrl contains v_pt ret true.
+     */
+    bool PtInRect(POINT v_pt);
 
     /**
      * fint ctrl cover pt
      * @param    POINT v_pt:point
      * @return   if v_pt is in the ctrl return pointer, otherwise nullptr
+     * This function will return the deepest control pointer contains v_pt.
      */
     virtual UIControl* FindCtrlFromPT(POINT v_pt);
 
     virtual UIControl* FindCtrlFromName(LPCTSTR v_name);
 
 public:
-    // Event
-    // virtual void Event(TEventUI& event);
+    /**
+    * Event
+    * Call base class function if you override them
+    */
+    virtual void Event(WindowMessage v_msg,
+                       WPARAM v_wparam, LPARAM v_lparam);
 
 protected:
     /**
-    * Load attribute feature]
+    * Load attribute feature
     * Call base class function if you override them
     */
     virtual void LoadResAttr();
     virtual void LoadTextAttr();
 
-protected:
+    RECT UpdatePos();   // Update pos from attribute
+
     enum StrLoc {
         left, top, right, bottom
     };

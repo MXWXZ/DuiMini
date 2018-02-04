@@ -26,7 +26,7 @@ bool UIRenderGDIP::GlobalInit() {
     Gdiplus::GdiplusStartupInput gdiplusStartupInput;
     if (Gdiplus::GdiplusStartup(&gdiplus_token,
                                 &gdiplusStartupInput, NULL) != Gdiplus::Ok) {
-        UISetError(kWarning, kThirdPartFail,
+        UISetError(kLL_Warning, kEC_ThirdPartFail,
                    _T("GDI+ GdiplusStartup fail!"));
         return false;
     }
@@ -130,7 +130,7 @@ bool UIRenderGDIP::DrawImage(UIRenderImage* v_img, int v_left,
         return false;
     if (graph_->DrawImage((Gdiplus::Image*)v_img->GetInterface(),
                           v_left, v_top, v_width, v_height) != Gdiplus::Ok) {
-        UISetError(kWarning, kThirdPartFail,
+        UISetError(kLL_Warning, kEC_ThirdPartFail,
                    _T("GDI+ DrawImage fail!"));
         return false;
     }
@@ -157,7 +157,7 @@ bool UIRenderImageGDIP::Load(LPCTSTR v_path) {
     GlobalUnlock(mem);
     IStream *stream = nullptr;
     if (CreateStreamOnHGlobal(buffer, TRUE, &stream) != S_OK) {
-        UISetError(kWarning, kThirdPartFail,
+        UISetError(kLL_Warning, kEC_ThirdPartFail,
                    _T("GDI+ CreateStreamOnHGlobal fail!"));
         return false;
     }

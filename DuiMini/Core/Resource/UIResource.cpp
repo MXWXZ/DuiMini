@@ -15,30 +15,30 @@
 
 namespace DuiMini {
 IUIRes* UIResource::resclass_ = new UIResFile(DEFAULT_RESFOLDER);
-Restype UIResource::restype_ = kFile;
+ResType UIResource::restype_ = kRT_File;
 
 UIResource::~UIResource() {
     delete resclass_;
     resclass_ = nullptr;
 }
 
-void UIResource::SetResType(Restype v_type) {
+void UIResource::SetResType(ResType v_type) {
     restype_ = v_type;
     delete resclass_;
     switch (v_type) {
-    case kFile:
+    case kRT_File:
         resclass_ = new UIResFile();
         break;
-    case kPackage:
+    case kRT_Package:
         resclass_ = new UIResZip();
         break;
-    case kRC:
+    case kRT_RC:
         resclass_ = new UIResRC();
         break;
     }
 }
 
-Restype UIResource::GetResType() {
+ResType UIResource::GetResType() {
     return restype_;
 }
 
@@ -50,7 +50,7 @@ long UIResource::GetFileSize(LPCTSTR v_path) {
         FILE* fp;
         fp = _tfopen(v_path, _T("rb"));
         if (!fp)
-            UIHandleError(kError, kFileFail,
+            UIHandleError(kLL_Error, kEC_FileFail,
                           _T("File \"%s\" can't access!"),
                           v_path);
         fseek(fp, 0, SEEK_END);
@@ -71,7 +71,7 @@ BYTE* UIResource::GetFile(LPCTSTR v_path, BYTE* v_buffer, long v_size) {
         FILE* fp;
         fp = _tfopen(v_path, _T("rb"));
         if (!fp) {
-            UIHandleError(kError, kFileFail,
+            UIHandleError(kLL_Error, kEC_FileFail,
                           _T("File \"%s\" can't access!"),
                           v_path);
             return nullptr;

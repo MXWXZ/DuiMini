@@ -24,7 +24,7 @@ UIControl* UIDlgBuilder::Init(xmlnode v_root, UIWindow* v_wnd) {
     delete ctrl_root_;
     ctrl_root_ = nullptr;
     xml_root_ = v_root;
-    return _Parse(v_wnd, xml_root_);
+    return Parse(v_wnd, xml_root_);
 }
 
 UIControl* UIDlgBuilder::CreateControl(UIControl* v_ctrl,
@@ -34,6 +34,7 @@ UIControl* UIDlgBuilder::CreateControl(UIControl* v_ctrl,
     v_ctrl->SetBaseWindow(v_wnd);
     // Attach to parent (parent must have container attribute)
     if (v_parent) {
+        // must use dynamic_cast!
         IUIContainer* container = dynamic_cast<IUIContainer*>((UIControl*)v_parent->GetInterface(_T("container")));
         if (!container)
             return nullptr;
@@ -52,12 +53,12 @@ UIDialog* UIDlgBuilder::GetCtrlRoot() {
     return ctrl_root_;
 }
 
-UIControl* UIDlgBuilder::_Parse(UIWindow* v_wnd, xmlnode v_root,
+UIControl* UIDlgBuilder::Parse(UIWindow* v_wnd, xmlnode v_root,
                                 UIControl* v_parent/* = nullptr*/) {
     for (xmlnode node = v_root; node != nullptr;
          node = node->next_sibling()) {
         if (!v_parent && !CmpStr(node->name(), CTRLNAME_DIALOG)) {
-            UISetError(kWarning, kCtrlFormatInvalid,
+            UISetError(kLL_Warning, kEC_CtrlFormatInvalid,
                        _T("Dialog control must be the root."));
             return nullptr;
         }
@@ -69,7 +70,7 @@ UIControl* UIDlgBuilder::_Parse(UIWindow* v_wnd, xmlnode v_root,
         {
             if (CmpStr(ctrl_name, CTRLNAME_DIALOG)) {
                 if (v_parent) {
-                    UISetError(kWarning, kCtrlFormatInvalid,
+                    UISetError(kLL_Warning, kEC_CtrlFormatInvalid,
                                _T("Dialog control do not allow nesting."));
                     return nullptr;
                 }
@@ -90,7 +91,7 @@ UIControl* UIDlgBuilder::_Parse(UIWindow* v_wnd, xmlnode v_root,
         }
         // Invalid ctrl name
         if (!new_ctrl) {
-            UISetError(kWarning, kCtrlKindInvalid,
+            UISetError(kLL_Warning, kEC_CtrlKindInvalid,
                        _T("Control Kind \"%s\" invalid"), ctrl_name);
             return nullptr;
         }
@@ -105,7 +106,7 @@ UIControl* UIDlgBuilder::_Parse(UIWindow* v_wnd, xmlnode v_root,
 
         // Add children
         if (node->first_node())
-            _Parse(v_wnd, node->first_node(), new_ctrl);
+            Parse(v_wnd, node->first_node(), new_ctrl);
     }
     return ctrl_root_;
 }

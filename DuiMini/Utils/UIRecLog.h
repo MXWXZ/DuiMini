@@ -11,33 +11,33 @@
 
 namespace DuiMini {
 /**
- * Loglevel definition
- * kInfo:some information(will NOT affect the program)
- * kWarning:some warning(NOT fatal error)
- * kError:fatal error(usually cause exit)
+ * LogLevel definition
+ * kLL_Info:some information(will NOT affect the program)
+ * kLL_Warning:some warning(NOT fatal error)
+ * kLL_Error:fatal error(usually cause exit)
  */
-enum Loglevel {
-    kInfo = 0,
-    kWarning = 1,
-    kError = 2,
+enum LogLevel {
+    kLL_Info = 0,
+    kLL_Warning = 1,
+    kLL_Error = 2,
 };
 
 /**
  * log level wanted to record
- * kDebug:record all logs
- * kBeta:ignore kLoglevel_Info logs
- * kRelease:record ONLY kLoglevel_Error logs
+ * kRL_Debug:record all logs
+ * kRL_Beta:ignore kLoglevel_Info logs
+ * kRL_Release:record ONLY kLoglevel_Error logs
  */
-enum Reclevel {
-    kDebug = 0,
-    kBeta = 1,
-    kRelease = 2,
+enum RecLevel {
+    kRL_Debug = 0,
+    kRL_Beta = 1,
+    kRL_Release = 2,
 };
 
 class DUIMINI_API UIRecLog {
 public:
-    static void SetLogLevel(Reclevel v_record_level);
-    static Reclevel GetLogLevel();
+    static void SetLogLevel(RecLevel v_record_level);
+    static RecLevel GetLogLevel();
 
     static void SetLogFilePath(LPCTSTR v_fullpath);
     static CUStr GetLogFilePath();
@@ -54,10 +54,10 @@ public:
      * Record log(according to format)
      * WARNING: this function WILL AUTOMATICALLY add '\n' at the end
      */
-    static bool RecordLog(Loglevel v_level, LPCTSTR v_text, ...);
+    static bool RecordLog(LogLevel v_level, LPCTSTR v_text, ...);
 
 private:
-    static Reclevel record_level_;
+    static RecLevel record_level_;
     static UStr fullpath_;
 };
 

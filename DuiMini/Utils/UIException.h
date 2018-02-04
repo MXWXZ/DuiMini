@@ -11,37 +11,37 @@
 
 namespace DuiMini {
 enum ErrorCode {
-    kSuccess = 0,
-    kIDInvalid,
-    kCtrlKindInvalid,
-    kCtrlFormatInvalid,
-    kRegWndFailed,
-    kThirdPartFail,
+    kEC_Success = 0,
+    kEC_IDInvalid,
+    kEC_CtrlKindInvalid,
+    kEC_CtrlFormatInvalid,
+    kEC_RegWndFailed,
+    kEC_ThirdPartFail,
 
-    kFatalError,       // greater than this will quit the program
+    kEC_FatalError_,      // greater than this will quit the program
 
-    kFileFail,
+    kEC_FileFail,
 
-    kLogFileFail,     // keep this value at the end
+    kEC_LogFileFail,     // keep this value at the end
 };
 
-typedef bool(*ExtraHandleFun)(Loglevel v_log_level,
+typedef bool(*ExtraHandleFun)(LogLevel v_log_level,
                               ErrorCode v_error_code,
                               UStr v_error_msg);
 
 class DUIMINI_API UIException {
 public:
-    static void SetError(Loglevel v_log_level, ErrorCode v_error_code,
+    static void SetError(LogLevel v_log_level, ErrorCode v_error_code,
                          LPCTSTR v_error_msg, ...);
     static void HandleError();
-    static void HandleError(Loglevel v_log_level, ErrorCode v_error_code,
+    static void HandleError(LogLevel v_log_level, ErrorCode v_error_code,
                             LPCTSTR v_error_msg, ...);
 
     static ErrorCode GetLastError();
     static void SetExtraHandleFun(ExtraHandleFun v_extra_fun);
 
 private:
-    static Loglevel log_level_;
+    static LogLevel log_level_;
     static ErrorCode error_code_;
     static UStr error_msg_;
     static ExtraHandleFun extra_fun_;

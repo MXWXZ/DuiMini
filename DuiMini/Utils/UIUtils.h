@@ -166,19 +166,6 @@ private:
 
 ////////////////////////////////////////
 
-struct DUIMINI_API UIFont {
-    UStr name_;
-    UStr lang_;
-    UStr font_;
-    UINT size_;
-    bool bold_;
-    bool italic_;
-    bool underline_;
-    bool strikeout_;
-};
-
-////////////////////////////////////////
-
 class DUIMINI_API UIPtrArray {
 public:
     explicit UIPtrArray(UINT v_size = 0);

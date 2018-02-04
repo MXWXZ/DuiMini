@@ -38,7 +38,7 @@ long UIResZip::GetFileSize(LPCTSTR v_path) {
             return -1;
     long ret = UIUnzip::LocateZipItem(zipcache_, v_path);
     if (ret == -1)
-        UISetError(kError, kFileFail,
+        UISetError(kLL_Error, kEC_FileFail,
                    _T("File \"%s\" in \"%s\" can't access!"),
                    v_path, fullpath_.GetData());
     return ret;
@@ -49,7 +49,7 @@ bool UIResZip::GetFile(LPCTSTR v_path, BYTE* v_buffer, long v_size) {
         if (!OpenZip())
             return false;
     if (!UIUnzip::UnZipData(zipcache_, v_buffer)) {
-        UISetError(kError, kFileFail,
+        UISetError(kLL_Error, kEC_FileFail,
                    _T("File \"%s\" in \"%s\" can't access!"),
                    v_path, fullpath_.GetData());
         return false;
@@ -60,7 +60,7 @@ bool UIResZip::GetFile(LPCTSTR v_path, BYTE* v_buffer, long v_size) {
 ZFile UIResZip::OpenZip() {
     zipcache_ = UIUnzip::OpenZip(fullpath_);
     if (!zipcache_)
-        UISetError(kError, kFileFail,
+        UISetError(kLL_Error, kEC_FileFail,
                    _T("File \"%s\" can't access!"),
                    fullpath_.GetData());
     return zipcache_;

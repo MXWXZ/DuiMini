@@ -54,7 +54,7 @@ void UIContainer::Paint() {
     }
 }
 UIControl* UIContainer::FindCtrlFromPT(POINT v_pt) {
-    if (!::PtInRect(&rect_, v_pt))
+    if (!PtInRect(v_pt))
         return nullptr;
     for (UINT it = 0; it != item_.GetSize(); ++it) {
         UIControl* ctrl = ((UIControl*)item_[it])->FindCtrlFromPT(v_pt);
