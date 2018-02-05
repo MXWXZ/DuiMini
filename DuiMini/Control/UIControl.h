@@ -65,6 +65,9 @@ public:
     virtual void Event(WindowMessage v_msg,
                        WPARAM v_wparam, LPARAM v_lparam);
 
+    void SetMsgHandler(WindowMessage v_msg, MsgHandleFun v_func);
+    MsgHandleFun GetMsgHandler(WindowMessage v_msg) const;
+
 protected:
     /**
     * Load attribute feature
@@ -91,5 +94,6 @@ protected:
     UIWindow* basewnd_ = nullptr;        // attatch the window
     UIAttr attr_;                        // attribute
     RECT rect_{ 0, 0, 0, 0 };            // control rect
+    MsgHandleFun msgmap_[kWM_End_] = { 0 };     // message map
 };
 }   // namespace DuiMini

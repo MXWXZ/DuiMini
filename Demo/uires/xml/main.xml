@@ -1,0 +1,3 @@
+<dlg name="maindlg" title="[STR_MAIN_TITLE]" pos="|-450,|-275" width="900" height="550" background="[IMG_MAIN_BG]" >
+    <img name="head" pos="|0,|0" size="200,200" file="headimg.jpg" />
+</dlg>

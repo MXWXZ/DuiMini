@@ -10,6 +10,10 @@
 #pragma once
 
 namespace DuiMini {
+#define UIHandleError UIException::HandleError
+#define UISetError UIException::SetError
+#define UIGetLastError UIException::GetLastError
+
 enum ErrorCode {
     kEC_Success = 0,
     kEC_IDInvalid,
@@ -46,8 +50,4 @@ private:
     static UStr error_msg_;
     static ExtraHandleFun extra_fun_;
 };
-
-#define UIHandleError UIException::HandleError
-#define UISetError UIException::SetError
-#define UIGetLastError UIException::GetLastError
 }  // namespace DuiMini

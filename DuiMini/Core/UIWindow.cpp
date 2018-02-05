@@ -55,7 +55,7 @@ UIDlgBuilder* UIWindow::SetDlgBuilder(LPCTSTR v_dlgname) {
     return builder_;
 }
 
-UIDlgBuilder* UIWindow::GetDlgBuilder() {
+UIDlgBuilder* UIWindow::GetDlgBuilder() const {
     return builder_;
 }
 
@@ -68,7 +68,30 @@ void UIWindow::FinishCreateControl(UIControl* v_ctrl) {
     builder_->FinishCreateControl(v_ctrl);
 }
 
-UIRender* UIWindow::GetRender() {
+bool UIWindow::BindMsgHandler(LPCTSTR v_name, WindowMessage v_msg,
+                              MsgHandleFun v_func) const {
+    UIControl* ctrl = builder_->GetCtrlRoot()->FindCtrlFromName(v_name);
+    if (!ctrl) {
+        UIHandleError(kLL_Warning, kEC_IDInvalid,
+                      _T("Ctrl name \"%s\" invalid!"), v_name);
+        return false;
+    }
+    ctrl->SetMsgHandler(v_msg, v_func);
+    return true;
+}
+
+bool UIWindow::UnbindMsgHandler(LPCTSTR v_name, WindowMessage v_msg) const {
+    UIControl* ctrl = builder_->GetCtrlRoot()->FindCtrlFromName(v_name);
+    if (!ctrl) {
+        UIHandleError(kLL_Warning, kEC_IDInvalid,
+                      _T("Ctrl name \"%s\" invalid!"), v_name);
+        return false;
+    }
+    ctrl->SetMsgHandler(v_msg, nullptr);
+    return true;
+}
+
+UIRender* UIWindow::GetRender() const {
     return render_;
 }
 
@@ -94,7 +117,7 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
     UIControl *mousepos_ctrl = nullptr;
     // mouse msg:ctrl_lclick_ or ctrl_rclick_
     UIControl** ctrl_click_tmp = &ctrl_rclick_;
-    WindowMessage mouse_msg = kWM_START_;
+    WindowMessage mouse_msg = kWM_Start_;
     switch (v_msg) {
     case WM_LBUTTONDOWN:
         if (!mouse_msg)mouse_msg = kWM_LButtonDown;
@@ -120,6 +143,7 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
     {
         if (!SetDlgBuilder(dlgname_))
             break;
+        _CtrlBindMsgHandler();
         SendMessage(GetHWND(), WM_PAINT, NULL, NULL);
         break;
     }

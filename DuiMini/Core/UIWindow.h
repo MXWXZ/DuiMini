@@ -13,7 +13,8 @@
 namespace DuiMini {
 enum WindowMessage {
     //      Msg                 WPARAM              LPARAM
-    kWM_START_,        // USELESS
+    kWM_Start_ = 0,    // USELESS
+
     kWM_MouseEnter,    //               WM_MOUSEMOVE
     kWM_MouseLeave,    //                    ...
     kWM_MouseMove,     //                    ...
@@ -25,7 +26,16 @@ enum WindowMessage {
     kWM_RButtonUp,     //                    ...
     kWM_RButtonClick,  //                    ...
     kWM_RButtonDBClick,//                    ...
+
+    kWM_End_           // USELESS
 };
+
+typedef void(UIWindow::*MsgHandleFun)(WPARAM v_wparam, LPARAM v_lparam);
+
+#define MSG_MAP_BEGIN(theclass) virtual void _CtrlBindMsgHandler() { \
+                                    typedef theclass thisclass;
+#define MSG_MAP_END   }
+#define ON_CONTROL_MSG(name, msg, func)   BindMsgHandler(name, msg, static_cast<MsgHandleFun>(&thisclass::func));
 
 class DUIMINI_API UIWindow {
 public:
@@ -94,9 +104,20 @@ public:
     */
     void FinishCreateControl(UIControl* v_ctrl);
 
+    /**
+     * Bind & Unbind message handler
+     * @param    LPCTSTR v_name:ctrl name
+     * @param    WindowMessage v_msg:window message
+     * @param    MsgHandleFun v_func:handler function
+     * @return   true for success
+     */
+    bool BindMsgHandler(LPCTSTR v_name, WindowMessage v_msg,
+                        MsgHandleFun v_func) const;
+    bool UnbindMsgHandler(LPCTSTR v_name, WindowMessage v_msg) const;
+
 public:
-    UIRender* GetRender();
-    UIDlgBuilder* GetDlgBuilder();
+    UIRender* GetRender() const;
+    UIDlgBuilder* GetDlgBuilder() const;
 
 protected:
     /**
@@ -110,6 +131,7 @@ protected:
     UIDlgBuilder* SetDlgBuilder(LPCTSTR v_dlgname);
 
 protected:
+    // window info
     UStr             dlgname_;                 // dlg name
     HWND             hwnd_ = nullptr;          // main window hwnd
     UIDlgBuilder*    builder_ = nullptr;       // dlg builder
@@ -117,10 +139,14 @@ protected:
     RECT             rect_{ 0, 0, 0, 0 };      // window rect
     static int       classname_cnt_;           // auto classname counter
 
+    // Event system
     bool             mouse_tracking_ = false;  // mouse tracking state
     POINT            last_mousepos_{ 0,0 };    // last mouse position
     UIControl*       ctrl_lclick_ = nullptr;   // current left clicked ctrl
     UIControl*       ctrl_rclick_ = nullptr;   // current right clicked ctrl
     UIControl*       ctrl_hover_ = nullptr;    // current hovered ctrl
+
+    MSG_MAP_BEGIN(UIWindow)
+        MSG_MAP_END
 };
 }    // namespace DuiMini

@@ -85,6 +85,17 @@ void UIControl::Event(WindowMessage v_msg, WPARAM v_wparam, LPARAM v_lparam) {
                             GetAttribute(_T("name")).GetData(), v_msg);
         break;
     }
+
+    if (msgmap_[v_msg])
+        (basewnd_->*msgmap_[v_msg])(v_wparam, v_lparam);  // call notify func
+}
+
+void UIControl::SetMsgHandler(WindowMessage v_msg, MsgHandleFun v_func) {
+    msgmap_[v_msg] = v_func;
+}
+
+MsgHandleFun UIControl::GetMsgHandler(WindowMessage v_msg) const {
+    return msgmap_[v_msg];
 }
 
 int UIControl::GetPosFromStr(LPCTSTR v_str, StrLoc v_loc) const {

@@ -1,0 +1,14 @@
+<root>
+    <!-- dlg setting -->
+    <res type="dlg" name="main" file="xml\main.xml" />
+    <!-- skin setting -->
+    <style type="skin" name="default" value="skin\default" default="1" />
+    <style type="skin" name="testskin" value="skin\testskin" />
+    <style type="skin" name="system" value="skin\system" system="1" />
+    <!--language setting（must before font setting)-->
+    <res type="lang" lang="zh-cn" file="string\zh-CN.xml" default="1" />
+    <res type="lang" lang="en-us" file="string\en-US.xml" />
+    <!-- font setting -->
+    <style type="font" lang="zh-cn" name="default" font="Microsoft YaHei UI" size="12" default="1" />
+    <style type="font" lang="en-us" name="default" font="Segoe UI" size="12" default="1" />
+</root>

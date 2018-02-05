@@ -13,4 +13,8 @@ class MainDlg :public UIWindow {
 public:
     MainDlg();
     ~MainDlg();
+
+protected:
+    // override message handler sample
+    LRESULT MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) override;
 };

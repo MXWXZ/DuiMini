@@ -21,12 +21,12 @@ UIAttrSet UIConfig::cfg_font_;
 UIAttrSet UIConfig::res_id_;
 UIAttrSet UIConfig::lang_str_;
 
-#define CFG_BeginAttr  UIAttr now
-#define CFG_EndAttr(x) x.AddAttr(now)
-#define CFG_AddAttrStatic(x, y) now[x] = y
-#define CFG_AddAttr(x) now[x] = tmp.GetAttrValue(x)
-#define CFG_AddAttrDef(x, y) now[x] = tmp.GetAttrValue(x, y)
-#define CFG_CmpAttr(x, y) now[x] == y
+#define CFG_BeginAttr  UIAttr _now
+#define CFG_EndAttr(x) x.AddAttr(_now)
+#define CFG_AddAttrStatic(x, y) _now[x] = y
+#define CFG_AddAttr(x) _now[x] = tmp.GetAttrValue(x)
+#define CFG_AddAttrDef(x, y) _now[x] = tmp.GetAttrValue(x, y)
+#define CFG_CmpAttr(x, y) _now[x] == y
 
 void UIConfig::LoadConfig(LPCTSTR v_relativepath/* = DEFAULT_RESFILE*/) {
     UIXmlLoader config(v_relativepath);
