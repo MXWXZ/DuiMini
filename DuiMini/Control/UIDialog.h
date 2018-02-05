@@ -28,6 +28,8 @@ public:
     void BeforeSetAttribute() override;
     void AfterSetAttribute() override;
 
+    void Event(WindowMessage v_msg, WPARAM v_wparam, LPARAM v_lparam) override;
+
 protected:
     void LoadResAttr() override;
     void LoadTextAttr() override;

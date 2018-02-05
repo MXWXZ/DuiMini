@@ -86,4 +86,12 @@ UIControl* UIContainer::FindCtrlFromName(LPCTSTR v_name) {
     }
     return UIControl::FindCtrlFromName(v_name);
 }
+
+RECT UIContainer::UpdatePos() {
+    for (UINT it = 0; it < item_.GetSize(); ++it) {
+        UIControl* ctrl = reinterpret_cast<UIControl*>(item_[it]);
+        ctrl->UpdatePos();
+    }
+    return UIControl::UpdatePos();
+}
 }   // namespace DuiMini

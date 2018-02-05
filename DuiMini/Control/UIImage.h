@@ -24,9 +24,6 @@ public:
     LPVOID GetInterface(LPCTSTR v_name) override;
     void Paint() override;
 
-public:
-    // virtual void Event(TEventUI& event);
-
 protected:
     void LoadResAttr() override;
 

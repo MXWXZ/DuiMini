@@ -59,6 +59,11 @@ UIDlgBuilder* UIWindow::GetDlgBuilder() const {
     return builder_;
 }
 
+LRESULT UIWindow::SendWindowMessage(UINT v_msg, WPARAM v_wparam,
+                                    LPARAM v_lparam) const {
+    return SendMessage(hwnd_, v_msg, v_wparam, v_lparam);
+}
+
 UIControl* UIWindow::CreateControl(UIControl* v_ctrl,
                                    UIControl* v_parent/* = nullptr*/) {
     return builder_->CreateControl(v_ctrl, this, v_parent);
@@ -102,7 +107,8 @@ UIControl* UIWindow::FindCtrlFromName(LPCTSTR v_name) {
 }
 
 void UIWindow::UpdateWindow() const {
-    SendMessage(hwnd_, WM_PAINT, NULL, NULL);
+    builder_->GetCtrlRoot()->UpdatePos();
+    SendWindowMessage(WM_PAINT, NULL, NULL);
 }
 
 void UIWindow::Run(LPCTSTR v_classname/* = _T("DuiMini")*/) {
@@ -144,7 +150,7 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
         if (!SetDlgBuilder(dlgname_))
             break;
         _CtrlBindMsgHandler();
-        SendMessage(GetHWND(), WM_PAINT, NULL, NULL);
+        UpdateWindow();
         break;
     }
     case WM_DESTROY:
@@ -154,7 +160,7 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
     }
     case WM_CLOSE:
     {
-        DWORD lparam = MAKELONG(last_mousepos_.x, last_mousepos_.y);
+        DWORD lparam = MAKELPARAM(last_mousepos_.x, last_mousepos_.y);
         // send btnup msg to current click ctrl
         if (ctrl_lclick_)
             ctrl_lclick_->Event(kWM_LButtonUp, NULL, lparam);
@@ -241,6 +247,50 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
         mouse_tracking_ = false;
         break;
     }
+    case WM_NCHITTEST:
+    {
+        if (builder_->GetCtrlRoot()->GetAttribute(_T("resizable")).Str2Int()) {
+            POINT pt;
+            pt.x = GET_X_LPARAM(v_lparam);
+            pt.y = GET_Y_LPARAM(v_lparam);
+            ::ScreenToClient(hwnd_, &pt);
+            int border_left = builder_->GetCtrlRoot()->GetAttribute(_T("sizebox_left")).Str2Int();
+            int border_top = builder_->GetCtrlRoot()->GetAttribute(_T("sizebox_top")).Str2Int();
+            int border_right = builder_->GetCtrlRoot()->GetAttribute(_T("sizebox_right")).Str2Int();
+            int border_bottom = builder_->GetCtrlRoot()->GetAttribute(_T("sizebox_bottom")).Str2Int();
+            UStr tmp;
+            tmp.Format(_T("%d,%d"), pt.x, pt.y);
+            SetTitle(tmp);
+            if (pt.x < rect_.left + border_left && pt.y < rect_.top + border_top)
+                return HTTOPLEFT;
+            else if (pt.x > rect_.right - border_right && pt.y < rect_.top + border_top)
+                return HTTOPRIGHT;
+            else if (pt.x<rect_.left + border_left && pt.y>rect_.bottom - border_bottom)
+                return HTBOTTOMLEFT;
+            else if (pt.x > rect_.right - border_right && pt.y > rect_.bottom - border_bottom)
+                return HTBOTTOMRIGHT;
+            else if (pt.x < rect_.left + border_left)
+                return HTLEFT;
+            else if (pt.x > rect_.right - border_right)
+                return HTRIGHT;
+            else if (pt.y < rect_.top + border_top)
+                return HTTOP;
+            else if (pt.y > rect_.bottom - border_bottom)
+                return HTBOTTOM;
+        }
+        break;
+    }
+    case WM_SIZE:
+    {
+        GetClientRect(hwnd_, &rect_);
+
+        UStr pos;
+        pos.Format(_T("0,0,%d,%d"), rect_.right - rect_.left,
+                   rect_.bottom - rect_.top);
+        builder_->GetCtrlRoot()->SetPos(pos);
+        UpdateWindow();
+        break;
+    }
     }
 
     return CallWindowProc(DefWindowProc, hwnd_, v_msg, WLPARAM);
@@ -281,10 +331,7 @@ bool UIWindow::Paint() {
 
 bool UIWindow::ShowWindow(bool v_show /*= true*/,
                           bool v_focus /*= true*/) const {
-    if (!IsWindow(hwnd_))
-        return false;
-    ::ShowWindow(hwnd_, v_show ? (v_focus ? SW_SHOWNORMAL : SW_SHOWNOACTIVATE) : SW_HIDE);
-    return true;
+    return ::ShowWindow(hwnd_, v_show ? (v_focus ? SW_SHOWNORMAL : SW_SHOWNOACTIVATE) : SW_HIDE);
 }
 
 void UIWindow::DoModal() {
@@ -293,6 +340,34 @@ void UIWindow::DoModal() {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
+}
+
+bool UIWindow::AllowWindowMove(bool v_movable/* = true*/) {
+    bool ret = builder_->GetCtrlRoot()->GetAttribute(_T("movable")).Str2Int();
+    builder_->GetCtrlRoot()->SetAttribute(_T("movable"), UStr(v_movable));
+    return ret;
+}
+
+bool UIWindow::AllowWindowResize(bool v_resizable/* = true*/) {
+    bool ret = builder_->GetCtrlRoot()->GetAttribute(_T("resizable")).Str2Int();
+    builder_->GetCtrlRoot()->SetAttribute(_T("resizable"), UStr(v_resizable));
+    return ret;
+}
+
+void UIWindow::SetSizeBox(LPCTSTR v_sizestr) {
+    builder_->GetCtrlRoot()->SetAttribute(_T("sizebox"), v_sizestr);
+    UStr tmp = v_sizestr;
+    int seppos1 = tmp.Find(_T(","));
+    builder_->GetCtrlRoot()->SetAttribute(_T("sizebox_left"), tmp.Left(seppos1));
+    int seppos2 = tmp.Find(_T(","), seppos1 + 1);
+    builder_->GetCtrlRoot()->SetAttribute(_T("sizebox_top"), tmp.Mid(seppos1 + 1, seppos2 - seppos1 - 1));
+    int seppos3 = tmp.Find(_T(","), seppos2 + 1);
+    builder_->GetCtrlRoot()->SetAttribute(_T("sizebox_right"), tmp.Mid(seppos2 + 1, seppos3 - seppos2 - 1));
+    builder_->GetCtrlRoot()->SetAttribute(_T("sizebox_bottom"), tmp.Right(tmp.GetLength() - seppos3 - 1));
+}
+
+void UIWindow::SetCaptionRect(LPCTSTR v_pos) {
+    builder_->GetCtrlRoot()->SetAttribute(_T("caption"), v_pos);
 }
 
 RECT UIWindow::GetWindowPos() const {
@@ -324,19 +399,8 @@ bool UIWindow::SetWindowPos(int v_x, int v_y, int v_width, int v_height) {
 
 bool UIWindow::SetWindowPos(HWND v_insertafter, int v_x, int v_y,
                             int v_width, int v_height, UINT v_flags) {
-    bool ret = ::SetWindowPos(hwnd_, v_insertafter, v_x, v_y,
+    return ::SetWindowPos(hwnd_, v_insertafter, v_x, v_y,
                               v_width, v_height, v_flags);
-    if (ret) {
-        rect_.left = v_x;
-        rect_.top = v_y;
-        rect_.right = v_x + v_width;
-        rect_.bottom = v_y + v_height;
-
-        UStr pos;
-        pos.Format(_T("0,0,%d,%d"), v_width, v_height);
-        builder_->GetCtrlRoot()->SetPos(pos);
-    }
-    return ret;
 }
 
 bool UIWindow::CenterWindow() {
@@ -354,13 +418,10 @@ bool UIWindow::CenterWindow() {
 
 void UIWindow::ShowTaskBar(bool v_show/* = true*/) const {
     LONG style = GetWindowLong(hwnd_, GWL_EXSTYLE);
-    if (v_show) {
+    if (v_show)
         style &= ~WS_EX_TOOLWINDOW;
-        style |= WS_EX_APPWINDOW;
-    } else {
+    else
         style |= WS_EX_TOOLWINDOW;
-        style &= ~WS_EX_APPWINDOW;
-    }
     SetWindowLong(hwnd_, GWL_EXSTYLE, style);
     builder_->GetCtrlRoot()->SetAttribute(_T("appwin"), UStr(v_show));
 }

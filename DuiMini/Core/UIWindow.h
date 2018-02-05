@@ -68,6 +68,11 @@ public:
 
     void DoModal();     // Do modal loop
 
+    bool AllowWindowMove(bool v_movable = true);
+    bool AllowWindowResize(bool v_resizable = true);
+    void SetSizeBox(LPCTSTR v_sizestr);
+    void SetCaptionRect(LPCTSTR v_pos);
+
     RECT GetWindowPos() const;
     bool SetWindowSize(int v_width, int v_height);      // Set width&height
     bool SetWindowPos(int v_x, int v_y);     // Set x&y
@@ -118,6 +123,8 @@ public:
 public:
     UIRender* GetRender() const;
     UIDlgBuilder* GetDlgBuilder() const;
+    LRESULT SendWindowMessage(UINT v_msg, WPARAM v_wparam,
+                              LPARAM v_lparam) const;
 
 protected:
     /**
@@ -132,19 +139,19 @@ protected:
 
 protected:
     // window info
-    UStr             dlgname_;                 // dlg name
-    HWND             hwnd_ = nullptr;          // main window hwnd
-    UIDlgBuilder*    builder_ = nullptr;       // dlg builder
-    UIRender*        render_ = nullptr;        // render
-    RECT             rect_{ 0, 0, 0, 0 };      // window rect
-    static int       classname_cnt_;           // auto classname counter
+    UStr             dlgname_;                    // dlg name
+    HWND             hwnd_ = nullptr;             // main window hwnd
+    UIDlgBuilder*    builder_ = nullptr;          // dlg builder
+    UIRender*        render_ = nullptr;           // render
+    RECT             rect_{ 0, 0, 0, 0 };         // window rect
+    static int       classname_cnt_;              // auto classname counter
 
     // Event system
-    bool             mouse_tracking_ = false;  // mouse tracking state
-    POINT            last_mousepos_{ 0,0 };    // last mouse position
-    UIControl*       ctrl_lclick_ = nullptr;   // current left clicked ctrl
-    UIControl*       ctrl_rclick_ = nullptr;   // current right clicked ctrl
-    UIControl*       ctrl_hover_ = nullptr;    // current hovered ctrl
+    bool             mouse_tracking_ = false;     // mouse tracking state
+    POINT            last_mousepos_{ 0,0 };       // last mouse position
+    UIControl*       ctrl_lclick_ = nullptr;      // current left clicked ctrl
+    UIControl*       ctrl_rclick_ = nullptr;      // current right clicked ctrl
+    UIControl*       ctrl_hover_ = nullptr;       // current hovered ctrl
 
     MSG_MAP_BEGIN(UIWindow)
         MSG_MAP_END

@@ -57,6 +57,8 @@ public:
 
     virtual UIControl* FindCtrlFromName(LPCTSTR v_name);
 
+    virtual RECT UpdatePos();   // Update pos from attribute
+
 public:
     /**
     * Event
@@ -76,8 +78,6 @@ protected:
     virtual void LoadResAttr();
     virtual void LoadTextAttr();
 
-    RECT UpdatePos();   // Update pos from attribute
-
     enum StrLoc {
         left, top, right, bottom
     };
@@ -85,9 +85,11 @@ protected:
      * Parse str to pos
      * @param    LPCTSTR v_str: pos str. e.g. |10
      * @param    StrLoc v_loc: pos location
+     * @param    UIControl* v_parent:parent ctrl, nullptr for auto recognize
      * @return   real pos value
      */
-    virtual int GetPosFromStr(LPCTSTR v_str, StrLoc v_loc) const;
+    virtual int GetPosFromStr(LPCTSTR v_str, StrLoc v_loc,
+                              UIControl* v_parent = nullptr) const;
 
 protected:
     UIControl* parent_ = nullptr;        // control parent

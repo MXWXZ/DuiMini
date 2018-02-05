@@ -28,6 +28,7 @@ public:
     LPVOID GetInterface(LPCTSTR v_name) override;
     UIControl* FindCtrlFromPT(POINT v_pt) override;
     UIControl* FindCtrlFromName(LPCTSTR v_name) override;
+    RECT UpdatePos() override;
 
 protected:
     UIPtrArray item_;

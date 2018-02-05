@@ -98,19 +98,27 @@ MsgHandleFun UIControl::GetMsgHandler(WindowMessage v_msg) const {
     return msgmap_[v_msg];
 }
 
-int UIControl::GetPosFromStr(LPCTSTR v_str, StrLoc v_loc) const {
+int UIControl::GetPosFromStr(LPCTSTR v_str, StrLoc v_loc,
+                             UIControl* v_parent/* = nullptr*/) const {
     CUStr str = v_str;
-    RECT screen{ 0, 0, 0, 0 };
-    if (!parent_) {     // default parent is screen
-        screen.right = GetSystemMetrics(SM_CXSCREEN);
-        screen.bottom = GetSystemMetrics(SM_CYSCREEN);
+    RECT parentrc;
+    if (v_parent) {
+        parentrc = v_parent->GetPos();
+    } else {
+        if (!parent_) {     // default parent is screen
+            parentrc.left = 0;
+            parentrc.top = 0;
+            parentrc.right = GetSystemMetrics(SM_CXSCREEN);
+            parentrc.bottom = GetSystemMetrics(SM_CYSCREEN);
+        } else {
+            parentrc = parent_->GetPos();
+        }
     }
     if (str[0] == '$') {
         return str.Right(str.GetLength() - 1).Str2Int();
     } else if (str[0] == '|') {
         int offset = str.Right(str.GetLength() - 1).Str2Int();
         // ONLY 2nd layer control can be relative to parent
-        RECT parentrc = parent_ ? parent_->GetPos() : screen;
         int center;
         if (v_loc == left || v_loc == right)
             center = (parentrc.left + parentrc.right) / 2;
@@ -119,7 +127,6 @@ int UIControl::GetPosFromStr(LPCTSTR v_str, StrLoc v_loc) const {
         return center + offset;
     } else if (str[0] == '%') {
         int percent = str.Right(str.GetLength() - 1).Str2Int();
-        RECT parentrc = parent_ ? parent_->GetPos() : screen;
         int ret;
         if (v_loc == left || v_loc == right)
             ret = parentrc.left + (parentrc.right - parentrc.left)*percent / 100;
@@ -127,7 +134,23 @@ int UIControl::GetPosFromStr(LPCTSTR v_str, StrLoc v_loc) const {
             ret = parentrc.top + (parentrc.bottom - parentrc.top)*percent / 100;
         return ret;
     } else {
-        return str.Str2Int();
+        int offset = str.Str2Int();
+        if (v_loc == left)
+            return parentrc.left + offset;
+        else if (v_loc == top)
+            return parentrc.top + offset;
+        else if (v_loc == right) {
+            if (str[0] == '-')
+                return parentrc.right + offset;
+            else
+                return parentrc.left + offset;
+        }
+        else {
+            if (str[0] == '-')
+                return parentrc.bottom + offset;
+            else
+                return parentrc.top + offset;
+        }
     }
 }
 
