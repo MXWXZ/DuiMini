@@ -13,8 +13,13 @@ class MainDlg :public UIWindow {
 public:
     MainDlg();
     ~MainDlg();
+    bool FuncName(WPARAM v_wparam, LPARAM v_lparam);
 
 protected:
     // override message handler sample
     LRESULT MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) override;
+
+    MSG_MAP_BEGIN(MainDlg)
+        ON_CONTROL_MSG(_T("head"), kWM_LButtonClick, FuncName);
+        MSG_MAP_END
 };

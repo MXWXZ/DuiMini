@@ -26,6 +26,8 @@ public:
      * DO NOT call it manually! If you must do, call AfterSetAttribute()
      * to prevent some strange act.
      * Call base class function if you override them
+     * BeforeSetAttribute should be at the end,AfterSetAttribute
+     * should be at the first
      */
     virtual void BeforeSetAttribute();  // Init attribute
     virtual void SetAttribute(LPCTSTR v_name, LPCTSTR v_value);
@@ -62,9 +64,9 @@ public:
 public:
     /**
     * Event
-    * Call base class function if you override them
+    * Call base class function at the first if you override them
     */
-    virtual void Event(WindowMessage v_msg,
+    virtual bool Event(WindowMessage v_msg,
                        WPARAM v_wparam, LPARAM v_lparam);
 
     void SetMsgHandler(WindowMessage v_msg, MsgHandleFun v_func);
@@ -73,7 +75,7 @@ public:
 protected:
     /**
     * Load attribute feature
-    * Call base class function if you override them
+    * Call base class function at the end if you override them
     */
     virtual void LoadResAttr();
     virtual void LoadTextAttr();

@@ -18,17 +18,15 @@ public:
     virtual ~UIDialog();
 
 public:
-    virtual bool SetBackground(LPCTSTR v_path);
-
-public:
     LPVOID GetInterface(LPCTSTR v_name) override;
 
-    virtual void PaintBackground();
+    virtual RECT PaintBackground();
+    virtual bool SetBackground(LPCTSTR v_path);
 
     void BeforeSetAttribute() override;
     void AfterSetAttribute() override;
 
-    void Event(WindowMessage v_msg, WPARAM v_wparam, LPARAM v_lparam) override;
+    bool Event(WindowMessage v_msg, WPARAM v_wparam, LPARAM v_lparam) override;
 
 protected:
     void LoadResAttr() override;

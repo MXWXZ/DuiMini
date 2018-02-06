@@ -23,6 +23,8 @@ public:
     bool Load(LPCTSTR v_path);
     bool Release();
     void* GetInterface() const;
+    UINT GetWidth() const;
+    UINT GetHeight() const;
 
 private:
     IUIRenderImage* renderimg_ = nullptr;

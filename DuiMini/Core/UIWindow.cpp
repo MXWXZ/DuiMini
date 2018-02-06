@@ -96,6 +96,26 @@ bool UIWindow::UnbindMsgHandler(LPCTSTR v_name, WindowMessage v_msg) const {
     return true;
 }
 
+bool UIWindow::SetBackground(LPCTSTR v_path) {
+    return builder_->GetCtrlRoot()->SetBackground(v_path);
+}
+
+void UIWindow::SetBGAlpha(ALPHA v_alpha) {
+    builder_->GetCtrlRoot()->SetAttribute(_T("bgalpha"), UStr(v_alpha));
+}
+
+void UIWindow::SetAlpha(ALPHA v_alpha) {
+    builder_->GetCtrlRoot()->SetAttribute(_T("alpha"), UStr(v_alpha));
+}
+
+ALPHA UIWindow::GetBGAlpha() {
+    return (ALPHA)(builder_->GetCtrlRoot()->GetAttribute(_T("bgalpha")).Str2Int());
+}
+
+ALPHA UIWindow::GetAlpha() {
+    return (ALPHA)(builder_->GetCtrlRoot()->GetAttribute(_T("alpha")).Str2Int());
+}
+
 UIRender* UIWindow::GetRender() const {
     return render_;
 }
@@ -179,8 +199,8 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
         if (!mousepos_ctrl)
             break;
         ctrl_click = mousepos_ctrl;
-        mousepos_ctrl->Event(mouse_msg, WLPARAM);
         SetCapture(hwnd_);
+        mousepos_ctrl->Event(mouse_msg, WLPARAM);
         break;
     }
     case WM_LBUTTONUP:
@@ -193,13 +213,13 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
             ctrl_click = nullptr;
             break;
         }
+        ReleaseCapture();
         ctrl_click->Event(mouse_msg, WLPARAM);
         if (v_msg == WM_LBUTTONUP)
             ctrl_click->Event(kWM_LButtonClick, WLPARAM);
         else
             ctrl_click->Event(kWM_RButtonClick, WLPARAM);
         ctrl_click = nullptr;
-        ReleaseCapture();
         break;
     }
     case WM_LBUTTONDBLCLK:
@@ -212,6 +232,15 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
     }
     case WM_MOUSEMOVE:
     {
+        if (!mouse_tracking_) {
+            TRACKMOUSEEVENT tmp;
+            tmp.cbSize = sizeof(tmp);
+            tmp.dwFlags = TME_LEAVE | TME_HOVER;
+            tmp.hwndTrack = hwnd_;
+            tmp.dwHoverTime = 1000;     // 1000 delay time
+            ::TrackMouseEvent(&tmp);
+            mouse_tracking_ = true;
+        }
         last_mousepos_.x = GET_X_LPARAM(v_lparam);
         last_mousepos_.y = GET_Y_LPARAM(v_lparam);
 
@@ -226,25 +255,15 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
         }
         if (mousepos_ctrl)
             mousepos_ctrl->Event(kWM_MouseMove, WLPARAM);
-
-        if (!mouse_tracking_) {
-            TRACKMOUSEEVENT tmp;
-            tmp.cbSize = sizeof(tmp);
-            tmp.dwFlags = TME_LEAVE | TME_HOVER;
-            tmp.hwndTrack = hwnd_;
-            tmp.dwHoverTime = 1000;     // 1000 delay time
-            ::TrackMouseEvent(&tmp);
-            mouse_tracking_ = true;
-        }
         break;
     }
     case WM_MOUSELEAVE:
     {
+        mouse_tracking_ = false;
         if (ctrl_hover_) {      // clear hover control
             ctrl_hover_->Event(kWM_MouseLeave, WLPARAM);
             ctrl_hover_ = nullptr;
         }
-        mouse_tracking_ = false;
         break;
     }
     case WM_NCHITTEST:
@@ -258,9 +277,7 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
             int border_top = builder_->GetCtrlRoot()->GetAttribute(_T("sizebox_top")).Str2Int();
             int border_right = builder_->GetCtrlRoot()->GetAttribute(_T("sizebox_right")).Str2Int();
             int border_bottom = builder_->GetCtrlRoot()->GetAttribute(_T("sizebox_bottom")).Str2Int();
-            UStr tmp;
-            tmp.Format(_T("%d,%d"), pt.x, pt.y);
-            SetTitle(tmp);
+
             if (pt.x < rect_.left + border_left && pt.y < rect_.top + border_top)
                 return HTTOPLEFT;
             else if (pt.x > rect_.right - border_right && pt.y < rect_.top + border_top)

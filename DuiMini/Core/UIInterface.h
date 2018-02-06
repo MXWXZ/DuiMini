@@ -83,5 +83,7 @@ public:
     virtual bool Load(LPCTSTR v_path) = 0;
     virtual bool Release() = 0;
     virtual void* GetInterface() const = 0;
+    virtual UINT GetWidth() const = 0;
+    virtual UINT GetHeight() const = 0;
 };
 }   // namespace DuiMini

@@ -28,6 +28,7 @@ public:
 
 private:
     HDC background_ = NULL;         // background DC
+    RECT bg_rect_{ 0, 0, 0, 0 };    // background rect
     HBITMAP bg_bitmap_ = NULL;      // bitmap on DC
     Gdiplus::Graphics* graph_ = nullptr;    // always nullptr after used
     static ULONG_PTR gdiplus_token;
@@ -42,6 +43,8 @@ public:
     bool Load(LPCTSTR v_path) override;
     bool Release() override;
     void* GetInterface() const override;
+    UINT GetWidth() const override;
+    UINT GetHeight() const override;
 
 private:
     Gdiplus::Image* img_ = nullptr;

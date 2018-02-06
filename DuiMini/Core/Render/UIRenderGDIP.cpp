@@ -72,7 +72,7 @@ bool UIRenderGDIP::Paint(UIWindow* v_wnd) {
         SelectObject(background_, bg_bitmap_);
 
         graph_ = new Gdiplus::Graphics(background_);
-        dlg->PaintBackground();
+        bg_rect_ = dlg->PaintBackground();
         graph_->ReleaseHDC(background_);
         delete graph_;
         graph_ = nullptr;
@@ -87,9 +87,11 @@ bool UIRenderGDIP::Paint(UIWindow* v_wnd) {
     blendfunc.BlendOp = 0;
     blendfunc.BlendFlags = 0;
     blendfunc.AlphaFormat = 1;
-    blendfunc.SourceConstantAlpha = 255;
+    blendfunc.SourceConstantAlpha = v_wnd->GetBGAlpha();
     AlphaBlend(hdctmp, 0, 0, sizewindow.cx, sizewindow.cy,
-               background_, 0, 0, sizewindow.cx, sizewindow.cy, blendfunc);
+               background_, bg_rect_.left, bg_rect_.top,
+               bg_rect_.right - bg_rect_.left,
+               bg_rect_.bottom - bg_rect_.top, blendfunc);
 
     graph_ = new Gdiplus::Graphics(hdctmp);
     v_wnd->GetDlgBuilder()->GetCtrlRoot()->Paint();
@@ -98,7 +100,7 @@ bool UIRenderGDIP::Paint(UIWindow* v_wnd) {
     graph_ = nullptr;
 
     POINT wndpos = { rcwindow.left, rcwindow.top };
-
+    blendfunc.SourceConstantAlpha = v_wnd->GetAlpha();
     HMODULE funinst = LoadLibrary(_T("User32.DLL"));
     typedef BOOL(WINAPI *FUNC)(HWND, HDC, POINT*, SIZE*, HDC, POINT*,
                                  COLORREF, BLENDFUNCTION*, DWORD);
@@ -174,5 +176,17 @@ bool UIRenderImageGDIP::Release() {
 
 void* UIRenderImageGDIP::GetInterface() const {
     return reinterpret_cast<void*>(img_);
+}
+
+UINT UIRenderImageGDIP::GetWidth() const {
+    if (!img_)
+        return 0;
+    return img_->GetWidth();
+}
+
+UINT UIRenderImageGDIP::GetHeight() const {
+    if (!img_)
+        return 0;
+    return img_->GetHeight();
 }
 }    // namespace DuiMini

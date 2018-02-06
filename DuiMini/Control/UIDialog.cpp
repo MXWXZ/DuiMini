@@ -32,10 +32,12 @@ bool UIDialog::SetBackground(LPCTSTR v_path) {
     return false;
 }
 
-void UIDialog::PaintBackground() {
-    basewnd_->GetRender()->DrawImage(bgimg_, 0, 0,
-                                     GetAttribute(_T("width")).Str2Int(),
-                                     GetAttribute(_T("height")).Str2Int());
+RECT UIDialog::PaintBackground() {
+    int width = bgimg_->GetWidth();
+    int height = bgimg_->GetHeight();
+    RECT ret = { 0,0,width,height };
+    basewnd_->GetRender()->DrawImage(bgimg_, 0, 0, width, height);
+    return ret;
 }
 
 void UIDialog::BeforeSetAttribute() {
@@ -46,6 +48,8 @@ void UIDialog::BeforeSetAttribute() {
     SetAttribute(_T("movable"), _T("1"));
     SetAttribute(_T("sizebox"), _T("0,0,0,0"));
     SetAttribute(_T("resizable"), _T("0"));
+    SetAttribute(_T("bgalpha"), _T("255"));
+    SetAttribute(_T("alpha"), _T("255"));
     UIContainer::BeforeSetAttribute();
 }
 
@@ -57,7 +61,9 @@ void UIDialog::AfterSetAttribute() {
         basewnd_->ShowTaskBar(false);
 }
 
-void UIDialog::Event(WindowMessage v_msg, WPARAM v_wparam, LPARAM v_lparam) {
+bool UIDialog::Event(WindowMessage v_msg, WPARAM v_wparam, LPARAM v_lparam) {
+    if (!UIControl::Event(v_msg, v_wparam, v_lparam))
+        return false;
     switch (v_msg) {
     case kWM_LButtonDown:
     {
@@ -80,12 +86,14 @@ void UIDialog::Event(WindowMessage v_msg, WPARAM v_wparam, LPARAM v_lparam) {
             break;
 
         ClientToScreen(basewnd_->GetHWND(), &pt);
+        ReleaseCapture();
         basewnd_->SendWindowMessage(WM_NCLBUTTONDOWN, HTCAPTION,
                                     MAKELPARAM(pt.x, pt.y));
         basewnd_->SendWindowMessage(WM_LBUTTONUP, v_wparam, v_lparam);
         break;
     }
     }
+    return true;
 }
 
 // TODO

@@ -30,7 +30,7 @@ enum WindowMessage {
     kWM_End_           // USELESS
 };
 
-typedef void(UIWindow::*MsgHandleFun)(WPARAM v_wparam, LPARAM v_lparam);
+typedef bool(UIWindow::*MsgHandleFun)(WPARAM v_wparam, LPARAM v_lparam);
 
 #define MSG_MAP_BEGIN(theclass) virtual void _CtrlBindMsgHandler() { \
                                     typedef theclass thisclass;
@@ -119,6 +119,12 @@ public:
     bool BindMsgHandler(LPCTSTR v_name, WindowMessage v_msg,
                         MsgHandleFun v_func) const;
     bool UnbindMsgHandler(LPCTSTR v_name, WindowMessage v_msg) const;
+
+    bool SetBackground(LPCTSTR v_path);
+    void SetBGAlpha(ALPHA v_alpha);
+    void SetAlpha(ALPHA v_alpha);
+    ALPHA GetBGAlpha();
+    ALPHA GetAlpha();
 
 public:
     UIRender* GetRender() const;

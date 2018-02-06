@@ -50,6 +50,18 @@ void* UIRenderImage::GetInterface() const {
     return renderimg_->GetInterface();
 }
 
+UINT UIRenderImage::GetWidth() const {
+    if (!renderimg_)
+        return 0;
+    return renderimg_->GetWidth();
+}
+
+UINT UIRenderImage::GetHeight() const {
+    if (!renderimg_)
+        return 0;
+    return renderimg_->GetHeight();
+}
+
 ////////////////////////////////////////
 
 RenderMode UIRender::render_mode_ = kRM_GDIPlus;

@@ -16,6 +16,11 @@ MainDlg::MainDlg()
 
 MainDlg::~MainDlg() {}
 
+bool MainDlg::FuncName(WPARAM v_wparam, LPARAM v_lparam) {
+    SetWindowSize(1000, 500);
+    return true;
+}
+
 LRESULT MainDlg::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
     switch (v_msg) {
     case WM_RBUTTONDBLCLK:

@@ -71,7 +71,13 @@ UIControl * UIControl::FindCtrlFromName(LPCTSTR v_name) {
         return nullptr;
 }
 
-void UIControl::Event(WindowMessage v_msg, WPARAM v_wparam, LPARAM v_lparam) {
+bool UIControl::Event(WindowMessage v_msg, WPARAM v_wparam, LPARAM v_lparam) {
+    bool ret = true;
+    // call notify func
+    if (msgmap_[v_msg])
+        ret = (basewnd_->*msgmap_[v_msg])(v_wparam, v_lparam);
+    if (!ret)
+        return false;
     switch (v_msg) {
     case kWM_LButtonDown:
     case kWM_LButtonUp:
@@ -85,9 +91,7 @@ void UIControl::Event(WindowMessage v_msg, WPARAM v_wparam, LPARAM v_lparam) {
                             GetAttribute(_T("name")).GetData(), v_msg);
         break;
     }
-
-    if (msgmap_[v_msg])
-        (basewnd_->*msgmap_[v_msg])(v_wparam, v_lparam);  // call notify func
+    return true;
 }
 
 void UIControl::SetMsgHandler(WindowMessage v_msg, MsgHandleFun v_func) {

@@ -42,6 +42,7 @@ typedef rapidxml::xml_node<TCHAR>* xmlnode;
 typedef rapidxml::xml_attribute<TCHAR>* xmlattr;
 
 #define CmpStr(x,y) _tcscmp(x,y) == 0
+typedef unsigned char ALPHA;
 
 #ifdef _UNICODE
 typedef std::wstring tstring;
