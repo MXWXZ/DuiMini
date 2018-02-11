@@ -14,61 +14,137 @@ namespace DuiMini {
 UIDialog::UIDialog() {}
 
 UIDialog::~UIDialog() {
-    delete bgimg_;
-    bgimg_ = nullptr;
 }
 
-bool UIDialog::SetBackground(LPCTSTR v_path) {
-    UIRenderImage* tmp = new UIRenderImage();
-    if (tmp->Load(v_path)) {
-        delete bgimg_;
-        bgimg_ = tmp;
-        SetAttribute(_T("background"), v_path);
-        // once failed, bgimg_ is still the new one(only redraw failed)
-        return basewnd_->GetRender()->RedrawBackground();
-    }
-    delete tmp;
-    tmp = nullptr;
-    return false;
-}
-
-RECT UIDialog::PaintBackground() {
-    int width = bgimg_->GetWidth();
-    int height = bgimg_->GetHeight();
-    RECT ret = { 0,0,width,height };
-    basewnd_->GetRender()->DrawImage(bgimg_, 0, 0, width, height);
+bool UIDialog::AllowWindowMove(BOOL v_movable/* = TRUE*/) {
+    bool ret = GetAttribute(_T("movable")).Str2Int();
+    if (v_movable >= 0)
+        SetAttribute(_T("movable"), UStr(v_movable));
     return ret;
 }
 
-void UIDialog::BeforeSetAttribute() {
-    SetAttribute(_T("background"), _T(""));
-    SetAttribute(_T("title"), _T(""));
-    SetAttribute(_T("appwin"), _T("1"));
-    SetAttribute(_T("caption"), _T("0,0,-0,-0"));
-    SetAttribute(_T("movable"), _T("1"));
-    SetAttribute(_T("sizebox"), _T("0,0,0,0"));
-    SetAttribute(_T("resizable"), _T("0"));
-    SetAttribute(_T("bgalpha"), _T("255"));
-    SetAttribute(_T("alpha"), _T("255"));
-    UIContainer::BeforeSetAttribute();
+bool UIDialog::AllowWindowResize(BOOL v_resizable/* = TRUE*/) {
+    bool ret = GetAttribute(_T("resizable")).Str2Int();
+    if (v_resizable >= 0)
+        SetAttribute(_T("resizable"), UStr(v_resizable));
+    return ret;
+}
+
+void UIDialog::SetSizeBox(LPCTSTR v_sizestr) {
+    SetAttribute(_T("sizebox"), v_sizestr);
+    UStr tmp = v_sizestr;
+    int seppos1 = tmp.Find(_T(","));
+    SetAttribute(_T("sizebox_left"), tmp.Left(seppos1));
+    int seppos2 = tmp.Find(_T(","), seppos1 + 1);
+    SetAttribute(_T("sizebox_top"), tmp.Mid(seppos1 + 1, seppos2 - seppos1 - 1));
+    int seppos3 = tmp.Find(_T(","), seppos2 + 1);
+    SetAttribute(_T("sizebox_right"), tmp.Mid(seppos2 + 1, seppos3 - seppos2 - 1));
+    SetAttribute(_T("sizebox_bottom"), tmp.Right(tmp.GetLength() - seppos3 - 1));
+}
+
+CUStr UIDialog::GetSizeBox() const {
+    return GetAttribute(_T("sizebox"));
+}
+
+void UIDialog::SetCaptionRect(LPCTSTR v_pos) {
+    SetAttribute(_T("caption"), v_pos);
+    UStr tmp = v_pos;
+    int seppos1 = tmp.Find(_T(","));
+    caption_rect_.left = GetPosFromStr(tmp.Left(seppos1), left, this);
+    int seppos2 = tmp.Find(_T(","), seppos1 + 1);
+    caption_rect_.top = GetPosFromStr(tmp.Mid(seppos1 + 1, seppos2 - seppos1 - 1), top, this);
+    int seppos3 = tmp.Find(_T(","), seppos2 + 1);
+    caption_rect_.right = GetPosFromStr(tmp.Mid(seppos2 + 1, seppos3 - seppos2 - 1), right, this);
+    caption_rect_.bottom = GetPosFromStr(tmp.Right(tmp.GetLength() - seppos3 - 1), bottom, this);
+}
+
+RECT UIDialog::GetCaptionRect() const {
+    return caption_rect_;
+}
+
+CUStr UIDialog::GetTitle() const {
+    return GetAttribute(_T("title"));
+}
+
+void UIDialog::SetTitle(LPCTSTR v_title) {
+    SetWindowText(basewnd_->GetHWND(), v_title);
+    SetAttribute(_T("title"), v_title);
+}
+
+CUStr UIDialog::GetBackground() const {
+    return GetAttribute(_T("background"));
+}
+
+bool UIDialog::SetBackground(LPCTSTR v_path) {
+    if (bgimg_->SetFile(v_path)) {
+        SetAttribute(_T("background"), v_path);
+        return basewnd_->GetRender()->RedrawBackground();
+    }
+    return false;
+}
+
+bool UIDialog::ShowTaskBar(BOOL v_show/* = TRUE*/) {
+    bool ret = GetAttribute(_T("appwin")).Str2Int();
+    if (v_show >= 0) {
+        LONG style = GetWindowLong(basewnd_->GetHWND(), GWL_EXSTYLE);
+        if (v_show == TRUE)
+            style &= ~WS_EX_TOOLWINDOW;
+        else
+            style |= WS_EX_TOOLWINDOW;
+        SetWindowLong(basewnd_->GetHWND(), GWL_EXSTYLE, style);
+        SetAttribute(_T("appwin"), UStr(v_show));
+    }
+    return ret;
+}
+
+void UIDialog::SetBGAlpha(ALPHA v_alpha) {
+    SetAttribute(_T("bgalpha"), UStr(v_alpha));
+}
+
+void UIDialog::SetAlpha(ALPHA v_alpha) {
+    SetAttribute(_T("alpha"), UStr(v_alpha));
+}
+
+ALPHA UIDialog::GetBGAlpha() const {
+    return (ALPHA)(GetAttribute(_T("bgalpha")).Str2Int());
+}
+
+ALPHA UIDialog::GetAlpha() const {
+    return (ALPHA)(GetAttribute(_T("alpha")).Str2Int());
+}
+
+RECT UIDialog::PaintBackground() {
+    RECT tmp = bgimg_->GetPos();
+    bgimg_->Paint();
+    return tmp;
 }
 
 void UIDialog::AfterSetAttribute() {
+    // Init ctrl
+    if (bgimg_)
+        Remove(bgimg_);
+    bgimg_ = new UIImage;
+    basewnd_->CreateControl(bgimg_, this);
+    bgimg_->SetAttribute(_T("pos"), _T("0,0,-0,-0"));
+    bgimg_->SetAttribute(_T("file"), GetBackground());
+    bgimg_->SetIndependent(FALSE);
+    basewnd_->FinishCreateControl(bgimg_);
+
     UIContainer::AfterSetAttribute();
     basewnd_->SetWindowPos(GetPos());   // Init dlg pos
-    basewnd_->SetSizeBox(GetAttribute(_T("sizebox")));
-    if (GetAttribute(_T("appwin")) == _T("0"))
-        basewnd_->ShowTaskBar(false);
+    SetSizeBox(GetSizeBox());           // Init size box
+    if (!ShowTaskBar(-1))
+        ShowTaskBar(FALSE);
 }
 
 bool UIDialog::Event(WindowMessage v_msg, WPARAM v_wparam, LPARAM v_lparam) {
-    if (!UIControl::Event(v_msg, v_wparam, v_lparam))
+    if (!UIContainer::Event(v_msg, v_wparam, v_lparam))
         return false;
     switch (v_msg) {
     case kWM_LButtonDown:
     {
         // move window
-        if (!GetAttribute(_T("movable")).Str2Int())
+        if (!AllowWindowMove(-1))
             break;
         RECT test;
         UStr tmp = GetAttribute(_T("caption"));
@@ -96,15 +172,14 @@ bool UIDialog::Event(WindowMessage v_msg, WPARAM v_wparam, LPARAM v_lparam) {
     return true;
 }
 
-// TODO
-void UIDialog::LoadResAttr() {
-    SetBackground(GetAttrFile(_T("background")));
-    UIContainer::LoadResAttr();
+void UIDialog::OnSkinChange(SKINID v_former, SKINID v_new) {
+    SetBackground(GetAttrPath(GetBackground()));
+    UIContainer::OnSkinChange(v_former, v_new);
 }
 
-void UIDialog::LoadTextAttr() {
-    basewnd_->SetTitle(GetAttrStr(_T("title")));
-    UIContainer::LoadTextAttr();
+void UIDialog::OnLangChange(LANGID v_former, LANGID v_new) {
+    SetTitle(GetAttrStr(GetTitle()));
+    UIContainer::OnLangChange(v_former, v_new);
 }
 
 LPVOID UIDialog::GetInterface(LPCTSTR v_name) {

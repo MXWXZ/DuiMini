@@ -45,7 +45,7 @@ bool UIRenderGDIP::Paint(UIWindow* v_wnd) {
     RECT rcwindow;
     GetWindowRect(hwnd, &rcwindow);
     SIZE sizewindow;
-    UIDialog* dlg = v_wnd->GetDlgBuilder()->GetCtrlRoot();
+    UIDialog* dlg = v_wnd->GetDialog();
 
     RECT pos = dlg->GetPos();
     sizewindow.cx = pos.right - pos.left;
@@ -87,20 +87,20 @@ bool UIRenderGDIP::Paint(UIWindow* v_wnd) {
     blendfunc.BlendOp = 0;
     blendfunc.BlendFlags = 0;
     blendfunc.AlphaFormat = 1;
-    blendfunc.SourceConstantAlpha = v_wnd->GetBGAlpha();
+    blendfunc.SourceConstantAlpha = v_wnd->GetDialog()->GetBGAlpha();
     AlphaBlend(hdctmp, 0, 0, sizewindow.cx, sizewindow.cy,
                background_, bg_rect_.left, bg_rect_.top,
                bg_rect_.right - bg_rect_.left,
                bg_rect_.bottom - bg_rect_.top, blendfunc);
 
     graph_ = new Gdiplus::Graphics(hdctmp);
-    v_wnd->GetDlgBuilder()->GetCtrlRoot()->Paint();
+    v_wnd->GetDialog()->Paint();
     graph_->ReleaseHDC(hdctmp);
     delete graph_;
     graph_ = nullptr;
 
     POINT wndpos = { rcwindow.left, rcwindow.top };
-    blendfunc.SourceConstantAlpha = v_wnd->GetAlpha();
+    blendfunc.SourceConstantAlpha = v_wnd->GetDialog()->GetAlpha();
     HMODULE funinst = LoadLibrary(_T("User32.DLL"));
     typedef BOOL(WINAPI *FUNC)(HWND, HDC, POINT*, SIZE*, HDC, POINT*,
                                  COLORREF, BLENDFUNCTION*, DWORD);

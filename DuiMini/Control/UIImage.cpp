@@ -31,9 +31,8 @@ bool UIImage::SetFile(LPCTSTR v_path) {
     return false;
 }
 
-void UIImage::BeforeSetAttribute() {
-    SetAttribute(_T("file"), _T(""));
-    UIControl::BeforeSetAttribute();
+CUStr UIImage::GetFile() const {
+    return GetAttribute(_T("file"));
 }
 
 LPVOID UIImage::GetInterface(LPCTSTR v_name) {
@@ -48,9 +47,9 @@ void UIImage::Paint() {
                                      rect_.bottom - rect_.top);
 }
 
-void UIImage::LoadResAttr() {
-    SetFile(GetAttrFile(_T("file")));
-    UIControl::LoadResAttr();
+void UIImage::OnSkinChange(SKINID v_former, SKINID v_new) {
+    SetFile(GetAttrPath(GetFile()));
+    UIControl::OnSkinChange(v_former, v_new);
 }
 
 }   // namespace DuiMini

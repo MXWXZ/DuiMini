@@ -23,6 +23,9 @@ struct DUIMINI_API UIFont {
 
 ////////////////////////////////////////
 
+#define GetAttrPath(x) UIConfig::GetStrPath(x)
+#define GetAttrStr(x) UIConfig::TranslateStr(x)
+
 class DUIMINI_API UIConfig {
 public:
     /**
@@ -32,32 +35,18 @@ public:
     */
     static void LoadConfig(LPCTSTR v_relativepath = DEFAULT_RESFILE);
 
-    /**
-    * Get config
-    * @return   UIAttrSet structure point
-    */
-    static UIAttrSet* GetLang();
-    static UIAttrSet* GetFont();
-    static UIAttrSet* GetSkin();
-    static UIAttrSet* GetDlg();
-    static UIAttrSet* GetResid();
-    static UIAttrSet* GetLangstr();
-
-    /**
-    * Get Shown config
-    */
-    static UINT GetCFGShownLang();
-    static UINT GetCFGShownFont();
-    static UINT GetCFGShownSkin();
+    // Get Shown lang config
+    static LANGID GetShownLang();
+    static FONTID GetShownFont();
+    static SKINID GetShownSkin();
 
     /**
     * Set Shown Config
-    * @param    UINT v_id:config id
-    * @return   new config id
+    * @param    v_id:config id
     */
-    static UINT SetShownLang(UINT v_id);
-    static UINT SetShownFont(UINT v_id);
-    static UINT SetShownSkin(UINT v_id);
+    static void SetShownLang(LANGID v_id);
+    static void SetShownFont(FONTID v_id);
+    static void SetShownSkin(SKINID v_id);
 
     /**
     * Find dlg config
@@ -65,6 +54,7 @@ public:
     * @return   dlg attr structure, nullptr for not find
     */
     static UIAttr* FindDlg(LPCTSTR v_name);
+    static CUStr FindDlgFile(LPCTSTR v_name);       // return file directly
 
     /**
     * Find resid
@@ -76,29 +66,29 @@ public:
 
     /**
      * Get real file path from str(resid or path)
-     * @param    LPCTSTR v_str:resid or path
+     * @param    LPCTSTR v_str:str need to get path
      * @return   relative path, empty for not find
      * This function will check '[' at the beginning and ']' at the end
      * to distinguish resid and path, please use "[resid]" to represent
      * you want to use resid.
      */
-    static CUStr GetStrFile(LPCTSTR v_str);
+    static CUStr GetStrPath(LPCTSTR v_str);
 
     /**
-     * Find language str
+     * Find language string map
      * @param    LPCTSTR v_name:str name
      * @return   langstr attr structure, nullptr for not find
      */
-    static UIAttr* FindLangstr(LPCTSTR v_name);
-    static CUStr FindLangstrValue(LPCTSTR v_name);
+    static UIAttr* FindLangMap(LPCTSTR v_name);
+    static CUStr FindLangMapValue(LPCTSTR v_name);    // return value directly
 
     /**
-    * Get real string from string(language string or string)
-    * @param    LPCTSTR v_str:langstr or str
-    * @return   real string, if langstr not find, return itself.
+    * Translate string from string(langstr or plain string)
+    * @param    LPCTSTR v_str:str need to translate
+    * @return   translated string, if langstr not find, return v_str.
     * This function will check '[' at the beginning and ']' at the end
-    * to distinguish langstr and str, please use "[langstr]" to represent
-    * you want to use langstr.
+    * to distinguish langstr and plain str, please use "[langstr]"
+    * to represent you want to use langstr.
     *
     * If your string is like "[string]"(started with '[' and ends in ']')
     * and you dont want to parse it as langstr, you must change the beginning
@@ -106,22 +96,19 @@ public:
     * e.g. if you want to use "[[abc[def]" as a string other than langstr,
     * you must write it like "\[[abc[def]"
     */
-    static CUStr GetStrStr(LPCTSTR v_str);
+    static CUStr TranslateStr(LPCTSTR v_str);
 
 private:
-    static UIAttrSet cfg_dlg_;        // dlg config
+    static UIAttrSet dlg_;            // dlg config
 
-    static UINT cfg_shownlang_;       // shown lang
-    static UINT cfg_shownskin_;       // shown skin
-    static UINT cfg_shownfont_;       // shown font
-    static UIAttrSet cfg_lang_;       // language config
-    static UIAttrSet cfg_skin_;       // skin config
-    static UIAttrSet cfg_font_;       // font config
+    static LANGID shownlang_;         // shown lang
+    static SKINID shownskin_;         // shown skin
+    static FONTID shownfont_;         // shown font
+    static UIAttrSet lang_;           // language config
+    static UIAttrSet skin_;           // skin config
+    static UIAttrSet font_;           // font config
 
     static UIAttrSet res_id_;         // shown skin resid
     static UIAttrSet lang_str_;       // shown language str
 };
-
-#define GetAttrFile(x) UIConfig::GetStrFile(GetAttribute(x))
-#define GetAttrStr(x) UIConfig::GetStrStr(GetAttribute(x))
 }   // namespace DuiMini

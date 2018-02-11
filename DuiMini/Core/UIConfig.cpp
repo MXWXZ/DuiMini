@@ -11,13 +11,13 @@
 #include "UIConfig.h"
 
 namespace DuiMini {
-UIAttrSet UIConfig::cfg_dlg_;
-UINT   UIConfig::cfg_shownskin_ = 0;
-UINT   UIConfig::cfg_shownlang_ = 0;
-UINT   UIConfig::cfg_shownfont_ = 0;
-UIAttrSet UIConfig::cfg_lang_;
-UIAttrSet UIConfig::cfg_skin_;
-UIAttrSet UIConfig::cfg_font_;
+UIAttrSet UIConfig::dlg_;
+SKINID    UIConfig::shownskin_ = 0;
+LANGID    UIConfig::shownlang_ = 0;
+FONTID    UIConfig::shownfont_ = 0;
+UIAttrSet UIConfig::lang_;
+UIAttrSet UIConfig::skin_;
+UIAttrSet UIConfig::font_;
 UIAttrSet UIConfig::res_id_;
 UIAttrSet UIConfig::lang_str_;
 
@@ -45,10 +45,10 @@ void UIConfig::LoadConfig(LPCTSTR v_relativepath/* = DEFAULT_RESFILE*/) {
                 CFG_AddAttrDef(_T("system"), 0);
                 if (CFG_CmpAttr(_T("system"), _T("1")))
                     CFG_AddAttrStatic(_T("default"), _T("0"));
-                CFG_EndAttr(cfg_skin_);
+                CFG_EndAttr(skin_);
                 if (CFG_CmpAttr(_T("system"), _T("0")) &&
                     CFG_CmpAttr(_T("default"), _T("1")))
-                    SetShownSkin(cfg_skin_.GetSize() - 1);
+                    SetShownSkin(skin_.GetSize());
             }
 
             // font config
@@ -63,10 +63,10 @@ void UIConfig::LoadConfig(LPCTSTR v_relativepath/* = DEFAULT_RESFILE*/) {
                 CFG_AddAttrDef(_T("underline"), 0);
                 CFG_AddAttrDef(_T("strikeout"), 0);
                 CFG_AddAttrDef(_T("default"), 0);
-                CFG_EndAttr(cfg_font_);
+                CFG_EndAttr(font_);
                 if (CFG_CmpAttr(_T("default"), _T("1")) &&
-                    CFG_CmpAttr(_T("lang"), cfg_lang_[cfg_shownlang_][_T("lang")]))
-                    SetShownFont(cfg_font_.GetSize() - 1);
+                    CFG_CmpAttr(_T("lang"), lang_[shownlang_][_T("lang")]))
+                    SetShownFont(font_.GetSize());
             }
         }
 
@@ -77,7 +77,7 @@ void UIConfig::LoadConfig(LPCTSTR v_relativepath/* = DEFAULT_RESFILE*/) {
                 CFG_BeginAttr;
                 CFG_AddAttr(_T("name"));
                 CFG_AddAttr(_T("file"));
-                CFG_EndAttr(cfg_dlg_);
+                CFG_EndAttr(dlg_);
             }
             // lang config
             if (tmp.CmpAttrValue(_T("type"), _T("lang"))) {
@@ -85,54 +85,30 @@ void UIConfig::LoadConfig(LPCTSTR v_relativepath/* = DEFAULT_RESFILE*/) {
                 CFG_AddAttr(_T("lang"));
                 CFG_AddAttr(_T("file"));
                 CFG_AddAttrDef(_T("default"), 0);
-                CFG_EndAttr(cfg_lang_);
+                CFG_EndAttr(lang_);
                 if (CFG_CmpAttr(_T("default"), _T("1")))
-                    SetShownLang(cfg_lang_.GetSize() - 1);
+                    SetShownLang(lang_.GetSize());
             }
         }
     }
 }
 
-UIAttrSet* UIConfig::GetLang() {
-    return &cfg_lang_;
+LANGID UIConfig::GetShownLang() {
+    return shownlang_;
 }
 
-UIAttrSet* UIConfig::GetFont() {
-    return &cfg_font_;
+FONTID UIConfig::GetShownFont() {
+    return shownfont_;
 }
 
-UIAttrSet* UIConfig::GetSkin() {
-    return &cfg_skin_;
-}
-
-UIAttrSet* UIConfig::GetDlg() {
-    return &cfg_dlg_;
-}
-
-UIAttrSet* UIConfig::GetResid() {
-    return &res_id_;
-}
-
-UIAttrSet* UIConfig::GetLangstr() {
-    return &lang_str_;
-}
-
-UINT UIConfig::GetCFGShownLang() {
-    return cfg_shownlang_;
-}
-
-UINT UIConfig::GetCFGShownFont() {
-    return cfg_shownfont_;
-}
-
-UINT UIConfig::GetCFGShownSkin() {
-    return cfg_shownskin_;
+SKINID UIConfig::GetShownSkin() {
+    return shownskin_;
 }
 
 // TODO
-UINT UIConfig::SetShownLang(UINT v_id) {
+void UIConfig::SetShownLang(LANGID v_id) {
     lang_str_.Clear();
-    UIXmlLoader file(cfg_lang_[v_id][_T("file")]);
+    UIXmlLoader file(lang_[v_id - 1][_T("file")]);
     for (xmlnode node = file.GetRoot()->first_node();
          node != nullptr;
          node = node->next_sibling()) {
@@ -142,18 +118,16 @@ UINT UIConfig::SetShownLang(UINT v_id) {
         CFG_AddAttr(_T("value"));
         CFG_EndAttr(lang_str_);
     }
-    cfg_shownlang_ = v_id;
-    return cfg_shownlang_;
+    shownlang_ = v_id;
 }
 
-UINT UIConfig::SetShownFont(UINT v_id) {
-    cfg_shownfont_ = v_id;
-    return cfg_shownfont_;
+void UIConfig::SetShownFont(FONTID v_id) {
+    shownfont_ = v_id;
 }
 
-UINT UIConfig::SetShownSkin(UINT v_id) {
+void UIConfig::SetShownSkin(SKINID v_id) {
     res_id_.Clear();
-    UIXmlLoader file(cfg_skin_[v_id][_T("value")] + _T("\\resid.xml"));
+    UIXmlLoader file(skin_[v_id - 1][_T("value")] + _T("\\resid.xml"));
     for (xmlnode node = file.GetRoot()->first_node();
          node != nullptr;
          node = node->next_sibling()) {
@@ -164,17 +138,24 @@ UINT UIConfig::SetShownSkin(UINT v_id) {
         CFG_AddAttr(_T("file"));
         CFG_EndAttr(res_id_);
     }
-    cfg_shownskin_ = v_id;
-    return cfg_shownskin_;
+    shownskin_ = v_id;
 }
 
 UIAttr* UIConfig::FindDlg(LPCTSTR v_name) {
-    int ret = cfg_dlg_.FindNextAttr(0, _T("name"), v_name);
+    int ret = dlg_.FindNextAttr(0, _T("name"), v_name);
     if (ret != -1)
-        return &cfg_dlg_[ret];
+        return &dlg_[ret];
     UIHandleError(kLL_Warning, kEC_IDInvalid,
                   _T("Config dlg name %s invalid!"), v_name);
     return nullptr;
+}
+
+CUStr UIConfig::FindDlgFile(LPCTSTR v_name) {
+    UIAttr* tmp = FindDlg(v_name);
+    if (tmp)
+        return tmp->GetValue(_T("file"));
+    else
+        return CUStr();
 }
 
 UIAttr* UIConfig::FindResid(LPCTSTR v_name) {
@@ -185,15 +166,16 @@ UIAttr* UIConfig::FindResid(LPCTSTR v_name) {
                   _T("Config resid name %s invalid!"), v_name);
     return nullptr;
 }
+
 CUStr UIConfig::FindResidFile(LPCTSTR v_name) {
     UIAttr* resid = FindResid(v_name);
-    if (!resid)
-        return CUStr();
-    else
+    if (resid)
         return resid->GetValue(_T("file"));
+    else
+        return CUStr();
 }
 
-CUStr UIConfig::GetStrFile(LPCTSTR v_str) {
+CUStr UIConfig::GetStrPath(LPCTSTR v_str) {
     CUStr str = v_str;
     int len = str.GetLength();
     if (len == 0)
@@ -204,7 +186,7 @@ CUStr UIConfig::GetStrFile(LPCTSTR v_str) {
         return str;
 }
 
-UIAttr* UIConfig::FindLangstr(LPCTSTR v_name) {
+UIAttr* UIConfig::FindLangMap(LPCTSTR v_name) {
     int ret = lang_str_.FindNextAttr(0, _T("name"), v_name);
     if (ret != -1)
         return &lang_str_[ret];
@@ -213,21 +195,21 @@ UIAttr* UIConfig::FindLangstr(LPCTSTR v_name) {
     return nullptr;
 }
 
-CUStr UIConfig::FindLangstrValue(LPCTSTR v_name) {
-    UIAttr* langstr = FindLangstr(v_name);
+CUStr UIConfig::FindLangMapValue(LPCTSTR v_name) {
+    UIAttr* langstr = FindLangMap(v_name);
     if (!langstr)
         return CUStr();
     else
         return langstr->GetValue(_T("value"));
 }
 
-CUStr UIConfig::GetStrStr(LPCTSTR v_str) {
+CUStr UIConfig::TranslateStr(LPCTSTR v_str) {
     UStr str = v_str;
     int len = str.GetLength();
     if (len == 0)
         return CUStr();
     if (str[0] == '[' && str[len - 1] == ']')
-        return FindLangstrValue(str.Mid(1, len - 2));
+        return FindLangMapValue(str.Mid(1, len - 2));
     else if(str[0]=='\\' && str[1]=='[' && str[len - 1] == ']')
         return str.Mid(1, len - 1);
     else

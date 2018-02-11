@@ -29,6 +29,10 @@ UIWindow::~UIWindow() {
     render_ = nullptr;
 }
 
+UIDialog* UIWindow::GetDialog() const {
+    return builder_->GetCtrlRoot();
+}
+
 HWND UIWindow::GetHWND() const {
     return hwnd_;
 }
@@ -46,10 +50,10 @@ UIDlgBuilder* UIWindow::SetDlgBuilder(LPCTSTR v_dlgname) {
     if (builder_)
         return nullptr;
     builder_ = new UIDlgBuilder;
-    UIAttr* dlgattr = UIConfig::FindDlg(v_dlgname);
-    if (!dlgattr)
+    UStr dlg_file = UIConfig::FindDlgFile(v_dlgname);
+    if (dlg_file.IsEmpty())
         return nullptr;
-    UIXmlLoader config(dlgattr->GetValue(_T("file")));
+    UIXmlLoader config(dlg_file);
     builder_->Init(config.GetRoot(), this);
     UIHandleError();
     return builder_;
@@ -75,7 +79,7 @@ void UIWindow::FinishCreateControl(UIControl* v_ctrl) {
 
 bool UIWindow::BindMsgHandler(LPCTSTR v_name, WindowMessage v_msg,
                               MsgHandleFun v_func) const {
-    UIControl* ctrl = builder_->GetCtrlRoot()->FindCtrlFromName(v_name);
+    UIControl* ctrl = GetDialog()->FindCtrlFromName(v_name);
     if (!ctrl) {
         UIHandleError(kLL_Warning, kEC_IDInvalid,
                       _T("Ctrl name \"%s\" invalid!"), v_name);
@@ -86,7 +90,7 @@ bool UIWindow::BindMsgHandler(LPCTSTR v_name, WindowMessage v_msg,
 }
 
 bool UIWindow::UnbindMsgHandler(LPCTSTR v_name, WindowMessage v_msg) const {
-    UIControl* ctrl = builder_->GetCtrlRoot()->FindCtrlFromName(v_name);
+    UIControl* ctrl = GetDialog()->FindCtrlFromName(v_name);
     if (!ctrl) {
         UIHandleError(kLL_Warning, kEC_IDInvalid,
                       _T("Ctrl name \"%s\" invalid!"), v_name);
@@ -96,26 +100,6 @@ bool UIWindow::UnbindMsgHandler(LPCTSTR v_name, WindowMessage v_msg) const {
     return true;
 }
 
-bool UIWindow::SetBackground(LPCTSTR v_path) {
-    return builder_->GetCtrlRoot()->SetBackground(v_path);
-}
-
-void UIWindow::SetBGAlpha(ALPHA v_alpha) {
-    builder_->GetCtrlRoot()->SetAttribute(_T("bgalpha"), UStr(v_alpha));
-}
-
-void UIWindow::SetAlpha(ALPHA v_alpha) {
-    builder_->GetCtrlRoot()->SetAttribute(_T("alpha"), UStr(v_alpha));
-}
-
-ALPHA UIWindow::GetBGAlpha() {
-    return (ALPHA)(builder_->GetCtrlRoot()->GetAttribute(_T("bgalpha")).Str2Int());
-}
-
-ALPHA UIWindow::GetAlpha() {
-    return (ALPHA)(builder_->GetCtrlRoot()->GetAttribute(_T("alpha")).Str2Int());
-}
-
 UIRender* UIWindow::GetRender() const {
     return render_;
 }
@@ -123,11 +107,11 @@ UIRender* UIWindow::GetRender() const {
 UIControl* UIWindow::FindCtrlFromName(LPCTSTR v_name) {
     if (!builder_)
         return nullptr;
-    return builder_->GetCtrlRoot()->FindCtrlFromName(v_name);
+    return GetDialog()->FindCtrlFromName(v_name);
 }
 
 void UIWindow::UpdateWindow() const {
-    builder_->GetCtrlRoot()->UpdatePos();
+    GetDialog()->UpdatePos();
     SendWindowMessage(WM_PAINT, NULL, NULL);
 }
 
@@ -159,7 +143,7 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
     case WM_RBUTTONDBLCLK:
         if (!mouse_msg)mouse_msg = kWM_RButtonDBClick;
     case WM_MOUSEMOVE:
-        mousepos_ctrl = builder_->GetCtrlRoot()->FindCtrlFromPT(last_mousepos_);
+        mousepos_ctrl = GetDialog()->FindCtrlFromPT(last_mousepos_);
         break;
     }
     UIControl* &ctrl_click = *ctrl_click_tmp;
@@ -198,8 +182,8 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
     {
         if (!mousepos_ctrl)
             break;
-        ctrl_click = mousepos_ctrl;
         SetCapture(hwnd_);
+        ctrl_click = mousepos_ctrl;
         mousepos_ctrl->Event(mouse_msg, WLPARAM);
         break;
     }
@@ -209,11 +193,11 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
         if (!ctrl_click)
             break;
 
+        ReleaseCapture();
         if (ctrl_click != mousepos_ctrl) {
             ctrl_click = nullptr;
             break;
         }
-        ReleaseCapture();
         ctrl_click->Event(mouse_msg, WLPARAM);
         if (v_msg == WM_LBUTTONUP)
             ctrl_click->Event(kWM_LButtonClick, WLPARAM);
@@ -268,15 +252,15 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
     }
     case WM_NCHITTEST:
     {
-        if (builder_->GetCtrlRoot()->GetAttribute(_T("resizable")).Str2Int()) {
+        if (GetDialog()->GetAttribute(_T("resizable")).Str2Int()) {
             POINT pt;
             pt.x = GET_X_LPARAM(v_lparam);
             pt.y = GET_Y_LPARAM(v_lparam);
             ::ScreenToClient(hwnd_, &pt);
-            int border_left = builder_->GetCtrlRoot()->GetAttribute(_T("sizebox_left")).Str2Int();
-            int border_top = builder_->GetCtrlRoot()->GetAttribute(_T("sizebox_top")).Str2Int();
-            int border_right = builder_->GetCtrlRoot()->GetAttribute(_T("sizebox_right")).Str2Int();
-            int border_bottom = builder_->GetCtrlRoot()->GetAttribute(_T("sizebox_bottom")).Str2Int();
+            int border_left = GetDialog()->GetAttribute(_T("sizebox_left")).Str2Int();
+            int border_top = GetDialog()->GetAttribute(_T("sizebox_top")).Str2Int();
+            int border_right = GetDialog()->GetAttribute(_T("sizebox_right")).Str2Int();
+            int border_bottom = GetDialog()->GetAttribute(_T("sizebox_bottom")).Str2Int();
 
             if (pt.x < rect_.left + border_left && pt.y < rect_.top + border_top)
                 return HTTOPLEFT;
@@ -304,7 +288,7 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
         UStr pos;
         pos.Format(_T("0,0,%d,%d"), rect_.right - rect_.left,
                    rect_.bottom - rect_.top);
-        builder_->GetCtrlRoot()->SetPos(pos);
+        GetDialog()->SetPos(pos);
         UpdateWindow();
         break;
     }
@@ -359,34 +343,6 @@ void UIWindow::DoModal() {
     }
 }
 
-bool UIWindow::AllowWindowMove(bool v_movable/* = true*/) {
-    bool ret = builder_->GetCtrlRoot()->GetAttribute(_T("movable")).Str2Int();
-    builder_->GetCtrlRoot()->SetAttribute(_T("movable"), UStr(v_movable));
-    return ret;
-}
-
-bool UIWindow::AllowWindowResize(bool v_resizable/* = true*/) {
-    bool ret = builder_->GetCtrlRoot()->GetAttribute(_T("resizable")).Str2Int();
-    builder_->GetCtrlRoot()->SetAttribute(_T("resizable"), UStr(v_resizable));
-    return ret;
-}
-
-void UIWindow::SetSizeBox(LPCTSTR v_sizestr) {
-    builder_->GetCtrlRoot()->SetAttribute(_T("sizebox"), v_sizestr);
-    UStr tmp = v_sizestr;
-    int seppos1 = tmp.Find(_T(","));
-    builder_->GetCtrlRoot()->SetAttribute(_T("sizebox_left"), tmp.Left(seppos1));
-    int seppos2 = tmp.Find(_T(","), seppos1 + 1);
-    builder_->GetCtrlRoot()->SetAttribute(_T("sizebox_top"), tmp.Mid(seppos1 + 1, seppos2 - seppos1 - 1));
-    int seppos3 = tmp.Find(_T(","), seppos2 + 1);
-    builder_->GetCtrlRoot()->SetAttribute(_T("sizebox_right"), tmp.Mid(seppos2 + 1, seppos3 - seppos2 - 1));
-    builder_->GetCtrlRoot()->SetAttribute(_T("sizebox_bottom"), tmp.Right(tmp.GetLength() - seppos3 - 1));
-}
-
-void UIWindow::SetCaptionRect(LPCTSTR v_pos) {
-    builder_->GetCtrlRoot()->SetAttribute(_T("caption"), v_pos);
-}
-
 RECT UIWindow::GetWindowPos() const {
     return rect_;
 }
@@ -416,6 +372,7 @@ bool UIWindow::SetWindowPos(int v_x, int v_y, int v_width, int v_height) {
 
 bool UIWindow::SetWindowPos(HWND v_insertafter, int v_x, int v_y,
                             int v_width, int v_height, UINT v_flags) {
+    // Attribute will be change at WM_SIZE
     return ::SetWindowPos(hwnd_, v_insertafter, v_x, v_y,
                               v_width, v_height, v_flags);
 }
@@ -431,25 +388,6 @@ bool UIWindow::CenterWindow() {
     newpos.right = newpos.left + width;
     newpos.bottom = newpos.top + height;
     return SetWindowPos(newpos);
-}
-
-void UIWindow::ShowTaskBar(bool v_show/* = true*/) const {
-    LONG style = GetWindowLong(hwnd_, GWL_EXSTYLE);
-    if (v_show)
-        style &= ~WS_EX_TOOLWINDOW;
-    else
-        style |= WS_EX_TOOLWINDOW;
-    SetWindowLong(hwnd_, GWL_EXSTYLE, style);
-    builder_->GetCtrlRoot()->SetAttribute(_T("appwin"), UStr(v_show));
-}
-
-CUStr UIWindow::GetTitle() const {
-    return builder_->GetCtrlRoot()->GetAttribute(_T("title"));
-}
-
-void UIWindow::SetTitle(LPCTSTR v_title) {
-    SetWindowText(hwnd_, v_title);
-    builder_->GetCtrlRoot()->SetAttribute(_T("title"), v_title);
 }
 
 HWND UIWindow::Create(LPCTSTR v_classname) {

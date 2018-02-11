@@ -26,6 +26,8 @@ enum WindowMessage {
     kWM_RButtonUp,     //                    ...
     kWM_RButtonClick,  //                    ...
     kWM_RButtonDBClick,//                    ...
+    kWM_SkinChange,    //    former skinid       new skinid
+    kWM_LangChange,    //    former langid       new langid
 
     kWM_End_           // USELESS
 };
@@ -44,6 +46,7 @@ public:
     ~UIWindow();
 
 public:
+    UIDialog* GetDialog() const;
     HWND GetHWND() const;
 
     LPCTSTR SetDlgName(LPCTSTR v_dlgname);  // Please ONLY set before create
@@ -68,11 +71,6 @@ public:
 
     void DoModal();     // Do modal loop
 
-    bool AllowWindowMove(bool v_movable = true);
-    bool AllowWindowResize(bool v_resizable = true);
-    void SetSizeBox(LPCTSTR v_sizestr);
-    void SetCaptionRect(LPCTSTR v_pos);
-
     RECT GetWindowPos() const;
     bool SetWindowSize(int v_width, int v_height);      // Set width&height
     bool SetWindowPos(int v_x, int v_y);     // Set x&y
@@ -82,10 +80,7 @@ public:
                       int v_width, int v_height, UINT v_flags);
     bool CenterWindow();
 
-    void ShowTaskBar(bool v_show = true) const;
-
-    CUStr GetTitle() const;
-    void SetTitle(LPCTSTR v_title);
+    
 
     UIControl* FindCtrlFromName(LPCTSTR v_name);
 
@@ -119,12 +114,6 @@ public:
     bool BindMsgHandler(LPCTSTR v_name, WindowMessage v_msg,
                         MsgHandleFun v_func) const;
     bool UnbindMsgHandler(LPCTSTR v_name, WindowMessage v_msg) const;
-
-    bool SetBackground(LPCTSTR v_path);
-    void SetBGAlpha(ALPHA v_alpha);
-    void SetAlpha(ALPHA v_alpha);
-    ALPHA GetBGAlpha();
-    ALPHA GetAlpha();
 
 public:
     UIRender* GetRender() const;

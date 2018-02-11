@@ -15,27 +15,19 @@ UIControl::UIControl() {}
 
 UIControl::~UIControl() {}
 
-void UIControl::BeforeSetAttribute() {
-    SetAttribute(_T("name"), _T("Static"));
-    SetAttribute(_T("pos"), _T("0,0"));
-    SetAttribute(_T("width"), _T("0"));
-    SetAttribute(_T("height"), _T("0"));
-    SetAttribute(_T("size"), _T("0,0"));
-}
-
 void UIControl::SetAttribute(LPCTSTR v_name, LPCTSTR v_value) {
     attr_[v_name] = v_value;
 }
 
 void UIControl::AfterSetAttribute() {
     UpdatePos();
-    LoadTextAttr();
-    LoadResAttr();
+    Event(kWM_LangChange, 0, UIConfig::GetShownLang());
+    Event(kWM_SkinChange, 0, UIConfig::GetShownSkin());
 }
 
-void UIControl::LoadResAttr() {}
+void UIControl::OnSkinChange(SKINID v_former, SKINID v_new) {}
 
-void UIControl::LoadTextAttr() {}
+void UIControl::OnLangChange(LANGID v_former, LANGID v_new) {}
 
 CUStr UIControl::GetAttribute(LPCTSTR v_name) const {
     return attr_.GetValue(v_name);
@@ -58,13 +50,19 @@ UIWindow* UIControl::GetBaseWindow() const {
 }
 
 UIControl* UIControl::FindCtrlFromPT(POINT v_pt) {
+    if (!independent_)
+        return nullptr;
+
     if (PtInRect(v_pt))
         return this;
     else
         return nullptr;
 }
 
-UIControl * UIControl::FindCtrlFromName(LPCTSTR v_name) {
+UIControl* UIControl::FindCtrlFromName(LPCTSTR v_name) {
+    if (!independent_)
+        return nullptr;
+
     if (GetAttribute(_T("name")) == v_name)
         return this;
     else
@@ -90,6 +88,14 @@ bool UIControl::Event(WindowMessage v_msg, WPARAM v_wparam, LPARAM v_lparam) {
         UIRecLog::RecordLog(kLL_Info, _T("Message hit! Control name:\"%s\",Message:%d"),
                             GetAttribute(_T("name")).GetData(), v_msg);
         break;
+    case kWM_SkinChange:
+        OnSkinChange(static_cast<SKINID>(v_wparam),
+                     static_cast<SKINID>(v_lparam));
+        break;
+    case kWM_LangChange:
+        OnLangChange(static_cast<LANGID>(v_wparam),
+                     static_cast<LANGID>(v_lparam));
+        break;
     }
     return true;
 }
@@ -100,6 +106,13 @@ void UIControl::SetMsgHandler(WindowMessage v_msg, MsgHandleFun v_func) {
 
 MsgHandleFun UIControl::GetMsgHandler(WindowMessage v_msg) const {
     return msgmap_[v_msg];
+}
+
+bool UIControl::SetIndependent(BOOL v_independent/* = TRUE*/) {
+    bool ret = independent_;
+    if (v_independent >= 0)
+        ret = independent_ = v_independent;
+    return ret;
 }
 
 int UIControl::GetPosFromStr(LPCTSTR v_str, StrLoc v_loc,
@@ -159,6 +172,9 @@ int UIControl::GetPosFromStr(LPCTSTR v_str, StrLoc v_loc,
 }
 
 LPVOID UIControl::GetInterface(LPCTSTR v_name) {
+    if (!independent_)
+        return nullptr;
+
     if (CmpStr(v_name, CTRLNAME_CONTROL))
         return this;
     return nullptr;

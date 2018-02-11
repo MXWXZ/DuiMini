@@ -10,28 +10,32 @@
 #pragma once
 
 namespace DuiMini {
+#define ATTR_MAP_BEGIN virtual void BeforeSetAttribute() {
+#define DEFAULT_ATTR(attr, def) SetAttribute(attr, def);
+#define PARENT_ATTR(parentclass) parentclass::BeforeSetAttribute();
+#define ATTR_MAP_END }
+
 class DUIMINI_API UIControl {
 public:
     UIControl();
     virtual ~UIControl();
 
 public:
-    RECT SetPos(LPCTSTR v_pos);
+    RECT SetPos(LPCTSTR v_pos);     // v_pos must have 4 param
     RECT GetPos() const;
-    CUStr GetAttribute(LPCTSTR v_name) const;
 
 public:
     // Attribute
-    /**
-     * DO NOT call it manually! If you must do, call AfterSetAttribute()
-     * to prevent some strange act.
-     * Call base class function if you override them
-     * BeforeSetAttribute should be at the end,AfterSetAttribute
-     * should be at the first
-     */
-    virtual void BeforeSetAttribute();  // Init attribute
+    ATTR_MAP_BEGIN
+        DEFAULT_ATTR(_T("name"), _T("Static"))
+        DEFAULT_ATTR(_T("pos"), _T("0,0"))
+        DEFAULT_ATTR(_T("width"), _T("0"))
+        DEFAULT_ATTR(_T("height"), _T("0"))
+        DEFAULT_ATTR(_T("size"), _T("0,0"))
+        ATTR_MAP_END
     virtual void SetAttribute(LPCTSTR v_name, LPCTSTR v_value);
     virtual void AfterSetAttribute();   // Init others which based on attribute
+    virtual CUStr GetAttribute(LPCTSTR v_name) const;
 
     virtual void Paint() = 0;
 
@@ -57,7 +61,7 @@ public:
      */
     virtual UIControl* FindCtrlFromPT(POINT v_pt);
 
-    virtual UIControl* FindCtrlFromName(LPCTSTR v_name);
+    virtual UIControl* FindCtrlFromName(LPCTSTR v_name); // find ctrl with name
 
     virtual RECT UpdatePos();   // Update pos from attribute
 
@@ -69,16 +73,17 @@ public:
     virtual bool Event(WindowMessage v_msg,
                        WPARAM v_wparam, LPARAM v_lparam);
 
+    // Msg handler bind
     void SetMsgHandler(WindowMessage v_msg, MsgHandleFun v_func);
     MsgHandleFun GetMsgHandler(WindowMessage v_msg) const;
 
+    bool SetIndependent(BOOL v_independent = TRUE);
+
 protected:
-    /**
-    * Load attribute feature
-    * Call base class function at the end if you override them
-    */
-    virtual void LoadResAttr();
-    virtual void LoadTextAttr();
+    // Skin change
+    virtual void OnSkinChange(SKINID v_former, SKINID v_new);
+    // language change
+    virtual void OnLangChange(LANGID v_former, LANGID v_new);
 
     enum StrLoc {
         left, top, right, bottom
@@ -94,6 +99,7 @@ protected:
                               UIControl* v_parent = nullptr) const;
 
 protected:
+    bool independent_ = true;            // independent ctrl
     UIControl* parent_ = nullptr;        // control parent
     UIWindow* basewnd_ = nullptr;        // attatch the window
     UIAttr attr_;                        // attribute
