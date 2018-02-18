@@ -129,10 +129,22 @@ bool UIRender::RedrawBackground() {
     return ret;
 }
 
-bool UIRender::DrawImage(UIRenderImage * v_img, int v_left, int v_top, int v_width, int v_height) {
+bool UIRender::DrawImage(UIRenderImage* v_img, const UIRect& v_destrect) {
+    if (!render_ || !v_img)
+        return false;
+    bool ret = render_->DrawImage(v_img, v_destrect,
+                                  UIRect(0, 0, v_img->GetWidth(),
+                                         v_img->GetHeight()));
+    if (!ret)
+        UIHandleError();
+    return ret;
+}
+
+bool UIRender::DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
+                         const UIRect& v_srcrect) {
     if (!render_)
         return false;
-    bool ret = render_->DrawImage(v_img, v_left, v_top, v_width, v_height);
+    bool ret = render_->DrawImage(v_img, v_destrect, v_srcrect);
     if (!ret)
         UIHandleError();
     return ret;

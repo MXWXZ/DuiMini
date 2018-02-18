@@ -18,9 +18,6 @@ public:
     virtual ~UIDialog();
 
 public:
-    // background
-    bool SetBackground(LPCTSTR v_path);
-    CUStr GetBackground() const;
     // title
     CUStr GetTitle() const;
     void SetTitle(LPCTSTR v_title);
@@ -37,42 +34,33 @@ public:
     CUStr GetSizeBox() const;
     // caption
     void SetCaptionRect(LPCTSTR v_pos);
-    RECT GetCaptionRect() const;
-    // bgalpha
-    void SetBGAlpha(ALPHA v_alpha);
-    ALPHA GetBGAlpha() const;
+    UIRect GetCaptionRect() const;
     // alpha
     void SetAlpha(ALPHA v_alpha);
     ALPHA GetAlpha() const;
     
 public:
     ATTR_MAP_BEGIN
-        DEFAULT_ATTR(_T("background"), _T(""))
         DEFAULT_ATTR(_T("title"), _T(""))
         DEFAULT_ATTR(_T("appwin"), _T("1"))
         DEFAULT_ATTR(_T("caption"), _T("0,0,-0,-0"))
         DEFAULT_ATTR(_T("movable"), _T("1"))
         DEFAULT_ATTR(_T("sizebox"), _T("0,0,0,0"))
         DEFAULT_ATTR(_T("resizable"), _T("0"))
-        DEFAULT_ATTR(_T("bgalpha"), _T("255"))
         DEFAULT_ATTR(_T("alpha"), _T("255"))
         PARENT_ATTR(UIContainer)
         ATTR_MAP_END
 
     LPVOID GetInterface(LPCTSTR v_name) override;
 
-    virtual RECT PaintBackground();
-
     void AfterSetAttribute() override;
 
     bool Event(WindowMessage v_msg, WPARAM v_wparam, LPARAM v_lparam) override;
 
 protected:
-    void OnSkinChange(SKINID v_former, SKINID v_new) override;
     void OnLangChange(LANGID v_former, LANGID v_new) override;
 
 protected:
-    RECT          caption_rect_{ 0, 0, 0, 0 };
-    UIImage       *bgimg_ = nullptr;    // no need to delete
+    UIRect   caption_rect_;
 };
 }   // namespace DuiMini

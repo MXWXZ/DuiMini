@@ -409,4 +409,66 @@ int UIString::Format(LPCTSTR v_str, ...) {
     return ret;
 }
 
+////////////////////////////////////////
+
+UIRect::UIRect() {}
+
+UIRect::UIRect(long v_left, long v_top, long v_right, long v_bottom) {
+    SetRect(v_left, v_top, v_right, v_bottom);
+}
+
+UIRect::UIRect(const RECT &v_rect) {
+    rect_ = v_rect;
+}
+
+UIRect::UIRect(const UIRect &v_src) {
+    rect_ = v_src.rect_;
+}
+
+UIRect::~UIRect() {}
+
+void UIRect::SetRect(long v_left, long v_top, long v_right, long v_bottom) {
+    left = v_left;
+    top = v_top;
+    right = v_right;
+    bottom = v_bottom;
+}
+
+const UIRect& UIRect::operator=(const RECT& v_rect) {
+    rect_ = v_rect;
+    return *this;
+}
+
+const UIRect& UIRect::operator=(const UIRect& v_src) {
+    rect_ = v_src.rect_;
+    return *this;
+}
+
+bool UIRect::operator==(const RECT& v_rect) const {
+    return (rect_.left == v_rect.left &&
+            rect_.top == v_rect.top &&
+            rect_.right == v_rect.right &&
+            rect_.bottom == v_rect.bottom);
+}
+
+bool UIRect::operator!=(const RECT& v_rect) const {
+    return !(*this == v_rect);
+}
+
+UIRect::operator RECT() {
+    return rect();
+}
+
+RECT& UIRect::rect() {
+    return rect_;
+}
+
+long UIRect::width() const {
+    return right - left;
+}
+
+long UIRect::height() const {
+    return bottom - top;
+}
+
 }   // namespace DuiMini

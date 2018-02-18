@@ -42,18 +42,19 @@ bool UIRenderGDIP::Paint(UIWindow* v_wnd) {
     if (!v_wnd)
         return false;
     HWND hwnd = v_wnd->GetHWND();
-    RECT rcwindow;
-    GetWindowRect(hwnd, &rcwindow);
+    UIRect rcwindow;
+    GetWindowRect(hwnd, &rcwindow.rect());
     SIZE sizewindow;
     UIDialog* dlg = v_wnd->GetDialog();
 
-    RECT pos = dlg->GetPos();
-    sizewindow.cx = pos.right - pos.left;
-    sizewindow.cy = pos.bottom - pos.top;
+    UIRect pos = dlg->GetPos();
+    sizewindow.cx = pos.width();
+    sizewindow.cy = pos.height();
 
     HDC hdc = GetDC(hwnd);
-    BITMAPINFOHEADER bmp_infoheader = { 0 };
+    
     int nBytesPerLine = ((sizewindow.cx * 32 + 31) & (~31)) >> 3;
+    BITMAPINFOHEADER bmp_infoheader = { 0 };
     bmp_infoheader.biSize = sizeof(BITMAPINFOHEADER);
     bmp_infoheader.biWidth = sizewindow.cx;
     bmp_infoheader.biHeight = sizewindow.cy;
@@ -69,11 +70,10 @@ bool UIRenderGDIP::Paint(UIWindow* v_wnd) {
                                       DIB_RGB_COLORS, &bits, NULL, 0);
         if (bg_bitmap_ == NULL)
             return false;
-        SelectObject(background_, bg_bitmap_);
+        tmpobj_ = SelectObject(background_, bg_bitmap_);
 
         graph_ = new Gdiplus::Graphics(background_);
-        bg_rect_ = dlg->PaintBackground();
-        graph_->ReleaseHDC(background_);
+        dlg->Paint(true);
         delete graph_;
         graph_ = nullptr;
     }
@@ -87,51 +87,52 @@ bool UIRenderGDIP::Paint(UIWindow* v_wnd) {
     blendfunc.BlendOp = 0;
     blendfunc.BlendFlags = 0;
     blendfunc.AlphaFormat = 1;
-    blendfunc.SourceConstantAlpha = v_wnd->GetDialog()->GetBGAlpha();
+    blendfunc.SourceConstantAlpha = 255;
     AlphaBlend(hdctmp, 0, 0, sizewindow.cx, sizewindow.cy,
-               background_, bg_rect_.left, bg_rect_.top,
-               bg_rect_.right - bg_rect_.left,
-               bg_rect_.bottom - bg_rect_.top, blendfunc);
+               background_, 0, 0, sizewindow.cx, sizewindow.cy, blendfunc);
 
     graph_ = new Gdiplus::Graphics(hdctmp);
-    v_wnd->GetDialog()->Paint();
-    graph_->ReleaseHDC(hdctmp);
+    dlg->Paint();
     delete graph_;
     graph_ = nullptr;
 
     POINT wndpos = { rcwindow.left, rcwindow.top };
     blendfunc.SourceConstantAlpha = v_wnd->GetDialog()->GetAlpha();
-    HMODULE funinst = LoadLibrary(_T("User32.DLL"));
-    typedef BOOL(WINAPI *FUNC)(HWND, HDC, POINT*, SIZE*, HDC, POINT*,
-                                 COLORREF, BLENDFUNCTION*, DWORD);
-    FUNC UpdateLayeredWindow;
-    UpdateLayeredWindow = (FUNC)GetProcAddress(funinst, "UpdateLayeredWindow");
+    
     if (!UpdateLayeredWindow(hwnd, hdc, &wndpos, &sizewindow, hdctmp,
                              &ptsrc, 0, &blendfunc, ULW_ALPHA))
         return false;
 
     SelectObject(hdctmp, bmpobj);
-
-    DeleteObject(funinst);
-    DeleteObject(bmpobj);
-    DeleteObject(bmptmp);
     DeleteDC(hdctmp);
-    DeleteDC(hdc);
+    DeleteObject(bmptmp);
+    ReleaseDC(hwnd, hdc);
     return true;
 }
 
 bool UIRenderGDIP::RedrawBackground() {
-    DeleteObject(background_);
-    background_ = nullptr;
+    if (background_) {
+        SelectObject(background_, tmpobj_);
+        DeleteDC(background_);
+        DeleteObject(bg_bitmap_);
+        background_ = NULL;
+        bg_bitmap_ = NULL;
+        tmpobj_ = NULL;
+    }
     return true;
 }
 
-bool UIRenderGDIP::DrawImage(UIRenderImage* v_img, int v_left,
-                             int v_top, int v_width, int v_height) {
-    if (!graph_)
+bool UIRenderGDIP::DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
+                             const UIRect& v_srcrect) {
+    if (!graph_ || !v_img)
         return false;
     if (graph_->DrawImage((Gdiplus::Image*)v_img->GetInterface(),
-                          v_left, v_top, v_width, v_height) != Gdiplus::Ok) {
+                          Gdiplus::Rect(v_destrect.left, v_destrect.top,
+                                        v_destrect.width(),
+                                        v_destrect.height()),
+                          v_srcrect.left, v_srcrect.top,
+                          v_srcrect.width(), v_srcrect.height(),
+                          Gdiplus::UnitPixel) != Gdiplus::Ok) {
         UISetError(kLL_Warning, kEC_ThirdPartFail,
                    _T("GDI+ DrawImage fail!"));
         return false;

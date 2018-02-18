@@ -62,11 +62,43 @@ public:
 
     int __cdecl Format(LPCTSTR v_str, ...);
 
-protected:
+private:
     tstring buffer_ = _T("");
 };
 typedef UIString UStr;
 typedef const UIString CUStr;
+
+////////////////////////////////////////
+
+class DUIMINI_API UIRect {
+public:
+    UIRect();
+    UIRect(long v_left, long v_top, long v_right, long v_bottom);
+    explicit UIRect(const RECT& v_rect);
+    UIRect(const UIRect& v_src);
+    ~UIRect();
+
+public:
+    void SetRect(long v_left, long v_top, long v_right, long v_bottom);
+
+    const UIRect& operator=(const RECT& v_rect);
+    const UIRect& operator=(const UIRect& v_src);
+    bool operator == (const RECT& v_rect) const;
+    bool operator != (const RECT& v_rect) const;
+
+    operator RECT();
+
+    RECT& rect();
+    long width() const;
+    long height() const;
+    long &left = rect_.left;
+    long &top = rect_.top;
+    long &right = rect_.right;
+    long &bottom = rect_.bottom;
+
+private:
+    RECT rect_{ 0,0,0,0 };
+};
 
 ////////////////////////////////////////
 

@@ -47,20 +47,24 @@ void UIContainer::RemoveAll() {
     item_.Empty();
 }
 
-void UIContainer::Paint() {
+void UIContainer::Paint(bool v_background/* = false*/) {
     for (UINT it = 0; it < item_.GetSize(); ++it) {
         UIControl* ctrl = reinterpret_cast<UIControl*>(item_[it]);
-        ctrl->Paint();
+        if (ctrl->AttachBackground(-1) == v_background)
+            ctrl->Paint(v_background);
     }
 }
 UIControl* UIContainer::FindCtrlFromPT(POINT v_pt) {
     if (!PtInRect(v_pt))
         return nullptr;
+    UIControl* ret = nullptr;
     for (UINT it = 0; it != item_.GetSize(); ++it) {
         UIControl* ctrl = ((UIControl*)item_[it])->FindCtrlFromPT(v_pt);
-        if (ctrl != nullptr)
-            return ctrl;
+        if (ctrl != nullptr)    // last pos match
+            ret = ctrl;
     }
+    if (ret)
+        return ret;
     return UIControl::FindCtrlFromPT(v_pt);
 }
 
@@ -81,13 +85,13 @@ LPVOID UIContainer::GetInterface(LPCTSTR v_name) {
 UIControl* UIContainer::FindCtrlFromName(LPCTSTR v_name) {
     for (UINT it = 0; it != item_.GetSize(); ++it) {
         UIControl* ctrl = ((UIControl*)item_[it])->FindCtrlFromName(v_name);
-        if (ctrl != nullptr)
+        if (ctrl != nullptr)    // first name match
             return ctrl;
     }
     return UIControl::FindCtrlFromName(v_name);
 }
 
-RECT UIContainer::UpdatePos() {
+UIRect UIContainer::UpdatePos() {
     for (UINT it = 0; it < item_.GetSize(); ++it) {
         UIControl* ctrl = reinterpret_cast<UIControl*>(item_[it]);
         ctrl->UpdatePos();

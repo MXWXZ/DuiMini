@@ -35,9 +35,9 @@ enum WindowMessage {
 typedef bool(UIWindow::*MsgHandleFun)(WPARAM v_wparam, LPARAM v_lparam);
 
 #define MSG_MAP_BEGIN(theclass) virtual void _CtrlBindMsgHandler() { \
-                                    typedef theclass thisclass;
+                                    typedef theclass _thisclass;
 #define MSG_MAP_END   }
-#define ON_CONTROL_MSG(name, msg, func)   BindMsgHandler(name, msg, static_cast<MsgHandleFun>(&thisclass::func));
+#define ON_CONTROL_MSG(name, msg, func)   BindMsgHandler(name, msg, static_cast<MsgHandleFun>(&_thisclass::func));
 
 class DUIMINI_API UIWindow {
 public:
@@ -71,10 +71,10 @@ public:
 
     void DoModal();     // Do modal loop
 
-    RECT GetWindowPos() const;
-    bool SetWindowSize(int v_width, int v_height);      // Set width&height
-    bool SetWindowPos(int v_x, int v_y);     // Set x&y
-    bool SetWindowPos(RECT v_rect);          // Set x&y&width&height
+    UIRect GetWindowPos() const;
+    bool SetWindowSize(int v_width, int v_height);   // Set width&height
+    bool SetWindowPos(int v_x, int v_y);             // Set x&y
+    bool SetWindowPos(const UIRect& v_rect);         // Set x&y&width&height
     bool SetWindowPos(int v_x, int v_y, int v_width, int v_height);
     bool SetWindowPos(HWND v_insert_after, int v_x, int v_y,
                       int v_width, int v_height, UINT v_flags);
@@ -84,7 +84,11 @@ public:
 
     UIControl* FindCtrlFromName(LPCTSTR v_name);
 
-    void UpdateWindow() const;
+    /**
+     * Update Window
+     * @param    bool v_updatebg:if true update background
+     */
+    void UpdateWindow(bool v_updatebg = false) const;
 
     /**
     * Create control
@@ -138,7 +142,7 @@ protected:
     HWND             hwnd_ = nullptr;             // main window hwnd
     UIDlgBuilder*    builder_ = nullptr;          // dlg builder
     UIRender*        render_ = nullptr;           // render
-    RECT             rect_{ 0, 0, 0, 0 };         // window rect
+    UIRect           rect_;                       // window rect
     static int       classname_cnt_;              // auto classname counter
 
     // Event system

@@ -74,8 +74,8 @@ public:
     // For buffering drawing, renew background buffer, NO SYNC SCREEN
     virtual bool RedrawBackground() = 0;
 
-    virtual bool DrawImage(UIRenderImage* v_img, int v_left, int v_top,
-                           int v_width, int v_height) = 0;
+    virtual bool DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
+                           const UIRect& v_srcrect) = 0;
 };
 
 class DUIMINI_API IUIRenderImage {

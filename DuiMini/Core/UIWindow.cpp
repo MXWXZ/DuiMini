@@ -110,8 +110,10 @@ UIControl* UIWindow::FindCtrlFromName(LPCTSTR v_name) {
     return GetDialog()->FindCtrlFromName(v_name);
 }
 
-void UIWindow::UpdateWindow() const {
+void UIWindow::UpdateWindow(bool v_updatebg/* = false*/) const {
     GetDialog()->UpdatePos();
+    if (v_updatebg)
+        render_->RedrawBackground();
     SendWindowMessage(WM_PAINT, NULL, NULL);
 }
 
@@ -143,6 +145,8 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
     case WM_RBUTTONDBLCLK:
         if (!mouse_msg)mouse_msg = kWM_RButtonDBClick;
     case WM_MOUSEMOVE:
+        last_mousepos_.x = GET_X_LPARAM(v_lparam);
+        last_mousepos_.y = GET_Y_LPARAM(v_lparam);
         mousepos_ctrl = GetDialog()->FindCtrlFromPT(last_mousepos_);
         break;
     }
@@ -154,7 +158,6 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
         if (!SetDlgBuilder(dlgname_))
             break;
         _CtrlBindMsgHandler();
-        UpdateWindow();
         break;
     }
     case WM_DESTROY:
@@ -225,8 +228,6 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
             ::TrackMouseEvent(&tmp);
             mouse_tracking_ = true;
         }
-        last_mousepos_.x = GET_X_LPARAM(v_lparam);
-        last_mousepos_.y = GET_Y_LPARAM(v_lparam);
 
         // enter new ctrl
         if (mousepos_ctrl != ctrl_hover_) {
@@ -283,13 +284,12 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
     }
     case WM_SIZE:
     {
-        GetClientRect(hwnd_, &rect_);
-
+        GetClientRect(hwnd_, &rect_.rect());
         UStr pos;
         pos.Format(_T("0,0,%d,%d"), rect_.right - rect_.left,
-                   rect_.bottom - rect_.top);
+                    rect_.bottom - rect_.top);
         GetDialog()->SetPos(pos);
-        UpdateWindow();
+        UpdateWindow(true);
         break;
     }
     }
@@ -343,7 +343,7 @@ void UIWindow::DoModal() {
     }
 }
 
-RECT UIWindow::GetWindowPos() const {
+UIRect UIWindow::GetWindowPos() const {
     return rect_;
 }
 
@@ -358,7 +358,7 @@ bool UIWindow::SetWindowPos(int v_x, int v_y) {
                         SWP_NOSIZE | SWP_NOZORDER);
 }
 
-bool UIWindow::SetWindowPos(RECT v_rect) {
+bool UIWindow::SetWindowPos(const UIRect& v_rect) {
     return SetWindowPos(NULL, v_rect.left, v_rect.top,
                         v_rect.right - v_rect.left,
                         v_rect.bottom - v_rect.top,
@@ -374,11 +374,11 @@ bool UIWindow::SetWindowPos(HWND v_insertafter, int v_x, int v_y,
                             int v_width, int v_height, UINT v_flags) {
     // Attribute will be change at WM_SIZE
     return ::SetWindowPos(hwnd_, v_insertafter, v_x, v_y,
-                              v_width, v_height, v_flags);
+                          v_width, v_height, v_flags | SWP_NOREDRAW);
 }
 
 bool UIWindow::CenterWindow() {
-    RECT newpos;
+    UIRect newpos;
     int screenwidth = GetSystemMetrics(SM_CXSCREEN);
     int screenheight = GetSystemMetrics(SM_CYSCREEN);
     int width = rect_.right - rect_.left;

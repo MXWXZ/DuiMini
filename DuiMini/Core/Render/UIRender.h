@@ -49,8 +49,9 @@ public:
 
     bool Paint(UIWindow* v_wnd);
     bool RedrawBackground();
-    bool DrawImage(UIRenderImage* v_img, int v_left, int v_top,
-                   int v_width, int v_height);
+    bool DrawImage(UIRenderImage* v_img, const UIRect& v_destrect);
+    bool DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
+                   const UIRect& v_srcrect);
 
 private:
     static IUIRender* SelectRender(IUIRender** v_pointer);

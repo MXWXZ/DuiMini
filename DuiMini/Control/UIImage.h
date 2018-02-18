@@ -18,15 +18,18 @@ public:
 public:
     bool SetFile(LPCTSTR v_path);
     CUStr GetFile() const;
+    void SetMargin(LPCTSTR v_pos);
+    CUStr GetMargin() const;
 
 public:
     ATTR_MAP_BEGIN
-        DEFAULT_ATTR(_T("file"), _T(""));
+        DEFAULT_ATTR(_T("file"), _T(""))
+        DEFAULT_ATTR(_T("margin"), _T("0,0,-0,-0"))
         PARENT_ATTR(UIControl)
         ATTR_MAP_END
 
     LPVOID GetInterface(LPCTSTR v_name) override;
-    void Paint() override;
+    void Paint(bool v_background = false) override;
 
 protected:
     void OnSkinChange(SKINID v_former, SKINID v_new) override;

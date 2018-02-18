@@ -15,14 +15,30 @@ namespace DuiMini {
 #define PARENT_ATTR(parentclass) parentclass::BeforeSetAttribute();
 #define ATTR_MAP_END }
 
+#define STATE_FUNC_START(attr, param)            \
+    LPCTSTR _attrstr = attr;                     \
+    BOOL &_myparam = param;                      \
+    bool ret = GetAttribute(_attrstr).Str2Int(); \
+    if (_myparam >= 0) {
+#define STATE_FUNC_END                           \
+        SetAttribute(_attrstr, UStr(_myparam));  \
+    }                                            \
+    return ret;
+
 class DUIMINI_API UIControl {
 public:
     UIControl();
     virtual ~UIControl();
 
 public:
-    RECT SetPos(LPCTSTR v_pos);     // v_pos must have 4 param
-    RECT GetPos() const;
+    void SetPos(LPCTSTR v_pos);     // v_pos must have 4 param
+    UIRect GetPos() const;
+    /**
+    * background
+    * @param    BOOL v_bg:TRUE/FALSE Attach/Detach, -1 not change state
+    * @return   former state
+    */
+    bool AttachBackground(BOOL v_bg);
 
 public:
     // Attribute
@@ -32,12 +48,13 @@ public:
         DEFAULT_ATTR(_T("width"), _T("0"))
         DEFAULT_ATTR(_T("height"), _T("0"))
         DEFAULT_ATTR(_T("size"), _T("0,0"))
+        DEFAULT_ATTR(_T("background"), _T("0"))
         ATTR_MAP_END
     virtual void SetAttribute(LPCTSTR v_name, LPCTSTR v_value);
     virtual void AfterSetAttribute();   // Init others which based on attribute
     virtual CUStr GetAttribute(LPCTSTR v_name) const;
 
-    virtual void Paint() = 0;
+    virtual void Paint(bool v_background = false) = 0;
 
     // Parent&Base
     virtual void SetParent(UIControl* v_parent);
@@ -63,7 +80,7 @@ public:
 
     virtual UIControl* FindCtrlFromName(LPCTSTR v_name); // find ctrl with name
 
-    virtual RECT UpdatePos();   // Update pos from attribute
+    virtual UIRect UpdatePos();   // Update pos from attribute
 
 public:
     /**
@@ -77,8 +94,6 @@ public:
     void SetMsgHandler(WindowMessage v_msg, MsgHandleFun v_func);
     MsgHandleFun GetMsgHandler(WindowMessage v_msg) const;
 
-    bool SetIndependent(BOOL v_independent = TRUE);
-
 protected:
     // Skin change
     virtual void OnSkinChange(SKINID v_former, SKINID v_new);
@@ -89,21 +104,24 @@ protected:
         left, top, right, bottom
     };
     /**
-     * Parse str to pos
+     * Parse str to pos(one section)
      * @param    LPCTSTR v_str: pos str. e.g. |10
      * @param    StrLoc v_loc: pos location
-     * @param    UIControl* v_parent:parent ctrl, nullptr for auto recognize
+     * @param    UIRect* v_parentrect:parent rect, nullptr for auto
      * @return   real pos value
      */
-    virtual int GetPosFromStr(LPCTSTR v_str, StrLoc v_loc,
-                              UIControl* v_parent = nullptr) const;
+    int ParsePosStr(LPCTSTR v_str, StrLoc v_loc,
+                    UIRect* v_parentrect = nullptr) const;
+
+    // Parse entire str
+    UIRect ParsePosStr(LPCTSTR v_str,
+                       UIRect* v_parentrect = nullptr) const;
 
 protected:
-    bool independent_ = true;            // independent ctrl
     UIControl* parent_ = nullptr;        // control parent
     UIWindow* basewnd_ = nullptr;        // attatch the window
     UIAttr attr_;                        // attribute
-    RECT rect_{ 0, 0, 0, 0 };            // control rect
+    UIRect rect_;                        // control rect
     MsgHandleFun msgmap_[kWM_End_] = { 0 };     // message map
 };
 }   // namespace DuiMini

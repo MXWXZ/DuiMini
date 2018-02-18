@@ -22,13 +22,12 @@ public:
     bool GlobalRelease() override;
     bool Paint(UIWindow* v_wnd) override;
     bool RedrawBackground() override;
-
-    bool DrawImage(UIRenderImage* v_img, int v_left, int v_top,
-                   int v_width, int v_height) override;
+    bool DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
+                   const UIRect& v_srcrect) override;
 
 private:
     HDC background_ = NULL;         // background DC
-    RECT bg_rect_{ 0, 0, 0, 0 };    // background rect
+    HGDIOBJ tmpobj_ = NULL;         // tmp object
     HBITMAP bg_bitmap_ = NULL;      // bitmap on DC
     Gdiplus::Graphics* graph_ = nullptr;    // always nullptr after used
     static ULONG_PTR gdiplus_token;

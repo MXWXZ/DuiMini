@@ -50,19 +50,17 @@ UIWindow* UIControl::GetBaseWindow() const {
 }
 
 UIControl* UIControl::FindCtrlFromPT(POINT v_pt) {
-    if (!independent_)
-        return nullptr;
-
-    if (PtInRect(v_pt))
+    if (PtInRect(v_pt)) {
+        if (AttachBackground(-1))
+            return basewnd_->GetDialog();
         return this;
-    else
+    } 
+    else {
         return nullptr;
+    }
 }
 
 UIControl* UIControl::FindCtrlFromName(LPCTSTR v_name) {
-    if (!independent_)
-        return nullptr;
-
     if (GetAttribute(_T("name")) == v_name)
         return this;
     else
@@ -108,23 +106,14 @@ MsgHandleFun UIControl::GetMsgHandler(WindowMessage v_msg) const {
     return msgmap_[v_msg];
 }
 
-bool UIControl::SetIndependent(BOOL v_independent/* = TRUE*/) {
-    bool ret = independent_;
-    if (v_independent >= 0)
-        ret = independent_ = v_independent;
-    return ret;
-}
-
-int UIControl::GetPosFromStr(LPCTSTR v_str, StrLoc v_loc,
-                             UIControl* v_parent/* = nullptr*/) const {
+int UIControl::ParsePosStr(LPCTSTR v_str, StrLoc v_loc,
+                           UIRect* v_parentrect/* = nullptr*/) const {
     CUStr str = v_str;
-    RECT parentrc;
-    if (v_parent) {
-        parentrc = v_parent->GetPos();
+    UIRect parentrc;
+    if (v_parentrect) {
+        parentrc = *v_parentrect;
     } else {
         if (!parent_) {     // default parent is screen
-            parentrc.left = 0;
-            parentrc.top = 0;
             parentrc.right = GetSystemMetrics(SM_CXSCREEN);
             parentrc.bottom = GetSystemMetrics(SM_CYSCREEN);
         } else {
@@ -171,26 +160,37 @@ int UIControl::GetPosFromStr(LPCTSTR v_str, StrLoc v_loc,
     }
 }
 
-LPVOID UIControl::GetInterface(LPCTSTR v_name) {
-    if (!independent_)
-        return nullptr;
+UIRect UIControl::ParsePosStr(LPCTSTR v_str,
+                              UIRect* v_parentrect/* = nullptr*/) const {
+    UIRect ret;
+    CUStr tmp = v_str;
+    int seppos1 = tmp.Find(_T(","));
+    ret.left = ParsePosStr(tmp.Left(seppos1), left, v_parentrect);
+    int seppos2 = tmp.Find(_T(","), seppos1 + 1);
+    ret.top = ParsePosStr(tmp.Mid(seppos1 + 1, seppos2 - seppos1 - 1), top, v_parentrect);
+    int seppos3 = tmp.Find(_T(","), seppos2 + 1);
+    ret.right = ParsePosStr(tmp.Mid(seppos2 + 1, seppos3 - seppos2 - 1), right, v_parentrect);
+    ret.bottom = ParsePosStr(tmp.Right(tmp.GetLength() - seppos3 - 1), bottom, v_parentrect);
+    return ret;
+}
 
+LPVOID UIControl::GetInterface(LPCTSTR v_name) {
     if (CmpStr(v_name, CTRLNAME_CONTROL))
         return this;
     return nullptr;
 }
 
 bool UIControl::PtInRect(POINT v_pt) {
-    return ::PtInRect(&rect_, v_pt);
+    return ::PtInRect(&rect_.rect(), v_pt);
 }
 
-RECT UIControl::UpdatePos() {
+UIRect UIControl::UpdatePos() {
     UStr attr = GetAttribute(_T("pos"));
     int septimes = attr.Replace(_T(","), _T(","));
     if (septimes == 1) {    // pos=x,x
         int seppos = attr.Find(_T(","));
-        rect_.left = GetPosFromStr(attr.Left(seppos), left);
-        rect_.top = GetPosFromStr(attr.Right(attr.GetLength() - seppos - 1), top);
+        rect_.left = ParsePosStr(attr.Left(seppos), left);
+        rect_.top = ParsePosStr(attr.Right(attr.GetLength() - seppos - 1), top);
         if (GetAttribute(_T("width")) == _T("0") &&
             GetAttribute(_T("height")) == _T("0")) {
             UStr size = GetAttribute(_T("size"));
@@ -202,13 +202,7 @@ RECT UIControl::UpdatePos() {
             rect_.bottom = rect_.top + GetAttribute(_T("height")).Str2Int();
         }
     } else {    // pos=x,x,x,x
-        int seppos1 = attr.Find(_T(","));
-        rect_.left = GetPosFromStr(attr.Left(seppos1), left);
-        int seppos2 = attr.Find(_T(","), seppos1 + 1);
-        rect_.top = GetPosFromStr(attr.Mid(seppos1 + 1, seppos2 - seppos1 - 1), top);
-        int seppos3 = attr.Find(_T(","), seppos2 + 1);
-        rect_.right = GetPosFromStr(attr.Mid(seppos2 + 1, seppos3 - seppos2 - 1), right);
-        rect_.bottom = GetPosFromStr(attr.Right(attr.GetLength() - seppos3 - 1), bottom);
+        rect_ = ParsePosStr(attr);
     }
     UStr width(rect_.right - rect_.left);
     UStr height(rect_.bottom - rect_.top);
@@ -218,13 +212,18 @@ RECT UIControl::UpdatePos() {
     return rect_;
 }
 
-RECT UIControl::SetPos(LPCTSTR v_pos) {
+void UIControl::SetPos(LPCTSTR v_pos) {
     SetAttribute(_T("pos"), v_pos);
-    return UpdatePos();
+    UpdatePos();
 }
 
-RECT UIControl::GetPos() const {
+UIRect UIControl::GetPos() const {
     return rect_;
+}
+
+bool UIControl::AttachBackground(BOOL v_bg) {
+    STATE_FUNC_START(_T("background"), v_bg)
+        STATE_FUNC_END
 }
 
 }   // namespace DuiMini
