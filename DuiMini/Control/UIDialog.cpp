@@ -80,6 +80,38 @@ ALPHA UIDialog::GetAlpha() const {
     return (ALPHA)(GetAttribute(_T("alpha")).Str2Int());
 }
 
+void UIDialog::SetMinWidth(long v_width) {
+    SetAttribute(_T("minwidth"), UStr(v_width));
+}
+
+long UIDialog::GetMinWidth() const {
+    return GetAttribute(_T("minwidth")).Str2Int();
+}
+
+void UIDialog::SetMaxWidth(long v_width) {
+    SetAttribute(_T("maxwidth"), UStr(v_width));
+}
+
+long UIDialog::GetMaxWidth() const {
+    return GetAttribute(_T("maxwidth")).Str2Int();
+}
+
+void UIDialog::SetMinHeight(long v_height) {
+    SetAttribute(_T("minheight"), UStr(v_height));
+}
+
+long UIDialog::GetMinHeight() const {
+    return GetAttribute(_T("minheight")).Str2Int();
+}
+
+void UIDialog::SetMaxHeight(long v_height) {
+    SetAttribute(_T("maxheight"), UStr(v_height));
+}
+
+long UIDialog::GetMaxHeight() const {
+    return GetAttribute(_T("maxheight")).Str2Int();
+}
+
 void UIDialog::AfterSetAttribute() {
     UIContainer::AfterSetAttribute();
     // Init dlg pos

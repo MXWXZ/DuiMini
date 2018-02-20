@@ -292,6 +292,16 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
         UpdateWindow(true);
         break;
     }
+    case WM_GETMINMAXINFO:
+    {
+        UIDialog* dlg = GetDialog();
+        MINMAXINFO* info = reinterpret_cast<MINMAXINFO*>(v_lparam);
+        info->ptMinTrackSize.x = dlg->GetMinWidth();
+        info->ptMinTrackSize.y = dlg->GetMinHeight();
+        info->ptMaxTrackSize.x = dlg->GetMaxWidth();
+        info->ptMaxTrackSize.y = dlg->GetMaxHeight();
+        break;
+    }
     }
 
     return CallWindowProc(DefWindowProc, hwnd_, v_msg, WLPARAM);

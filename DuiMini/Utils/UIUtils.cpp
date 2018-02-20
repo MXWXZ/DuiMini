@@ -259,7 +259,7 @@ UIString::UIString(const UIString& v_src) {
 UIString::~UIString() {}
 
 int UIString::GetLength() const {
-    return buffer_.length();
+    return static_cast<int>(buffer_.length());
 }
 
 UIString::operator LPCTSTR() const {
@@ -373,11 +373,11 @@ UIString UIString::Right(int v_len) const {
 }
 
 int UIString::Find(TCHAR v_ch, int v_pos /*= 0*/) const {
-    return buffer_.find(v_ch, v_pos);
+    return static_cast<int>(buffer_.find(v_ch, v_pos));
 }
 
 int UIString::Find(LPCTSTR v_str, int v_pos /*= 0*/) const {
-    return buffer_.find(v_str, v_pos);
+    return static_cast<int>(buffer_.find(v_str, v_pos));
 }
 
 int UIString::Replace(LPCTSTR v_str_from, LPCTSTR v_str_to) {

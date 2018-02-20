@@ -38,6 +38,15 @@ public:
     // alpha
     void SetAlpha(ALPHA v_alpha);
     ALPHA GetAlpha() const;
+    // min/max size
+    void SetMinWidth(long v_width);
+    long GetMinWidth() const;
+    void SetMaxWidth(long v_width);
+    long GetMaxWidth() const;
+    void SetMinHeight(long v_height);
+    long GetMinHeight() const;
+    void SetMaxHeight(long v_height);
+    long GetMaxHeight() const;
     
 public:
     ATTR_MAP_BEGIN
@@ -48,6 +57,10 @@ public:
         DEFAULT_ATTR(_T("sizebox"), _T("0,0,0,0"))
         DEFAULT_ATTR(_T("resizable"), _T("0"))
         DEFAULT_ATTR(_T("alpha"), _T("255"))
+        DEFAULT_ATTR(_T("minwidth"), _T("0"))
+        DEFAULT_ATTR(_T("maxwidth"), UStr(GetSystemMetrics(SM_CXSCREEN)))
+        DEFAULT_ATTR(_T("minheight"), _T("0"))
+        DEFAULT_ATTR(_T("maxheight"), UStr(GetSystemMetrics(SM_CYSCREEN)))
         PARENT_ATTR(UIContainer)
         ATTR_MAP_END
 

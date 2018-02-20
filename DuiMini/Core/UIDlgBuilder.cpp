@@ -63,7 +63,7 @@ UIControl* UIDlgBuilder::Parse(UIWindow* v_wnd, xmlnode v_root,
             return nullptr;
         }
         LPCTSTR ctrl_name = node->name();
-        UINT ctrl_namelen = _tcslen(ctrl_name);
+        size_t ctrl_namelen = _tcslen(ctrl_name);
         UIControl* new_ctrl = nullptr;
         switch (ctrl_namelen) {
         case 3:
