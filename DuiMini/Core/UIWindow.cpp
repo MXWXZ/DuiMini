@@ -59,6 +59,10 @@ UIDlgBuilder* UIWindow::SetDlgBuilder(LPCTSTR v_dlgname) {
     return builder_;
 }
 
+bool UIWindow::InitWindow() {
+    return true;
+}
+
 UIDlgBuilder* UIWindow::GetDlgBuilder() const {
     return builder_;
 }
@@ -119,6 +123,7 @@ void UIWindow::UpdateWindow(bool v_updatebg/* = false*/) const {
 
 void UIWindow::Run(LPCTSTR v_classname/* = _T("DuiMini")*/) {
     Create(v_classname);
+    InitWindow();
     ShowWindow();
     DoModal();
 }
@@ -351,6 +356,29 @@ void UIWindow::DoModal() {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
+}
+
+bool UIWindow::SetIcon(UINT v_res) {
+    HICON icon = (HICON)::LoadImage(UISystem::GetInstance(),
+                                    MAKEINTRESOURCE(v_res),
+                                    IMAGE_ICON,
+                                    ::GetSystemMetrics(SM_CXICON),
+                                    ::GetSystemMetrics(SM_CYICON),
+                                    LR_DEFAULTCOLOR);
+    HICON iconsm = (HICON)::LoadImage(UISystem::GetInstance(),
+                                      MAKEINTRESOURCE(v_res),
+                                      IMAGE_ICON,
+                                      ::GetSystemMetrics(SM_CXSMICON),
+                                      ::GetSystemMetrics(SM_CYSMICON),
+                                      LR_DEFAULTCOLOR);
+    if (!icon || !iconsm) {
+        UIHandleError(kLL_Warning, kEC_IDInvalid, _T("Icon id \"%u\" invalid!"),
+                      v_res);
+        return false;
+    }
+    SendWindowMessage(WM_SETICON, ICON_BIG, (LPARAM)icon);
+    SendWindowMessage(WM_SETICON, ICON_SMALL, (LPARAM)iconsm);
+    return true;
 }
 
 UIRect UIWindow::GetWindowPos() const {

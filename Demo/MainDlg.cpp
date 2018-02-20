@@ -8,6 +8,7 @@
  * @Description:
  */
 #include "stdafx.h"
+#include "Demo.h"
 #include "MainDlg.h"
 
 MainDlg::MainDlg()
@@ -15,6 +16,11 @@ MainDlg::MainDlg()
 }
 
 MainDlg::~MainDlg() {}
+
+bool MainDlg::InitWindow() {
+    SetIcon(IDI_DEMO);
+    return true;
+}
 
 bool MainDlg::FuncName(WPARAM v_wparam, LPARAM v_lparam) {
     SetWindowSize(1000, 500);

@@ -71,6 +71,8 @@ public:
 
     void DoModal();     // Do modal loop
 
+    bool SetIcon(UINT v_res);
+
     UIRect GetWindowPos() const;
     bool SetWindowSize(int v_width, int v_height);   // Set width&height
     bool SetWindowPos(int v_x, int v_y);             // Set x&y
@@ -79,8 +81,6 @@ public:
     bool SetWindowPos(HWND v_insert_after, int v_x, int v_y,
                       int v_width, int v_height, UINT v_flags);
     bool CenterWindow();
-
-    
 
     UIControl* FindCtrlFromName(LPCTSTR v_name);
 
@@ -136,6 +136,9 @@ protected:
 
     UIDlgBuilder* SetDlgBuilder(LPCTSTR v_dlgname);
 
+    // no need to call it if you override
+    virtual bool InitWindow();
+
 protected:
     // window info
     UStr             dlgname_;                    // dlg name
@@ -147,7 +150,7 @@ protected:
 
     // Event system
     bool             mouse_tracking_ = false;     // mouse tracking state
-    POINT            last_mousepos_{ 0,0 };       // last mouse position
+    POINT            last_mousepos_{ 0, 0 };      // last mouse position
     UIControl*       ctrl_lclick_ = nullptr;      // current left clicked ctrl
     UIControl*       ctrl_rclick_ = nullptr;      // current right clicked ctrl
     UIControl*       ctrl_hover_ = nullptr;       // current hovered ctrl

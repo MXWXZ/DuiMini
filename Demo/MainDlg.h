@@ -12,7 +12,9 @@
 class MainDlg :public UIWindow {
 public:
     MainDlg();
-    ~MainDlg();
+    ~MainDlg(); 
+
+    bool InitWindow() override;
     bool FuncName(WPARAM v_wparam, LPARAM v_lparam);
 
 protected:
