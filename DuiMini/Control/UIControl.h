@@ -33,6 +33,8 @@ public:
 public:
     void SetPos(LPCTSTR v_pos);     // v_pos must have 4 param
     UIRect GetPos() const;
+    long GetWidth() const;
+    long GetHeight() const;
     /**
     * background
     * @param    BOOL v_bg:TRUE/FALSE Attach/Detach, -1 not change state

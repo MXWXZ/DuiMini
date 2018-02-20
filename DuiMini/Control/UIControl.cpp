@@ -221,6 +221,14 @@ UIRect UIControl::GetPos() const {
     return rect_;
 }
 
+long UIControl::GetWidth() const {
+    return rect_.right - rect_.left;
+}
+
+long UIControl::GetHeight() const {
+    return rect_.bottom - rect_.top;
+}
+
 bool UIControl::AttachBackground(BOOL v_bg) {
     STATE_FUNC_START(_T("background"), v_bg)
         STATE_FUNC_END
