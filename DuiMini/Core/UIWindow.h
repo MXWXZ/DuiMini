@@ -39,6 +39,14 @@ typedef bool(UIWindow::*MsgHandleFun)(WPARAM v_wparam, LPARAM v_lparam);
 #define MSG_MAP_END   }
 #define ON_CONTROL_MSG(name, msg, func)   BindMsgHandler(name, msg, static_cast<MsgHandleFun>(&_thisclass::func));
 
+#define VAR_MAP_BEGIN           virtual void _CtrlBindVar() {       \
+                                UIControl** tmp = nullptr;
+#define ON_CONTROL_VAR(name, var)    tmp = (UIControl**)&var;       \
+                                     *tmp = FindCtrlFromName(name); \
+                                     if (!var)                      \
+                                        UIHandleError(kLL_Warning, kEC_IDInvalid, _T("Ctrl name \"%s\" invalid!"), name);
+#define VAR_MAP_END   }
+
 class DUIMINI_API UIWindow {
 public:
     UIWindow();
@@ -157,5 +165,8 @@ protected:
 
     MSG_MAP_BEGIN(UIWindow)
         MSG_MAP_END
+
+    VAR_MAP_BEGIN
+        VAR_MAP_END
 };
 }    // namespace DuiMini

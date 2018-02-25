@@ -123,7 +123,6 @@ void UIWindow::UpdateWindow(bool v_updatebg/* = false*/) const {
 
 void UIWindow::Run(LPCTSTR v_classname/* = _T("DuiMini")*/) {
     Create(v_classname);
-    InitWindow();
     ShowWindow();
     DoModal();
 }
@@ -163,6 +162,8 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
         if (!SetDlgBuilder(dlgname_))
             break;
         _CtrlBindMsgHandler();
+        _CtrlBindVar();
+        InitWindow();
         break;
     }
     case WM_DESTROY:
