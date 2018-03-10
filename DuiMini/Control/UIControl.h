@@ -31,13 +31,16 @@ public:
     virtual ~UIControl();
 
 public:
+    CUStr GetName() const;
     void SetPos(LPCTSTR v_pos);     // v_pos must have 4 param
     UIRect GetPos() const;
     long GetWidth() const;
     long GetHeight() const;
+
+    bool DisableCtrl(BOOL v_disable = TRUE);
     /**
     * background
-    * @param    BOOL v_bg:TRUE/FALSE Attach/Detach, -1 not change state
+    * @param    BOOL v_bg:TRUE/FALSE Attach/Detach, STAY not change state
     * @return   former state
     */
     bool AttachBackground(BOOL v_bg);
@@ -51,8 +54,9 @@ public:
         DEFAULT_ATTR(_T("height"), _T("0"))
         DEFAULT_ATTR(_T("size"), _T("0,0"))
         DEFAULT_ATTR(_T("background"), _T("0"))
+        DEFAULT_ATTR(_T("disable"), _T("0"))
         ATTR_MAP_END
-    virtual void SetAttribute(LPCTSTR v_name, LPCTSTR v_value);
+        virtual void SetAttribute(LPCTSTR v_name, LPCTSTR v_value);
     virtual void AfterSetAttribute();   // Init others which based on attribute
     virtual CUStr GetAttribute(LPCTSTR v_name) const;
 
@@ -89,18 +93,33 @@ public:
     * Event
     * Call base class function at the first if you override them
     */
-    virtual bool Event(WindowMessage v_msg,
-                       WPARAM v_wparam, LPARAM v_lparam);
+    virtual bool Event(const UIEvent& v_event);
 
     // Msg handler bind
     void SetMsgHandler(WindowMessage v_msg, MsgHandleFun v_func);
     MsgHandleFun GetMsgHandler(WindowMessage v_msg) const;
 
 protected:
+    // TODO: Add new Msg
+
     // Skin change
-    virtual void OnSkinChange(SKINID v_former, SKINID v_new);
+    virtual bool OnSkinChange(const UIEvent& v_event) { return true; }
     // language change
-    virtual void OnLangChange(LANGID v_former, LANGID v_new);
+    virtual bool OnLangChange(const UIEvent& v_event) { return true; }
+
+    virtual bool OnMouseEnter(const UIEvent& v_event) { return true; }
+    virtual bool OnMouseLeave(const UIEvent& v_event) { return true; }
+    virtual bool OnMouseMove(const UIEvent& v_event) { return true; }
+    virtual bool OnLButtonDown(const UIEvent& v_event) { return true; }
+    virtual bool OnLButtonUp(const UIEvent& v_event) { return true; }
+    virtual bool OnLButtonClick(const UIEvent& v_event) { return true; }
+    virtual bool OnLButtonDBClick(const UIEvent& v_event) { return true; }
+    virtual bool OnRButtonDown(const UIEvent& v_event) { return true; }
+    virtual bool OnRButtonUp(const UIEvent& v_event) { return true; }
+    virtual bool OnRButtonClick(const UIEvent& v_event) { return true; }
+    virtual bool OnRButtonDBClick(const UIEvent& v_event) { return true; }
+    virtual bool OnDisable(const UIEvent& v_event) { return true; }
+    virtual bool OnActive(const UIEvent& v_event) { return true; }
 
     enum StrLoc {
         left, top, right, bottom

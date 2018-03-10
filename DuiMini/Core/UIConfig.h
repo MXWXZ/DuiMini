@@ -47,6 +47,7 @@ public:
     static void SetShownLang(LANGID v_id);
     static void SetShownFont(FONTID v_id);
     static void SetShownSkin(SKINID v_id);
+    static void AddSystemSkin(SKINID v_id);
 
     /**
     * Find dlg config
@@ -109,6 +110,7 @@ private:
     static UIAttrSet font_;           // font config
 
     static UIAttrSet res_id_;         // shown skin resid
+    static UIAttrSet sys_res_id_;      // system skin id
     static UIAttrSet lang_str_;       // shown language str
 };
 }   // namespace DuiMini

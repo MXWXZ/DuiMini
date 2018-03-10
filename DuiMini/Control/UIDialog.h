@@ -23,7 +23,7 @@ public:
     void SetTitle(LPCTSTR v_title);
     /**
      * appwin/movable/resizable
-     * @param    BOOL xxx:TRUE/FALSE Allow/Reject, -1 not change state
+     * @param    BOOL xxx:TRUE/FALSE Allow/Reject, STAY not change state
      * @return   former state
      */
     bool ShowTaskBar(BOOL v_show = TRUE);
@@ -68,10 +68,10 @@ public:
 
     void AfterSetAttribute() override;
 
-    bool Event(WindowMessage v_msg, WPARAM v_wparam, LPARAM v_lparam) override;
+    bool Event(const UIEvent& v_event) override;
 
 protected:
-    void OnLangChange(LANGID v_former, LANGID v_new) override;
+    bool OnLangChange(const UIEvent& v_event) override;
 
 protected:
     UIRect   caption_rect_;

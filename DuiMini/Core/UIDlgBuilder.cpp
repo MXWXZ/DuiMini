@@ -35,7 +35,7 @@ UIControl* UIDlgBuilder::CreateControl(UIControl* v_ctrl,
     // Attach to parent (parent must have container attribute)
     if (v_parent) {
         // must use dynamic_cast!
-        IUIContainer* container = dynamic_cast<IUIContainer*>((UIControl*)v_parent->GetInterface(_T("container")));
+        IUIContainer* container = dynamic_cast<IUIContainer*>((UIControl*)v_parent->GetInterface(CTRLNAME_CONTAINER));
         if (!container)
             return nullptr;
         container->Add(v_ctrl);
@@ -65,6 +65,7 @@ UIControl* UIDlgBuilder::Parse(UIWindow* v_wnd, xmlnode v_root,
         LPCTSTR ctrl_name = node->name();
         size_t ctrl_namelen = _tcslen(ctrl_name);
         UIControl* new_ctrl = nullptr;
+        // TODO: Add new Ctrl
         switch (ctrl_namelen) {
         case 3:
         {
@@ -79,6 +80,8 @@ UIControl* UIDlgBuilder::Parse(UIWindow* v_wnd, xmlnode v_root,
             }
             if (CmpStr(ctrl_name, CTRLNAME_IMAGE))
                 new_ctrl = new UIImage;
+            if (CmpStr(ctrl_name, CTRLNAME_BUTTON))
+                new_ctrl = new UIButton;
             break;
         }
         case 9:

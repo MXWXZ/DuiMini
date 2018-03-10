@@ -18,6 +18,7 @@ FONTID    UIConfig::shownfont_ = 0;
 UIAttrSet UIConfig::lang_;
 UIAttrSet UIConfig::skin_;
 UIAttrSet UIConfig::font_;
+UIAttrSet UIConfig::sys_res_id_;
 UIAttrSet UIConfig::res_id_;
 UIAttrSet UIConfig::lang_str_;
 
@@ -46,6 +47,8 @@ void UIConfig::LoadConfig(LPCTSTR v_relativepath/* = DEFAULT_RESFILE*/) {
                 if (CFG_CmpAttr(_T("system"), _T("1")))
                     CFG_AddAttrStatic(_T("default"), _T("0"));
                 CFG_EndAttr(skin_);
+                if (CFG_CmpAttr(_T("system"), _T("1")))
+                    AddSystemSkin(skin_.GetSize());
                 if (CFG_CmpAttr(_T("system"), _T("0")) &&
                     CFG_CmpAttr(_T("default"), _T("1")))
                     SetShownSkin(skin_.GetSize());
@@ -141,6 +144,20 @@ void UIConfig::SetShownSkin(SKINID v_id) {
     shownskin_ = v_id;
 }
 
+void UIConfig::AddSystemSkin(SKINID v_id) {
+    UIXmlLoader file(skin_[v_id - 1][_T("value")] + _T("\\resid.xml"));
+    for (xmlnode node = file.GetRoot()->first_node();
+         node != nullptr;
+         node = node->next_sibling()) {
+        UIXmlNode tmp(node);
+        CFG_BeginAttr;
+        CFG_AddAttr(_T("type"));
+        CFG_AddAttr(_T("name"));
+        CFG_AddAttr(_T("file"));
+        CFG_EndAttr(sys_res_id_);
+    }
+}
+
 UIAttr* UIConfig::FindDlg(LPCTSTR v_name) {
     int ret = dlg_.FindNextAttr(0, _T("name"), v_name);
     if (ret != -1)
@@ -162,6 +179,9 @@ UIAttr* UIConfig::FindResid(LPCTSTR v_name) {
     int ret = res_id_.FindNextAttr(0, _T("name"), v_name);
     if (ret != -1)
         return &res_id_[ret];
+    ret = sys_res_id_.FindNextAttr(0, _T("name"), v_name);
+    if (ret != -1)
+        return &sys_res_id_[ret];
     UIHandleError(kLL_Warning, kEC_IDInvalid,
                   _T("Config resid name %s invalid!"), v_name);
     return nullptr;

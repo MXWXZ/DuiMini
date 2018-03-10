@@ -17,14 +17,8 @@ MainDlg::MainDlg()
 
 MainDlg::~MainDlg() {}
 
-bool MainDlg::InitWindow() {
+void MainDlg::OnInit() {
     SetIcon(IDI_DEMO);
-    return true;
-}
-
-bool MainDlg::FuncName(WPARAM v_wparam, LPARAM v_lparam) {
-    SetWindowSize(1000, 500);
-    return true;
 }
 
 LRESULT MainDlg::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {

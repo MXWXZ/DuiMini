@@ -59,9 +59,14 @@ UIDlgBuilder* UIWindow::SetDlgBuilder(LPCTSTR v_dlgname) {
     return builder_;
 }
 
-bool UIWindow::InitWindow() {
+bool UIWindow::OnCloseButton(const UIEvent& v_event) {
+    Close();
     return true;
 }
+
+void UIWindow::OnInit() {}
+
+void UIWindow::OnClose() {}
 
 UIDlgBuilder* UIWindow::GetDlgBuilder() const {
     return builder_;
@@ -104,6 +109,10 @@ bool UIWindow::UnbindMsgHandler(LPCTSTR v_name, WindowMessage v_msg) const {
     return true;
 }
 
+void UIWindow::Close() const {
+    SendWindowMessage(WM_CLOSE, NULL, NULL);
+}
+
 UIRender* UIWindow::GetRender() const {
     return render_;
 }
@@ -127,30 +136,24 @@ void UIWindow::Run(LPCTSTR v_classname/* = _T("DuiMini")*/) {
     DoModal();
 }
 
-#define WLPARAM v_wparam, v_lparam
 LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
+    UIEvent event(v_wparam, v_lparam);
+    event.SetMsgFromWinMsg(v_msg);
     // mouse msg:mouse position ctrl
     UIControl *mousepos_ctrl = nullptr;
     // mouse msg:ctrl_lclick_ or ctrl_rclick_
     UIControl** ctrl_click_tmp = &ctrl_rclick_;
-    WindowMessage mouse_msg = kWM_Start_;
+    // TODO: Add new Msg
     switch (v_msg) {
     case WM_LBUTTONDOWN:
-        if (!mouse_msg)mouse_msg = kWM_LButtonDown;
     case WM_LBUTTONUP:
-        if (!mouse_msg)mouse_msg = kWM_LButtonUp;
         ctrl_click_tmp = &ctrl_lclick_;  // change default value
     case WM_RBUTTONDOWN:                 // default value,no need to change
-        if (!mouse_msg)mouse_msg = kWM_RButtonDown;
     case WM_RBUTTONUP:
-        if (!mouse_msg)mouse_msg = kWM_RButtonUp;
     case WM_LBUTTONDBLCLK:
-        if (!mouse_msg)mouse_msg = kWM_LButtonDBClick;
     case WM_RBUTTONDBLCLK:
-        if (!mouse_msg)mouse_msg = kWM_RButtonDBClick;
     case WM_MOUSEMOVE:
-        last_mousepos_.x = GET_X_LPARAM(v_lparam);
-        last_mousepos_.y = GET_Y_LPARAM(v_lparam);
+        last_mousepos_ = event.GetPos();
         mousepos_ctrl = GetDialog()->FindCtrlFromPT(last_mousepos_);
         break;
     }
@@ -163,7 +166,8 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
             break;
         _CtrlBindMsgHandler();
         _CtrlBindVar();
-        InitWindow();
+        OnInit();
+        UpdateWindow(true);
         break;
     }
     case WM_DESTROY:
@@ -173,12 +177,14 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
     }
     case WM_CLOSE:
     {
-        DWORD lparam = MAKELPARAM(last_mousepos_.x, last_mousepos_.y);
+        UIEvent tmp(kWM_LButtonUp);
+        tmp.SetPos(last_mousepos_);
         // send btnup msg to current click ctrl
         if (ctrl_lclick_)
-            ctrl_lclick_->Event(kWM_LButtonUp, NULL, lparam);
+            ctrl_lclick_->Event(tmp);
         if (ctrl_rclick_)
-            ctrl_rclick_->Event(kWM_RButtonUp, NULL, lparam);
+            ctrl_rclick_->Event(tmp);
+        OnClose();
         break;
     }
     case WM_PAINT:
@@ -193,7 +199,7 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
             break;
         SetCapture(hwnd_);
         ctrl_click = mousepos_ctrl;
-        mousepos_ctrl->Event(mouse_msg, WLPARAM);
+        mousepos_ctrl->Event(event);
         break;
     }
     case WM_LBUTTONUP:
@@ -207,11 +213,11 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
             ctrl_click = nullptr;
             break;
         }
-        ctrl_click->Event(mouse_msg, WLPARAM);
+        ctrl_click->Event(event);
         if (v_msg == WM_LBUTTONUP)
-            ctrl_click->Event(kWM_LButtonClick, WLPARAM);
+            ctrl_click->Event(UIEvent(kWM_LButtonClick, v_wparam, v_lparam));
         else
-            ctrl_click->Event(kWM_RButtonClick, WLPARAM);
+            ctrl_click->Event(UIEvent(kWM_RButtonClick, v_wparam, v_lparam));
         ctrl_click = nullptr;
         break;
     }
@@ -220,7 +226,7 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
     {
         if (!mousepos_ctrl)
             break;
-        mousepos_ctrl->Event(mouse_msg, WLPARAM);
+        mousepos_ctrl->Event(event);
         break;
     }
     case WM_MOUSEMOVE:
@@ -238,21 +244,21 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
         // enter new ctrl
         if (mousepos_ctrl != ctrl_hover_) {
             if (ctrl_hover_)     // former ctrl leave
-                ctrl_hover_->Event(kWM_MouseLeave, WLPARAM);
+                ctrl_hover_->Event(UIEvent(kWM_MouseLeave, v_wparam, v_lparam));
             if (mousepos_ctrl) {
-                mousepos_ctrl->Event(kWM_MouseEnter, WLPARAM);
+                mousepos_ctrl->Event(UIEvent(kWM_MouseEnter, v_wparam, v_lparam));
                 ctrl_hover_ = mousepos_ctrl;
             }
         }
         if (mousepos_ctrl)
-            mousepos_ctrl->Event(kWM_MouseMove, WLPARAM);
+            mousepos_ctrl->Event(event);
         break;
     }
     case WM_MOUSELEAVE:
     {
         mouse_tracking_ = false;
         if (ctrl_hover_) {      // clear hover control
-            ctrl_hover_->Event(kWM_MouseLeave, WLPARAM);
+            ctrl_hover_->Event(event);
             ctrl_hover_ = nullptr;
         }
         break;
@@ -295,7 +301,8 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
         pos.Format(_T("0,0,%d,%d"), rect_.right - rect_.left,
                     rect_.bottom - rect_.top);
         GetDialog()->SetPos(pos);
-        UpdateWindow(true);
+        if (IsWindowVisible(hwnd_))
+            UpdateWindow(true);
         break;
     }
     case WM_GETMINMAXINFO:
@@ -310,7 +317,7 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
     }
     }
 
-    return CallWindowProc(DefWindowProc, hwnd_, v_msg, WLPARAM);
+    return CallWindowProc(DefWindowProc, hwnd_, v_msg, v_wparam, v_lparam);
 }
 #undef DEFPARAM
 

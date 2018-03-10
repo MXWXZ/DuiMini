@@ -32,7 +32,7 @@ public:
     void Paint(bool v_background = false) override;
 
 protected:
-    void OnSkinChange(SKINID v_former, SKINID v_new) override;
+    bool OnSkinChange(const UIEvent& v_event) override;
 
 protected:
     UIRenderImage *img_ = nullptr;

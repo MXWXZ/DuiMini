@@ -117,18 +117,18 @@ void UIDialog::AfterSetAttribute() {
     // Init dlg pos
     basewnd_->SetWindowPos(GetPos());
     SetSizeBox(GetSizeBox());           // Init size box
-    if (!ShowTaskBar(-1))
+    if (!ShowTaskBar(STAY))
         ShowTaskBar(FALSE);
 }
 
-bool UIDialog::Event(WindowMessage v_msg, WPARAM v_wparam, LPARAM v_lparam) {
-    if (!UIContainer::Event(v_msg, v_wparam, v_lparam))
+bool UIDialog::Event(const UIEvent& v_event) {
+    if (!UIContainer::Event(v_event))
         return false;
-    switch (v_msg) {
+    switch (v_event) {
     case kWM_LButtonDown:
     {
         // move window
-        if (!AllowWindowMove(-1))
+        if (!AllowWindowMove(STAY))
             break;
         UIRect test, tmprect = GetPos();
         UStr tmp = GetAttribute(_T("caption"));
@@ -139,26 +139,25 @@ bool UIDialog::Event(WindowMessage v_msg, WPARAM v_wparam, LPARAM v_lparam) {
         int seppos3 = tmp.Find(_T(","), seppos2 + 1);
         test.right = ParsePosStr(tmp.Mid(seppos2 + 1, seppos3 - seppos2 - 1), right, &tmprect);
         test.bottom = ParsePosStr(tmp.Right(tmp.GetLength() - seppos3 - 1), bottom, &tmprect);
-        POINT pt;
-        pt.x = GET_X_LPARAM(v_lparam);
-        pt.y = GET_Y_LPARAM(v_lparam);
+        POINT pt = v_event.GetPos();
         if (!::PtInRect(&test.rect(), pt))
             break;
 
         ClientToScreen(basewnd_->GetHWND(), &pt);
         ReleaseCapture();
         basewnd_->SendWindowMessage(WM_NCLBUTTONDOWN, HTCAPTION,
-                                    MAKELPARAM(pt.x, pt.y));
-        basewnd_->SendWindowMessage(WM_LBUTTONUP, v_wparam, v_lparam);
+                                    v_event.GetLParam());
+        basewnd_->SendWindowMessage(WM_LBUTTONUP, v_event.GetWParam(),
+                                    v_event.GetLParam());
         break;
     }
     }
     return true;
 }
 
-void UIDialog::OnLangChange(LANGID v_former, LANGID v_new) {
+bool UIDialog::OnLangChange(const UIEvent& v_event) {
     SetTitle(GetAttrStr(GetTitle()));
-    UIContainer::OnLangChange(v_former, v_new);
+    return UIContainer::OnLangChange(v_event);
 }
 
 LPVOID UIDialog::GetInterface(LPCTSTR v_name) {

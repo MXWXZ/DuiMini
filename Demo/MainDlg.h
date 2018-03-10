@@ -14,21 +14,19 @@ public:
     MainDlg();
     ~MainDlg();
 
-    bool InitWindow() override;
-    bool FuncName(WPARAM v_wparam, LPARAM v_lparam);
+    void OnInit() override;
 
 private:
-    UIImage* img_ = nullptr;
 
 protected:
     // override message handler sample
     LRESULT MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) override;
 
     MSG_MAP_BEGIN(MainDlg)
-        ON_CONTROL_MSG(_T("head"), kWM_LButtonClick, FuncName)
+        ON_PARENT_MSG(UIWindow)
         MSG_MAP_END
 
     VAR_MAP_BEGIN
-        ON_CONTROL_VAR(_T("head"), img_)
+        ON_PARENT_VAR(UIWindow)
         VAR_MAP_END
 };

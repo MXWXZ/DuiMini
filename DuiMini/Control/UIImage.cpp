@@ -129,9 +129,9 @@ void UIImage::Paint(bool v_background/* = false*/) {
                                             src_height - height_bottom));
 }
 
-void UIImage::OnSkinChange(SKINID v_former, SKINID v_new) {
+bool UIImage::OnSkinChange(const UIEvent& v_event) {
     SetFile(GetAttrPath(GetFile()));
-    UIControl::OnSkinChange(v_former, v_new);
+    return UIControl::OnSkinChange(v_event);
 }
 
 }   // namespace DuiMini

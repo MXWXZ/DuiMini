@@ -471,4 +471,90 @@ long UIRect::height() const {
     return bottom - top;
 }
 
+UIEvent::UIEvent() {}
+
+UIEvent::UIEvent(WindowMessage v_msg) :msg_(v_msg) {}
+
+UIEvent::UIEvent(WPARAM v_wparam, LPARAM v_lparam)
+    :wparam_(v_wparam), lparam_(v_lparam) {}
+
+UIEvent::UIEvent(WindowMessage v_msg, WPARAM v_wparam, LPARAM v_lparam)
+    :msg_(v_msg), wparam_(v_wparam), lparam_(v_lparam) {}
+
+UIEvent::~UIEvent() {}
+
+UIEvent::operator WindowMessage() const {
+    return GetMsg();
+}
+
+WindowMessage UIEvent::GetMsg() const {
+    return msg_;
+}
+
+WPARAM UIEvent::GetWParam() const {
+    return wparam_;
+}
+
+LPARAM UIEvent::GetLParam() const {
+    return lparam_;
+}
+
+void UIEvent::GetMsg(WindowMessage v_msg) {
+    msg_ = v_msg;
+}
+
+void UIEvent::GetWParam(WPARAM v_wparam) {
+    wparam_ = v_wparam;
+}
+
+void UIEvent::GetLParam(LPARAM v_lparam) {
+    lparam_ = v_lparam;
+}
+
+bool UIEvent::SetMsgFromWinMsg(UINT v_winmsg) {
+    bool ret = true;
+    // TODO: Add new Msg
+    switch (v_winmsg) {
+    case WM_MOUSEMOVE:
+        msg_ = kWM_MouseMove;
+        break;
+    case WM_LBUTTONDOWN:
+        msg_ = kWM_LButtonDown;
+        break;
+    case WM_LBUTTONUP:
+        msg_ = kWM_LButtonUp;
+        break;
+    case WM_RBUTTONDOWN:
+        msg_ = kWM_RButtonDown;
+        break;
+    case WM_RBUTTONUP:
+        msg_ = kWM_RButtonUp;
+        break;
+    case WM_LBUTTONDBLCLK:
+        msg_ = kWM_LButtonDBClick;
+        break;
+    case WM_RBUTTONDBLCLK:
+        msg_ = kWM_RButtonDBClick;
+        break;
+    case WM_MOUSELEAVE:
+        msg_ = kWM_MouseLeave;
+        break;
+    default:
+        ret = false;
+        break;
+    }
+    return ret;
+}
+
+void UIEvent::SetPos(POINT v_pt) {
+    lparam_ = MAKELPARAM(v_pt.x, v_pt.y);
+}
+
+POINT UIEvent::GetPos() const {
+    POINT ret;
+    ret.x = GET_X_LPARAM(lparam_);
+    ret.y = GET_Y_LPARAM(lparam_);
+    return ret;
+}
+
 }   // namespace DuiMini

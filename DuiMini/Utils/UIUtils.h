@@ -70,6 +70,36 @@ typedef const UIString CUStr;
 
 ////////////////////////////////////////
 
+class DUIMINI_API UIEvent {
+public:
+    UIEvent();
+    UIEvent(WindowMessage v_msg);
+    UIEvent(WPARAM v_wparam, LPARAM v_lparam);
+    UIEvent(WindowMessage v_msg, WPARAM v_wparam, LPARAM v_lparam);
+    ~UIEvent();
+
+public:
+    operator WindowMessage() const;
+    WindowMessage GetMsg() const;
+    WPARAM GetWParam() const;
+    LPARAM GetLParam() const;
+    void GetMsg(WindowMessage v_msg);
+    void GetWParam(WPARAM v_wparam);
+    void GetLParam(LPARAM v_lparam);
+
+    bool SetMsgFromWinMsg(UINT v_winmsg);
+
+    void SetPos(POINT v_pt);
+    POINT GetPos() const;
+
+private:
+    WindowMessage msg_ = kWM_Start_;
+    WPARAM wparam_ = NULL;
+    LPARAM lparam_ = NULL;
+};
+
+////////////////////////////////////////
+
 class DUIMINI_API UIRect {
 public:
     UIRect();

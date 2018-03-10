@@ -31,10 +31,12 @@
 #define DEFAULT_RESFILE     _T("uires.xml")   // Default res file
 #define DEFAULT_RESIDFILE   _T("resid.xml")   // Default resid file
 
-#define CTRLNAME_CONTROL        _T("control")
+// TODO: Add new Ctrl
+#define CTRLNAME_CONTROL        _T("ctrl")
 #define CTRLNAME_CONTAINER      _T("container")
 #define CTRLNAME_DIALOG         _T("dlg")
 #define CTRLNAME_IMAGE          _T("img")
+#define CTRLNAME_BUTTON          _T("btn")
 
 // rapidxml
 typedef rapidxml::xml_document<TCHAR> xmldoc;
@@ -46,6 +48,35 @@ typedef unsigned char ALPHA;
 typedef unsigned short SKINID;
 typedef unsigned short LANGID;
 typedef unsigned short FONTID;
+
+#define STAY -1
+
+// TODO: Add new Msg
+enum WindowMessage {
+    //      Msg                 WPARAM              LPARAM
+    kWM_Start_ = 0,    // USELESS
+
+    kWM_MouseEnter,    //               WM_MOUSEMOVE
+    kWM_MouseLeave,    //                    ...
+    kWM_MouseMove,     //                    ...
+    kWM_LButtonDown,   //               WM_LBUTTONDOWN
+    kWM_LButtonUp,     //                    ...
+    kWM_LButtonClick,  //                    ...
+    kWM_LButtonDBClick,//                    ...
+    kWM_RButtonDown,   //                    ...
+    kWM_RButtonUp,     //                    ...
+    kWM_RButtonClick,  //                    ...
+    kWM_RButtonDBClick,//                    ...
+
+    kWM_Disable,       //
+    kWM_IgnoreDisable_,// after this will ignore disable attribute
+    kWM_Active,        //
+
+    kWM_SkinChange,    //    former skinid       new skinid
+    kWM_LangChange,    //    former langid       new langid
+
+    kWM_End_           // USELESS
+};
 
 #ifdef _UNICODE
 typedef std::wstring tstring;

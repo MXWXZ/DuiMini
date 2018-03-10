@@ -13,7 +13,10 @@
 namespace DuiMini {
 UIControl::UIControl() {}
 
-UIControl::~UIControl() {}
+UIControl::~UIControl() {
+    if (parent_)
+        dynamic_cast<IUIContainer*>(parent_)->Remove(this);
+}
 
 void UIControl::SetAttribute(LPCTSTR v_name, LPCTSTR v_value) {
     attr_[v_name] = v_value;
@@ -21,13 +24,10 @@ void UIControl::SetAttribute(LPCTSTR v_name, LPCTSTR v_value) {
 
 void UIControl::AfterSetAttribute() {
     UpdatePos();
-    Event(kWM_LangChange, 0, UIConfig::GetShownLang());
-    Event(kWM_SkinChange, 0, UIConfig::GetShownSkin());
+    Event(UIEvent(kWM_LangChange, 0, UIConfig::GetShownLang()));
+    Event(UIEvent(kWM_SkinChange, 0, UIConfig::GetShownSkin()));
+    DisableCtrl(DisableCtrl(-1));
 }
-
-void UIControl::OnSkinChange(SKINID v_former, SKINID v_new) {}
-
-void UIControl::OnLangChange(LANGID v_former, LANGID v_new) {}
 
 CUStr UIControl::GetAttribute(LPCTSTR v_name) const {
     return attr_.GetValue(v_name);
@@ -51,7 +51,7 @@ UIWindow* UIControl::GetBaseWindow() const {
 
 UIControl* UIControl::FindCtrlFromPT(POINT v_pt) {
     if (PtInRect(v_pt)) {
-        if (AttachBackground(-1))
+        if (AttachBackground(STAY))
             return basewnd_->GetDialog();
         return this;
     } 
@@ -61,41 +61,76 @@ UIControl* UIControl::FindCtrlFromPT(POINT v_pt) {
 }
 
 UIControl* UIControl::FindCtrlFromName(LPCTSTR v_name) {
-    if (GetAttribute(_T("name")) == v_name)
+    if (GetName() == v_name)
         return this;
     else
         return nullptr;
 }
 
-bool UIControl::Event(WindowMessage v_msg, WPARAM v_wparam, LPARAM v_lparam) {
+bool UIControl::Event(const UIEvent& v_event) {
+    if (v_event < kWM_IgnoreDisable_ && DisableCtrl(STAY))
+        return true;
     bool ret = true;
     // call notify func
-    if (msgmap_[v_msg])
-        ret = (basewnd_->*msgmap_[v_msg])(v_wparam, v_lparam);
+    if (msgmap_[v_event])
+        ret = (basewnd_->*msgmap_[v_event])(v_event);
     if (!ret)
         return false;
-    switch (v_msg) {
+    bool flg = true;
+    // TODO: Add new Msg
+    switch (v_event) {
+    case kWM_MouseEnter:
+        ret = OnMouseEnter(v_event);
+        break;
+    case kWM_MouseLeave:
+        ret = OnMouseLeave(v_event);
+        break;
+    case kWM_MouseMove:
+        OnMouseMove(v_event);
+        return true;    // Do NOT record MouseMove MSG
+
     case kWM_LButtonDown:
+        if (flg)
+            (ret = OnLButtonDown(v_event)), flg = false;
     case kWM_LButtonUp:
+        if (flg)
+            (ret = OnLButtonUp(v_event)), flg = false;
     case kWM_LButtonClick:
+        if (flg)
+            (ret = OnLButtonClick(v_event)), flg = false;
     case kWM_LButtonDBClick:
+        if (flg)
+            (ret = OnLButtonDBClick(v_event)), flg = false;
     case kWM_RButtonDown:
+        if (flg)
+            (ret = OnRButtonDown(v_event)), flg = false;
     case kWM_RButtonUp:
+        if (flg)
+            (ret = OnRButtonUp(v_event)), flg = false;
     case kWM_RButtonClick:
+        if (flg)
+            (ret = OnRButtonClick(v_event)), flg = false;
     case kWM_RButtonDBClick:
-        UIRecLog::RecordLog(kLL_Info, _T("Message hit! Control name:\"%s\",Message:%d"),
-                            GetAttribute(_T("name")).GetData(), v_msg);
+        if (flg)
+            (ret = OnRButtonDBClick(v_event)), flg = false;
+        break;
+
+    case kWM_Disable:
+        ret = OnDisable(v_event);
+        break;
+    case kWM_Active:
+        ret = OnActive(v_event);
         break;
     case kWM_SkinChange:
-        OnSkinChange(static_cast<SKINID>(v_wparam),
-                     static_cast<SKINID>(v_lparam));
+        ret = OnSkinChange(v_event);
         break;
     case kWM_LangChange:
-        OnLangChange(static_cast<LANGID>(v_wparam),
-                     static_cast<LANGID>(v_lparam));
+        ret = OnLangChange(v_event);
         break;
     }
-    return true;
+    UIRecLog::RecordLog(kLL_Info, _T("Message hit! Control name:\"%s\",Message:%d"),
+                        GetAttribute(_T("name")).GetData(), v_event.GetMsg());
+    return ret;
 }
 
 void UIControl::SetMsgHandler(WindowMessage v_msg, MsgHandleFun v_func) {
@@ -141,11 +176,7 @@ int UIControl::ParsePosStr(LPCTSTR v_str, StrLoc v_loc,
         return ret;
     } else {
         int offset = str.Str2Int();
-        if (v_loc == left)
-            return parentrc.left + offset;
-        else if (v_loc == top)
-            return parentrc.top + offset;
-        else if (v_loc == right) {
+        if (v_loc == left || v_loc == right) {
             if (str[0] == '-')
                 return parentrc.right + offset;
             else
@@ -212,6 +243,10 @@ UIRect UIControl::UpdatePos() {
     return rect_;
 }
 
+CUStr UIControl::GetName() const {
+    return GetAttribute(_T("name"));
+}
+
 void UIControl::SetPos(LPCTSTR v_pos) {
     SetAttribute(_T("pos"), v_pos);
     UpdatePos();
@@ -227,6 +262,15 @@ long UIControl::GetWidth() const {
 
 long UIControl::GetHeight() const {
     return rect_.bottom - rect_.top;
+}
+
+bool UIControl::DisableCtrl(BOOL v_disable) {
+    STATE_FUNC_START(_T("disable"), v_disable)
+        if (v_disable == TRUE)
+            Event(UIEvent(kWM_Disable));
+        else
+            Event(UIEvent(kWM_Active));
+        STATE_FUNC_END
 }
 
 bool UIControl::AttachBackground(BOOL v_bg) {

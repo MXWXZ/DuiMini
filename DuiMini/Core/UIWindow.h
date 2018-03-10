@@ -11,31 +11,9 @@
 #include "Core/UIDlgBuilder.h"
 
 namespace DuiMini {
-enum WindowMessage {
-    //      Msg                 WPARAM              LPARAM
-    kWM_Start_ = 0,    // USELESS
-
-    kWM_MouseEnter,    //               WM_MOUSEMOVE
-    kWM_MouseLeave,    //                    ...
-    kWM_MouseMove,     //                    ...
-    kWM_LButtonDown,   //               WM_LBUTTONDOWN
-    kWM_LButtonUp,     //                    ...
-    kWM_LButtonClick,  //                    ...
-    kWM_LButtonDBClick,//                    ...
-    kWM_RButtonDown,   //                    ...
-    kWM_RButtonUp,     //                    ...
-    kWM_RButtonClick,  //                    ...
-    kWM_RButtonDBClick,//                    ...
-    kWM_SkinChange,    //    former skinid       new skinid
-    kWM_LangChange,    //    former langid       new langid
-
-    kWM_End_           // USELESS
-};
-
-typedef bool(UIWindow::*MsgHandleFun)(WPARAM v_wparam, LPARAM v_lparam);
-
 #define MSG_MAP_BEGIN(theclass) virtual void _CtrlBindMsgHandler() { \
                                     typedef theclass _thisclass;
+#define ON_PARENT_MSG(parentclass) parentclass::_CtrlBindMsgHandler();
 #define MSG_MAP_END   }
 #define ON_CONTROL_MSG(name, msg, func)   BindMsgHandler(name, msg, static_cast<MsgHandleFun>(&_thisclass::func));
 
@@ -45,7 +23,10 @@ typedef bool(UIWindow::*MsgHandleFun)(WPARAM v_wparam, LPARAM v_lparam);
                                      *tmp = FindCtrlFromName(name); \
                                      if (!var)                      \
                                         UIHandleError(kLL_Warning, kEC_IDInvalid, _T("Ctrl name \"%s\" invalid!"), name);
+#define ON_PARENT_VAR(parentclass) parentclass::_CtrlBindVar();
 #define VAR_MAP_END   }
+
+typedef bool(UIWindow::*MsgHandleFun)(const UIEvent& v_event);
 
 class DUIMINI_API UIWindow {
 public:
@@ -116,22 +97,18 @@ public:
     */
     void FinishCreateControl(UIControl* v_ctrl);
 
-    /**
-     * Bind & Unbind message handler
-     * @param    LPCTSTR v_name:ctrl name
-     * @param    WindowMessage v_msg:window message
-     * @param    MsgHandleFun v_func:handler function
-     * @return   true for success
-     */
-    bool BindMsgHandler(LPCTSTR v_name, WindowMessage v_msg,
-                        MsgHandleFun v_func) const;
-    bool UnbindMsgHandler(LPCTSTR v_name, WindowMessage v_msg) const;
+    void Close() const;
 
 public:
     UIRender* GetRender() const;
     UIDlgBuilder* GetDlgBuilder() const;
     LRESULT SendWindowMessage(UINT v_msg, WPARAM v_wparam,
                               LPARAM v_lparam) const;
+
+protected:
+    // no need to call it if you override
+    virtual void OnInit();
+    virtual void OnClose();
 
 protected:
     /**
@@ -144,8 +121,16 @@ protected:
 
     UIDlgBuilder* SetDlgBuilder(LPCTSTR v_dlgname);
 
-    // no need to call it if you override
-    virtual bool InitWindow();
+    /**
+    * Bind & Unbind message handler
+    * @param    LPCTSTR v_name:ctrl name
+    * @param    WindowMessage v_msg:window message
+    * @param    MsgHandleFun v_func:handler function
+    * @return   true for success
+    */
+    bool BindMsgHandler(LPCTSTR v_name, WindowMessage v_msg,
+                        MsgHandleFun v_func) const;
+    bool UnbindMsgHandler(LPCTSTR v_name, WindowMessage v_msg) const;
 
 protected:
     // window info
@@ -163,7 +148,11 @@ protected:
     UIControl*       ctrl_rclick_ = nullptr;      // current right clicked ctrl
     UIControl*       ctrl_hover_ = nullptr;       // current hovered ctrl
 
+protected:
+    bool OnCloseButton(const UIEvent& v_event);
+
     MSG_MAP_BEGIN(UIWindow)
+        ON_CONTROL_MSG(_T("btn_close"), kWM_LButtonClick, OnCloseButton)
         MSG_MAP_END
 
     VAR_MAP_BEGIN

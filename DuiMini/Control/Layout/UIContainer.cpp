@@ -34,6 +34,8 @@ bool UIContainer::Add(UIControl* v_ctrl) {
 bool UIContainer::Remove(UIControl* v_ctrl) {
     for (UINT it = 0; it < item_.GetSize(); ++it) {
         if (reinterpret_cast<UIControl*>(item_[it]) == v_ctrl) {
+            // if parent exist, "delete" will call UIContainer::Remove
+            v_ctrl->SetParent(nullptr);     // Prevent dead recursive
             delete v_ctrl;
             return item_.Remove(it);
         }
@@ -42,15 +44,19 @@ bool UIContainer::Remove(UIControl* v_ctrl) {
 }
 
 void UIContainer::RemoveAll() {
-    for (UINT it = 0; it < item_.GetSize(); ++it)
-        delete reinterpret_cast<UIControl*>(item_[it]);
+    for (UINT it = 0; it < item_.GetSize(); ++it) {
+        UIControl* ctrl = reinterpret_cast<UIControl*>(item_[it]);
+        // if parent exist, "delete" will call UIContainer::Remove
+        ctrl->SetParent(nullptr);     // Prevent dead recursive
+        delete ctrl;
+    }
     item_.Empty();
 }
 
 void UIContainer::Paint(bool v_background/* = false*/) {
     for (UINT it = 0; it < item_.GetSize(); ++it) {
         UIControl* ctrl = reinterpret_cast<UIControl*>(item_[it]);
-        if (ctrl->AttachBackground(-1) == v_background)
+        if (ctrl->AttachBackground(STAY) == v_background)
             ctrl->Paint(v_background);
     }
 }

@@ -159,6 +159,9 @@
     <ClInclude Include="Core\UIConfig.h">
       <Filter>头文件\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Control\UIButton.h">
+      <Filter>头文件\Control</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StdAfx.cpp">
@@ -228,6 +231,9 @@
       <Filter>源文件\Control</Filter>
     </ClCompile>
     <ClCompile Include="Control\UIImage.cpp">
+      <Filter>源文件\Control</Filter>
+    </ClCompile>
+    <ClCompile Include="Control\UIButton.cpp">
       <Filter>源文件\Control</Filter>
     </ClCompile>
   </ItemGroup>
