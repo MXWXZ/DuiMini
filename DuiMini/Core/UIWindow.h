@@ -98,6 +98,9 @@ public:
     void FinishCreateControl(UIControl* v_ctrl);
 
     void Close() const;
+    void Maximize() const;
+    void Restore() const;
+    void Minimize() const;
 
 public:
     UIRender* GetRender() const;
@@ -106,9 +109,12 @@ public:
                               LPARAM v_lparam) const;
 
 protected:
-    // no need to call it if you override
+    // better to call them if you override
     virtual void OnInit();
     virtual void OnClose();
+    virtual void OnMaximize();
+    virtual void OnRestore();
+    virtual void OnMinimize();
 
 protected:
     /**
@@ -150,9 +156,15 @@ protected:
 
 protected:
     bool OnCloseButton(const UIEvent& v_event);
+    bool OnMaxButton(const UIEvent& v_event);
+    bool OnRestoreButton(const UIEvent& v_event);
+    bool OnMinButton(const UIEvent& v_event);
 
     MSG_MAP_BEGIN(UIWindow)
         ON_CONTROL_MSG(_T("btn_close"), kWM_LButtonClick, OnCloseButton)
+        ON_CONTROL_MSG(_T("btn_max"), kWM_LButtonClick, OnMaxButton)
+        ON_CONTROL_MSG(_T("btn_restore"), kWM_LButtonClick, OnRestoreButton)
+        ON_CONTROL_MSG(_T("btn_min"), kWM_LButtonClick, OnMinButton)
         MSG_MAP_END
 
     VAR_MAP_BEGIN

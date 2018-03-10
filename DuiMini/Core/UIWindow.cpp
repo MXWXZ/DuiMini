@@ -64,9 +64,44 @@ bool UIWindow::OnCloseButton(const UIEvent& v_event) {
     return true;
 }
 
+bool UIWindow::OnMaxButton(const UIEvent & v_event) {
+    Maximize();
+    return true;
+}
+
+bool UIWindow::OnRestoreButton(const UIEvent & v_event) {
+    Restore();
+    return true;
+}
+
+bool UIWindow::OnMinButton(const UIEvent & v_event) {
+    Minimize();
+    return true;
+}
+
 void UIWindow::OnInit() {}
 
 void UIWindow::OnClose() {}
+
+void UIWindow::OnMaximize() {
+    UIButton* btn_max = (UIButton*)FindCtrlFromName(_T("btn_max"));
+    UIButton* btn_restore = (UIButton*)FindCtrlFromName(_T("btn_restore"));
+    if (btn_max && btn_max->VisibleCtrl(STAY))
+        btn_max->VisibleCtrl(FALSE);
+    if (btn_restore && !btn_restore->VisibleCtrl(STAY))
+        btn_restore->VisibleCtrl(TRUE);
+}
+
+void UIWindow::OnRestore() {
+    UIButton* btn_max = (UIButton*)FindCtrlFromName(_T("btn_max"));
+    UIButton* btn_restore = (UIButton*)FindCtrlFromName(_T("btn_restore"));
+    if (btn_max && !btn_max->VisibleCtrl(STAY))
+        btn_max->VisibleCtrl(TRUE);
+    if (btn_restore && btn_restore->VisibleCtrl(STAY))
+        btn_restore->VisibleCtrl(FALSE);
+}
+
+void UIWindow::OnMinimize() {}
 
 UIDlgBuilder* UIWindow::GetDlgBuilder() const {
     return builder_;
@@ -111,6 +146,21 @@ bool UIWindow::UnbindMsgHandler(LPCTSTR v_name, WindowMessage v_msg) const {
 
 void UIWindow::Close() const {
     SendWindowMessage(WM_CLOSE, NULL, NULL);
+}
+
+void UIWindow::Maximize() const {
+    SendWindowMessage(WM_SYSCOMMAND, SC_MAXIMIZE, MAKELPARAM(last_mousepos_.x,
+                                                             last_mousepos_.y));
+}
+
+void UIWindow::Restore() const {
+    SendWindowMessage(WM_SYSCOMMAND, SC_RESTORE, MAKELPARAM(last_mousepos_.x,
+                                                            last_mousepos_.y));
+}
+
+void UIWindow::Minimize() const {
+    SendWindowMessage(WM_SYSCOMMAND, SC_MINIMIZE, MAKELPARAM(last_mousepos_.x,
+                                                             last_mousepos_.y));
 }
 
 UIRender* UIWindow::GetRender() const {
@@ -301,6 +351,8 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
         pos.Format(_T("0,0,%d,%d"), rect_.right - rect_.left,
                     rect_.bottom - rect_.top);
         GetDialog()->SetPos(pos);
+        if (v_wparam == SIZE_RESTORED)
+            OnRestore();
         if (IsWindowVisible(hwnd_))
             UpdateWindow(true);
         break;
@@ -311,15 +363,23 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
         MINMAXINFO* info = reinterpret_cast<MINMAXINFO*>(v_lparam);
         info->ptMinTrackSize.x = dlg->GetMinWidth();
         info->ptMinTrackSize.y = dlg->GetMinHeight();
-        info->ptMaxTrackSize.x = dlg->GetMaxWidth();
-        info->ptMaxTrackSize.y = dlg->GetMaxHeight();
+        info->ptMaxSize.x = info->ptMaxTrackSize.x = dlg->GetMaxWidth();
+        info->ptMaxSize.y = info->ptMaxTrackSize.y = dlg->GetMaxHeight();
         break;
+    }
+    case WM_SYSCOMMAND:
+    {
+        if (v_wparam == SC_MINIMIZE)
+            OnMinimize();
+        else if (v_wparam == SC_MAXIMIZE)
+            OnMaximize();
+        else if (v_wparam == SC_RESTORE)
+            OnRestore();
     }
     }
 
     return CallWindowProc(DefWindowProc, hwnd_, v_msg, v_wparam, v_lparam);
 }
-#undef DEFPARAM
 
 LRESULT CALLBACK UIWindow::WinProc(HWND v_hwnd, UINT v_msg,
                                    WPARAM v_wparam, LPARAM v_lparam) {
@@ -425,8 +485,8 @@ bool UIWindow::SetWindowPos(HWND v_insertafter, int v_x, int v_y,
 
 bool UIWindow::CenterWindow() {
     UIRect newpos;
-    int screenwidth = GetSystemMetrics(SM_CXSCREEN);
-    int screenheight = GetSystemMetrics(SM_CYSCREEN);
+    int screenwidth = UIUtils::GetWorkAreaSize().width();
+    int screenheight = UIUtils::GetWorkAreaSize().height();
     int width = rect_.right - rect_.left;
     int height = rect_.bottom - rect_.top;
     newpos.left = (screenwidth - width) / 2;
@@ -464,7 +524,8 @@ HWND UIWindow::Create(LPCTSTR v_classname) {
     }
 
     hwnd_ = CreateWindowEx(WS_EX_LAYERED, classname, _T(""),
-                           WS_POPUP, CW_USEDEFAULT, CW_USEDEFAULT,
+                           WS_POPUP,
+                           CW_USEDEFAULT, CW_USEDEFAULT,
                            CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL,
                            UISystem::GetInstance(), this);
 

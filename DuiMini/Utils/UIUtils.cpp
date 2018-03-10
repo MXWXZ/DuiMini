@@ -25,6 +25,19 @@ CUStr UIUtils::GetTimeStr(LPCTSTR v_str) {
     return CUStr(tmpstr);
 }
 
+UIRect UIUtils::GetScreenSize() {
+    UIRect ret;
+    ret.right = GetSystemMetrics(SM_CXSCREEN);
+    ret.bottom = GetSystemMetrics(SM_CYSCREEN);
+    return ret;
+}
+
+UIRect UIUtils::GetWorkAreaSize() {
+    UIRect ret;
+    SystemParametersInfo(SPI_GETWORKAREA, 0, &(ret.rect()), 0);
+    return ret;
+}
+
 ////////////////////////////////////////
 
 UIAttr::UIAttr() {}

@@ -272,6 +272,18 @@ public:
      * @return   formated time string
      */
     static CUStr GetTimeStr(LPCTSTR v_str);
+
+    /**
+     * Get full screen size 
+     * @return   size rect
+     */
+    static UIRect GetScreenSize();
+
+    /**
+     * Get work area(without taskbar) size
+     * @return   size rect
+     */
+    static UIRect GetWorkAreaSize();
 };
 
 }   // namespace DuiMini

@@ -38,6 +38,9 @@ protected:
     bool OnMouseLeave(const UIEvent& v_event) override;
     bool OnLButtonDown(const UIEvent& v_event) override;
     bool OnLButtonUp(const UIEvent& v_event) override;
+    bool OnDisable(const UIEvent& v_event) override;
+    bool OnActive(const UIEvent& v_event) override;
+    bool OnInvisible(const UIEvent& v_event) override;
 
 protected:
     ButtonState state_ = kBS_Normal;

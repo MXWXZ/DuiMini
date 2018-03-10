@@ -61,4 +61,19 @@ bool UIButton::OnLButtonUp(const UIEvent& v_event) {
     return true;
 }
 
+bool UIButton::OnDisable(const UIEvent & v_event) {
+    SetState(kBS_Disable);
+    return true;
+}
+
+bool UIButton::OnActive(const UIEvent & v_event) {
+    SetState(kBS_Normal);
+    return true;
+}
+
+bool UIButton::OnInvisible(const UIEvent & v_event) {
+    SetState(kBS_Normal);   // init state
+    return true;
+}
+
 }   // namespace DuiMini

@@ -19,6 +19,7 @@ MainDlg::~MainDlg() {}
 
 void MainDlg::OnInit() {
     SetIcon(IDI_DEMO);
+    UIWindow::OnInit();
 }
 
 LRESULT MainDlg::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {

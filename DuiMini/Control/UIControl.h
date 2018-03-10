@@ -38,6 +38,7 @@ public:
     long GetHeight() const;
 
     bool DisableCtrl(BOOL v_disable = TRUE);
+    bool VisibleCtrl(BOOL v_visible = TRUE);
     /**
     * background
     * @param    BOOL v_bg:TRUE/FALSE Attach/Detach, STAY not change state
@@ -55,6 +56,7 @@ public:
         DEFAULT_ATTR(_T("size"), _T("0,0"))
         DEFAULT_ATTR(_T("background"), _T("0"))
         DEFAULT_ATTR(_T("disable"), _T("0"))
+        DEFAULT_ATTR(_T("visible"), _T("1"))
         ATTR_MAP_END
         virtual void SetAttribute(LPCTSTR v_name, LPCTSTR v_value);
     virtual void AfterSetAttribute();   // Init others which based on attribute
@@ -120,6 +122,8 @@ protected:
     virtual bool OnRButtonDBClick(const UIEvent& v_event) { return true; }
     virtual bool OnDisable(const UIEvent& v_event) { return true; }
     virtual bool OnActive(const UIEvent& v_event) { return true; }
+    virtual bool OnVisible(const UIEvent& v_event) { return true; }
+    virtual bool OnInvisible(const UIEvent& v_event) { return true; }
 
     enum StrLoc {
         left, top, right, bottom

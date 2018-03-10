@@ -26,7 +26,8 @@ void UIControl::AfterSetAttribute() {
     UpdatePos();
     Event(UIEvent(kWM_LangChange, 0, UIConfig::GetShownLang()));
     Event(UIEvent(kWM_SkinChange, 0, UIConfig::GetShownSkin()));
-    DisableCtrl(DisableCtrl(-1));
+    DisableCtrl(DisableCtrl(STAY));
+    VisibleCtrl(VisibleCtrl(STAY));
 }
 
 CUStr UIControl::GetAttribute(LPCTSTR v_name) const {
@@ -50,7 +51,7 @@ UIWindow* UIControl::GetBaseWindow() const {
 }
 
 UIControl* UIControl::FindCtrlFromPT(POINT v_pt) {
-    if (PtInRect(v_pt)) {
+    if (PtInRect(v_pt) && VisibleCtrl(STAY)) {
         if (AttachBackground(STAY))
             return basewnd_->GetDialog();
         return this;
@@ -68,7 +69,7 @@ UIControl* UIControl::FindCtrlFromName(LPCTSTR v_name) {
 }
 
 bool UIControl::Event(const UIEvent& v_event) {
-    if (v_event < kWM_IgnoreDisable_ && DisableCtrl(STAY))
+    if (v_event < kWM_IgnoreLimit_ && (DisableCtrl(STAY) || !VisibleCtrl(STAY)))
         return true;
     bool ret = true;
     // call notify func
@@ -121,6 +122,12 @@ bool UIControl::Event(const UIEvent& v_event) {
     case kWM_Active:
         ret = OnActive(v_event);
         break;
+    case kWM_Visible:
+        ret = OnVisible(v_event);
+        break;
+    case kWM_Invisible:
+        ret = OnInvisible(v_event);
+        break;
     case kWM_SkinChange:
         ret = OnSkinChange(v_event);
         break;
@@ -149,8 +156,7 @@ int UIControl::ParsePosStr(LPCTSTR v_str, StrLoc v_loc,
         parentrc = *v_parentrect;
     } else {
         if (!parent_) {     // default parent is screen
-            parentrc.right = GetSystemMetrics(SM_CXSCREEN);
-            parentrc.bottom = GetSystemMetrics(SM_CYSCREEN);
+            parentrc = UIUtils::GetScreenSize();
         } else {
             parentrc = parent_->GetPos();
         }
@@ -271,6 +277,15 @@ bool UIControl::DisableCtrl(BOOL v_disable) {
         else
             Event(UIEvent(kWM_Active));
         STATE_FUNC_END
+}
+
+bool UIControl::VisibleCtrl(BOOL v_visible) {
+    STATE_FUNC_START(_T("visible"), v_visible)
+        if (v_visible == TRUE)
+            Event(UIEvent(kWM_Visible));
+        else
+            Event(UIEvent(kWM_Invisible));
+    STATE_FUNC_END
 }
 
 bool UIControl::AttachBackground(BOOL v_bg) {

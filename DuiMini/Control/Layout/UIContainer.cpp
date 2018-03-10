@@ -56,7 +56,8 @@ void UIContainer::RemoveAll() {
 void UIContainer::Paint(bool v_background/* = false*/) {
     for (UINT it = 0; it < item_.GetSize(); ++it) {
         UIControl* ctrl = reinterpret_cast<UIControl*>(item_[it]);
-        if (ctrl->AttachBackground(STAY) == v_background)
+        if (ctrl->AttachBackground(STAY) == v_background
+            && ctrl->VisibleCtrl(STAY))
             ctrl->Paint(v_background);
     }
 }

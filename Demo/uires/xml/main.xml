@@ -1,5 +1,8 @@
 <dlg name="dlg_main" title="[STR_MAIN_TITLE]" pos="|-450,|-275" size="900,550" resizable="1"
      sizebox="5,5,5,5" minwidth="450" minheight="275" >
     <img name="img_bg" pos="0,0,-0,-0" file="[IMG_MAIN_BG]" background="1" margin="10,10,-10,-10" />
-    <btn name="btn_close" pos="-35,0,-0,25" file="[IMG_SYS_CLOSE]" />
+    <btn name="btn_close" pos="-35,0" size="35,25" file="[IMG_SYS_CLOSE]" />
+    <btn name="btn_max" pos="-70,0" size="35,25" file="[IMG_SYS_MAX]" />
+    <btn name="btn_restore" pos="-70,0" size="35,25" file="[IMG_SYS_RESTORE]" visible="0" />
+    <btn name="btn_min" pos="-105,0" size="35,25" file="[IMG_SYS_MIN]" />
 </dlg>

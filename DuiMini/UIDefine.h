@@ -69,8 +69,10 @@ enum WindowMessage {
     kWM_RButtonDBClick,//                    ...
 
     kWM_Disable,       //
-    kWM_IgnoreDisable_,// after this will ignore disable attribute
+    kWM_Invisible,     //
+    kWM_IgnoreLimit_,  // after this will ignore attribute limit
     kWM_Active,        //
+    kWM_Visible,       //
 
     kWM_SkinChange,    //    former skinid       new skinid
     kWM_LangChange,    //    former langid       new langid

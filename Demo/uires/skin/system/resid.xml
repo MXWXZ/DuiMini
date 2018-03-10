@@ -1,3 +1,6 @@
 <root>
     <res type="img" name="IMG_SYS_CLOSE" file="skin\system\close.png" />
+    <res type="img" name="IMG_SYS_MIN" file="skin\system\min.png" />
+    <res type="img" name="IMG_SYS_MAX" file="skin\system\max.png" />
+    <res type="img" name="IMG_SYS_RESTORE" file="skin\system\restore.png" />
 </root>
