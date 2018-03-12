@@ -42,17 +42,14 @@ bool UIRenderGDIP::Paint(UIWindow* v_wnd) {
     if (!v_wnd)
         return false;
     HWND hwnd = v_wnd->GetHWND();
-    UIRect rcwindow;
-    GetWindowRect(hwnd, &rcwindow.rect());
-    SIZE sizewindow;
     UIDialog* dlg = v_wnd->GetDialog();
-
-    UIRect pos = dlg->GetPos();
-    sizewindow.cx = pos.width();
-    sizewindow.cy = pos.height();
-
+    UIRect rcwindow;
+    GetWindowRect(hwnd, &(rcwindow.rect()));
+    SIZE sizewindow;
+    sizewindow.cx = rcwindow.width();
+    sizewindow.cy = rcwindow.height();
     HDC hdc = GetDC(hwnd);
-    
+
     int nBytesPerLine = ((sizewindow.cx * 32 + 31) & (~31)) >> 3;
     BITMAPINFOHEADER bmp_infoheader = { 0 };
     bmp_infoheader.biSize = sizeof(BITMAPINFOHEADER);

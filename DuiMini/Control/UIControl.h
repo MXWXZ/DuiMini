@@ -24,6 +24,7 @@ namespace DuiMini {
         SetAttribute(_attrstr, UStr(_myparam));  \
     }                                            \
     return ret;
+#define INIT_STATE(x) x(x(STAY))
 
 class DUIMINI_API UIControl {
 public:

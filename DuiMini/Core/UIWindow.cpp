@@ -149,18 +149,15 @@ void UIWindow::Close() const {
 }
 
 void UIWindow::Maximize() const {
-    SendWindowMessage(WM_SYSCOMMAND, SC_MAXIMIZE, MAKELPARAM(last_mousepos_.x,
-                                                             last_mousepos_.y));
+    SendWindowMessage(WM_SYSCOMMAND, SC_MAXIMIZE, NULL);
 }
 
 void UIWindow::Restore() const {
-    SendWindowMessage(WM_SYSCOMMAND, SC_RESTORE, MAKELPARAM(last_mousepos_.x,
-                                                            last_mousepos_.y));
+    SendWindowMessage(WM_SYSCOMMAND, SC_RESTORE, NULL);
 }
 
 void UIWindow::Minimize() const {
-    SendWindowMessage(WM_SYSCOMMAND, SC_MINIMIZE, MAKELPARAM(last_mousepos_.x,
-                                                             last_mousepos_.y));
+    SendWindowMessage(WM_SYSCOMMAND, SC_MINIMIZE, NULL);
 }
 
 UIRender* UIWindow::GetRender() const {
@@ -319,7 +316,6 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
             POINT pt;
             pt.x = GET_X_LPARAM(v_lparam);
             pt.y = GET_Y_LPARAM(v_lparam);
-            ::ScreenToClient(hwnd_, &pt);
             int border_left = GetDialog()->GetAttribute(_T("sizebox_left")).Str2Int();
             int border_top = GetDialog()->GetAttribute(_T("sizebox_top")).Str2Int();
             int border_right = GetDialog()->GetAttribute(_T("sizebox_right")).Str2Int();
@@ -344,12 +340,16 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
         }
         break;
     }
+    case WM_MOVE:
+    {
+        GetWindowRect(hwnd_, &(rect_.rect()));
+        break;
+    }
     case WM_SIZE:
     {
-        GetClientRect(hwnd_, &rect_.rect());
+        GetWindowRect(hwnd_, &(rect_.rect()));
         UStr pos;
-        pos.Format(_T("0,0,%d,%d"), rect_.right - rect_.left,
-                    rect_.bottom - rect_.top);
+        pos.Format(_T("0,0,%d,%d"), rect_.width(), rect_.height());
         GetDialog()->SetPos(pos);
         if (v_wparam == SIZE_RESTORED)
             OnRestore();
@@ -363,6 +363,8 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
         MINMAXINFO* info = reinterpret_cast<MINMAXINFO*>(v_lparam);
         info->ptMinTrackSize.x = dlg->GetMinWidth();
         info->ptMinTrackSize.y = dlg->GetMinHeight();
+        info->ptMaxPosition.x = 0;
+        info->ptMaxPosition.y = 0;
         info->ptMaxSize.x = info->ptMaxTrackSize.x = dlg->GetMaxWidth();
         info->ptMaxSize.y = info->ptMaxTrackSize.y = dlg->GetMaxHeight();
         break;
@@ -459,15 +461,13 @@ bool UIWindow::SetWindowSize(int v_width, int v_height) {
 }
 
 bool UIWindow::SetWindowPos(int v_x, int v_y) {
-    return SetWindowPos(NULL, v_x, v_y, rect_.right - rect_.left,
-                        rect_.bottom - rect_.top,
+    return SetWindowPos(NULL, v_x, v_y, rect_.width(), rect_.height(),
                         SWP_NOSIZE | SWP_NOZORDER);
 }
 
 bool UIWindow::SetWindowPos(const UIRect& v_rect) {
     return SetWindowPos(NULL, v_rect.left, v_rect.top,
-                        v_rect.right - v_rect.left,
-                        v_rect.bottom - v_rect.top,
+                        v_rect.width(), v_rect.height(),
                         SWP_NOZORDER);
 }
 
@@ -487,8 +487,8 @@ bool UIWindow::CenterWindow() {
     UIRect newpos;
     int screenwidth = UIUtils::GetWorkAreaSize().width();
     int screenheight = UIUtils::GetWorkAreaSize().height();
-    int width = rect_.right - rect_.left;
-    int height = rect_.bottom - rect_.top;
+    int width = rect_.width();
+    int height = rect_.height();
     newpos.left = (screenwidth - width) / 2;
     newpos.top = (screenheight - height) / 2;
     newpos.right = newpos.left + width;
@@ -524,7 +524,7 @@ HWND UIWindow::Create(LPCTSTR v_classname) {
     }
 
     hwnd_ = CreateWindowEx(WS_EX_LAYERED, classname, _T(""),
-                           WS_POPUP,
+                           WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
                            CW_USEDEFAULT, CW_USEDEFAULT,
                            CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL,
                            UISystem::GetInstance(), this);

@@ -26,8 +26,9 @@ void UIControl::AfterSetAttribute() {
     UpdatePos();
     Event(UIEvent(kWM_LangChange, 0, UIConfig::GetShownLang()));
     Event(UIEvent(kWM_SkinChange, 0, UIConfig::GetShownSkin()));
-    DisableCtrl(DisableCtrl(STAY));
-    VisibleCtrl(VisibleCtrl(STAY));
+    INIT_STATE(DisableCtrl);
+    INIT_STATE(VisibleCtrl);
+    INIT_STATE(AttachBackground); 
 }
 
 CUStr UIControl::GetAttribute(LPCTSTR v_name) const {
@@ -114,6 +115,8 @@ bool UIControl::Event(const UIEvent& v_event) {
     case kWM_RButtonDBClick:
         if (flg)
             (ret = OnRButtonDBClick(v_event)), flg = false;
+        UIRecLog::RecordLog(kLL_Info, _T("Message hit! Control name:\"%s\",Message:%d"),
+                            GetAttribute(_T("name")).GetData(), v_event.GetMsg());
         break;
 
     case kWM_Disable:
@@ -135,8 +138,6 @@ bool UIControl::Event(const UIEvent& v_event) {
         ret = OnLangChange(v_event);
         break;
     }
-    UIRecLog::RecordLog(kLL_Info, _T("Message hit! Control name:\"%s\",Message:%d"),
-                        GetAttribute(_T("name")).GetData(), v_event.GetMsg());
     return ret;
 }
 

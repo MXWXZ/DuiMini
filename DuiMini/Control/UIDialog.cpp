@@ -22,8 +22,15 @@ bool UIDialog::AllowWindowMove(BOOL v_movable/* = TRUE*/) {
 }
 
 bool UIDialog::AllowWindowResize(BOOL v_resizable/* = TRUE*/) {
-    STATE_FUNC_START(_T("resizable"), v_resizable)
-        STATE_FUNC_END
+    STATE_FUNC_START(_T("resizable"), v_resizable) {
+        LONG style = GetWindowLong(basewnd_->GetHWND(), GWL_STYLE);
+        if (v_resizable == TRUE)
+            style |= WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_THICKFRAME;
+        else
+            style &= ~(WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_THICKFRAME);
+        SetWindowLong(basewnd_->GetHWND(), GWL_STYLE, style);
+    }
+    STATE_FUNC_END
 }
 
 void UIDialog::SetSizeBox(LPCTSTR v_sizestr) {
@@ -63,10 +70,13 @@ void UIDialog::SetTitle(LPCTSTR v_title) {
 bool UIDialog::ShowTaskBar(BOOL v_show/* = TRUE*/) {
     STATE_FUNC_START(_T("appwin"), v_show) {
         LONG style = GetWindowLong(basewnd_->GetHWND(), GWL_EXSTYLE);
-        if (v_show == TRUE)
+        if (v_show == TRUE) {
             style &= ~WS_EX_TOOLWINDOW;
-        else
+            style |= WS_EX_APPWINDOW;
+        } else {
+            style &= ~WS_EX_APPWINDOW;
             style |= WS_EX_TOOLWINDOW;
+        }
         SetWindowLong(basewnd_->GetHWND(), GWL_EXSTYLE, style);
     }
     STATE_FUNC_END
@@ -119,6 +129,8 @@ void UIDialog::AfterSetAttribute() {
     SetSizeBox(GetSizeBox());           // Init size box
     if (!ShowTaskBar(STAY))
         ShowTaskBar(FALSE);
+    INIT_STATE(AllowWindowMove);
+    INIT_STATE(AllowWindowResize);
 }
 
 bool UIDialog::Event(const UIEvent& v_event) {
@@ -143,7 +155,6 @@ bool UIDialog::Event(const UIEvent& v_event) {
         if (!::PtInRect(&test.rect(), pt))
             break;
 
-        ClientToScreen(basewnd_->GetHWND(), &pt);
         ReleaseCapture();
         basewnd_->SendWindowMessage(WM_NCLBUTTONDOWN, HTCAPTION,
                                     v_event.GetLParam());
