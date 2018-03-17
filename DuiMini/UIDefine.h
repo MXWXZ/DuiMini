@@ -80,6 +80,9 @@ enum WindowMessage {
     kWM_End_           // USELESS
 };
 
+#define GetStr2WStrLen(str) MultiByteToWideChar(CP_UTF8, 0, str, -1, NULL, 0)
+#define Str2WStr(str,wstr,len) MultiByteToWideChar(CP_UTF8, 0, str, -1, wstr, len)
+
 #ifdef _UNICODE
 typedef std::wstring tstring;
 #else

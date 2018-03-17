@@ -53,8 +53,9 @@ UIDlgBuilder* UIWindow::SetDlgBuilder(LPCTSTR v_dlgname) {
     UStr dlg_file = UIConfig::FindDlgFile(v_dlgname);
     if (dlg_file.IsEmpty())
         return nullptr;
-    UIXmlLoader config(dlg_file);
-    builder_->Init(config.GetRoot(), this);
+    UIXmlLoader *config = (UIXmlLoader*)UIResource::LoadRes(kFT_XML, dlg_file);
+    builder_->Init(config->GetRoot(), this);
+    UIResource::ReleaseRes(config);
     UIHandleError();
     return builder_;
 }

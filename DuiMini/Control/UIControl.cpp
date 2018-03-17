@@ -32,7 +32,8 @@ void UIControl::AfterSetAttribute() {
 }
 
 CUStr UIControl::GetAttribute(LPCTSTR v_name) const {
-    return attr_.GetValue(v_name);
+    CUIAttrIt it = attr_.find(v_name);
+    return it != attr_.end() ? it->second : CUStr();
 }
 
 void UIControl::SetParent(UIControl* v_parent) {

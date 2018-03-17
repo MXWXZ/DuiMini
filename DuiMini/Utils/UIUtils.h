@@ -70,6 +70,15 @@ typedef const UIString CUStr;
 
 ////////////////////////////////////////
 
+typedef std::map<UStr, UStr> UIAttr;
+typedef std::map<UStr, UStr>::iterator UIAttrIt;
+typedef std::map<UStr, UStr>::const_iterator CUIAttrIt;
+typedef std::vector<UIAttr> UICFGItem;
+typedef std::vector<UIAttr>::iterator UICFGItemIt;
+typedef std::vector<UIAttr>::const_iterator CUICFGItemIt;
+
+////////////////////////////////////////
+
 class DUIMINI_API UIEvent {
 public:
     UIEvent();
@@ -128,83 +137,6 @@ public:
 
 private:
     RECT rect_{ 0,0,0,0 };
-};
-
-////////////////////////////////////////
-
-typedef std::map<UStr, UStr> SSMap;
-typedef std::map<UStr, UStr>::iterator SSMapIt;
-typedef std::map<UStr, UStr>::const_iterator SSMapCIt;
-class DUIMINI_API UIAttr {
-public:
-    UIAttr();
-    ~UIAttr();
-
-public:
-    SSMapIt GetBegin();
-    SSMapIt GetEnd();
-
-    /**
-     * Get attribute value
-     * @return   value, empty string for not find
-     * Warning!This function will NOT check if v_name is valid, if not, it will
-     * add an empty string value.
-     */
-    UStr& operator[] (LPCTSTR v_name);
-
-    /**
-     * SAFELY Get attribute value
-     * @return   value, empty string for not find
-     * This function will check if v_name is valid and will NOT add anything
-     */
-    CUStr GetValue(LPCTSTR v_name) const;
-
-private:
-    SSMap attribute_;
-};
-
-typedef const UIAttr CUIAttr;
-
-////////////////////////////////////////
-
-typedef std::map<int, UIAttr> IAMap;
-typedef std::map<int, UStr>::iterator IAMapIt;
-typedef std::map<int, UStr>::const_iterator IAMapCIt;
-class DUIMINI_API UIAttrSet {
-public:
-    UIAttrSet();
-    ~UIAttrSet();
-
-public:
-    /**
-     * WARNING!Make sure v_pos is valid!
-     * ONLY use this to modify or get UIAttr value,
-     * DO NOT use this to add new value!!!  
-     */
-    UIAttr& operator[] (const int v_pos);
-
-    /**
-     * SAFELY get value
-     */
-    CUIAttr GetValue(const int v_pos);
-
-    void AddAttr(const UIAttr &v_value);
-    int GetSize() const;
-    void Clear();
-
-    /**
-     * Find attribute name and value
-     * @param    int v_start:start pos(include)
-     * @param    LPCTSTR v_attr:attribute name
-     * @param    LPCTSTR v_value:attribute value, stay empty for anything
-     *                           existing. 
-     * @return   -1 for not find,otherwise is the positon
-     */
-    int FindNextAttr(int v_start, LPCTSTR v_attr, LPCTSTR v_value = _T(""));
-
-private:
-    IAMap attribute_set_;
-    int size_ = 0;
 };
 
 ////////////////////////////////////////
@@ -284,6 +216,13 @@ public:
      * @return   size rect
      */
     static UIRect GetWorkAreaSize();
+
+    /**
+     * Find next CFG item with v_name=v_value
+     * @return   nullptr for not find
+     */
+    static UIAttr* FindNextCFGItem(UICFGItem &v_item, UINT v_start,
+                                   LPCTSTR v_name, LPCTSTR v_value);
 };
 
 }   // namespace DuiMini

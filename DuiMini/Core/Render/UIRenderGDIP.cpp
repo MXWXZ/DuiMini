@@ -150,7 +150,7 @@ UIRenderImageGDIP::~UIRenderImageGDIP() {
 }
 
 bool UIRenderImageGDIP::Load(LPCTSTR v_path) {
-    long buflen = UIResource::GetFileSize(v_path);
+    long buflen= UIResource::GetFileSize(v_path);
     HGLOBAL mem = GlobalAlloc(GHND, buflen);
     BYTE* buffer = reinterpret_cast<BYTE*>(GlobalLock(mem));
     UIResource::GetFile(v_path, buffer, buflen);
@@ -163,6 +163,7 @@ bool UIRenderImageGDIP::Load(LPCTSTR v_path) {
     }
     img_ = Gdiplus::Image::FromStream(stream);
     stream->Release();
+    // no need to call GlobalFree here
     return true;
 }
 

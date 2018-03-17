@@ -16,10 +16,73 @@
 namespace DuiMini {
 IUIRes* UIResource::resclass_ = new UIResFile(DEFAULT_RESFOLDER);
 ResType UIResource::restype_ = kRT_File;
+UIResItem UIResource::res_item_;
 
 UIResource::~UIResource() {
     delete resclass_;
     resclass_ = nullptr;
+    UIResItemIt &itend = res_item_.end();
+    for (UIResItemIt it = res_item_.begin(); it != itend; ++it)
+        delete *it;
+    res_item_.clear();
+}
+
+LPVOID UIResource::LoadRes(FileType v_type, LPCTSTR v_path, bool* v_result/* = nullptr*/) {
+    UIResItemIt &itend = res_item_.end();
+    for (UIResItemIt it = res_item_.begin(); it != itend; ++it)
+        if ((*it)->path_ == v_path) {
+            ++((*it)->using_);
+            if (v_result)
+                *v_result = true;
+            return (*it)->res_;
+        }
+
+    bool res = false;
+    LoadedRes *tmp = new LoadedRes;
+    tmp->path_ = v_path;
+    tmp->type_ = v_type;
+    tmp->using_ = 1;
+    switch (v_type) {
+    case kFT_XML:
+        tmp->res_ = reinterpret_cast<LPVOID>(new UIXmlLoader(v_path));
+        res = true;
+        break;
+    case kFT_PIC:
+        UIRenderImage* obj = new UIRenderImage;
+        res = obj->Load(v_path);
+        tmp->res_ = reinterpret_cast<LPVOID>(obj);
+        break;
+    }
+    if (v_result)
+        *v_result = res;
+    res_item_.push_back(tmp);
+    return tmp->res_;
+}
+
+void UIResource::ReleaseResByName(LPCTSTR v_path) {
+    UIResItemIt &itend = res_item_.end();
+    for (UIResItemIt it = res_item_.begin(); it != itend; ++it)
+        if ((*it)->path_ == v_path) {
+            --((*it)->using_);
+            if ((*it)->using_ > 0)
+                break;
+            delete *it;
+            res_item_.erase(it);
+            break;
+        }
+}
+
+void UIResource::ReleaseRes(LPVOID v_res) {
+    UIResItemIt &itend = res_item_.end();
+    for (UIResItemIt it = res_item_.begin(); it != itend; ++it)
+        if ((*it)->res_ == v_res) {
+            --((*it)->using_);
+            if ((*it)->using_ > 0)
+                break;
+            delete *it;
+            res_item_.erase(it);
+            break;
+        }
 }
 
 void UIResource::SetResType(ResType v_type) {
@@ -115,19 +178,19 @@ UIXmlLoader::~UIXmlLoader() {
 void UIXmlLoader::Loadxml(LPCTSTR v_path) {
     delete[]buffer_;
     long buflen = UIResource::GetFileSize(v_path);
-    buffer_ = new BYTE[buflen + 1];
-    UIResource::GetFile(v_path, buffer_, buflen);
-    buffer_[buflen] = '\0';
+    BYTE *tmp = new BYTE[buflen + 1];
+    UIResource::GetFile(v_path, tmp, buflen);
+    tmp[buflen] = '\0';
 #ifdef _UNICODE
-    int len = MultiByteToWideChar(CP_UTF8, 0, (LPCSTR)buffer_, -1, NULL, 0);
-    LPWSTR str = new wchar_t[len];
-    MultiByteToWideChar(CP_UTF8, 0, (LPCSTR)buffer_, -1, str, len);
-    delete[]buffer_;
-    buffer_ = reinterpret_cast<BYTE*>(str);
-    doc_.parse<0>((LPWSTR)buffer_);
+    int len = GetStr2WStrLen((LPCSTR)tmp);
+    LPWSTR wtmp = new wchar_t[len];
+    Str2WStr((LPCSTR)tmp, wtmp, len);
+    delete[]tmp;
+    buffer_ = reinterpret_cast<TBYTE*>(wtmp);
 #else
-    doc_.parse<0>((LPSTR)buffer_);
+    buffer_ = tmp;
 #endif  // _UNICODE
+    doc_.parse<0>((LPTSTR)buffer_);
 }
 
 xmlnode UIXmlLoader::GetRoot() const {

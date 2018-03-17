@@ -100,17 +100,17 @@ public:
     static CUStr TranslateStr(LPCTSTR v_str);
 
 private:
-    static UIAttrSet dlg_;            // dlg config
+    static UICFGItem dlg_;            // dlg config
 
     static LANGID shownlang_;         // shown lang
     static SKINID shownskin_;         // shown skin
     static FONTID shownfont_;         // shown font
-    static UIAttrSet lang_;           // language config
-    static UIAttrSet skin_;           // skin config
-    static UIAttrSet font_;           // font config
+    static UICFGItem lang_;           // language config
+    static UICFGItem skin_;           // skin config
+    static UICFGItem font_;           // font config
 
-    static UIAttrSet res_id_;         // shown skin resid
-    static UIAttrSet sys_res_id_;      // system skin id
-    static UIAttrSet lang_str_;       // shown language str
+    static UICFGItem res_id_;         // shown skin resid
+    static UICFGItem sys_res_id_;     // system skin id
+    static UICFGItem lang_str_;       // shown language str
 };
 }   // namespace DuiMini

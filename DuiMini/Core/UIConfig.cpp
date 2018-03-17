@@ -11,27 +11,27 @@
 #include "UIConfig.h"
 
 namespace DuiMini {
-UIAttrSet UIConfig::dlg_;
+UICFGItem UIConfig::dlg_;
 SKINID    UIConfig::shownskin_ = 0;
 LANGID    UIConfig::shownlang_ = 0;
 FONTID    UIConfig::shownfont_ = 0;
-UIAttrSet UIConfig::lang_;
-UIAttrSet UIConfig::skin_;
-UIAttrSet UIConfig::font_;
-UIAttrSet UIConfig::sys_res_id_;
-UIAttrSet UIConfig::res_id_;
-UIAttrSet UIConfig::lang_str_;
+UICFGItem UIConfig::lang_;
+UICFGItem UIConfig::skin_;
+UICFGItem UIConfig::font_;
+UICFGItem UIConfig::sys_res_id_;
+UICFGItem UIConfig::res_id_;
+UICFGItem UIConfig::lang_str_;
 
 #define CFG_BeginAttr  UIAttr _now
-#define CFG_EndAttr(x) x.AddAttr(_now)
+#define CFG_EndAttr(x) x.push_back(_now)
 #define CFG_AddAttrStatic(x, y) _now[x] = y
 #define CFG_AddAttr(x) _now[x] = tmp.GetAttrValue(x)
 #define CFG_AddAttrDef(x, y) _now[x] = tmp.GetAttrValue(x, y)
 #define CFG_CmpAttr(x, y) _now[x] == y
 
 void UIConfig::LoadConfig(LPCTSTR v_relativepath/* = DEFAULT_RESFILE*/) {
-    UIXmlLoader config(v_relativepath);
-    for (xmlnode node = config.GetRoot()->first_node();
+    UIXmlLoader *config = (UIXmlLoader*)UIResource::LoadRes(kFT_XML, v_relativepath);
+    for (xmlnode node = config->GetRoot()->first_node();
          node != nullptr;
          node = node->next_sibling()) {
         UIXmlNode tmp(node);
@@ -48,10 +48,10 @@ void UIConfig::LoadConfig(LPCTSTR v_relativepath/* = DEFAULT_RESFILE*/) {
                     CFG_AddAttrStatic(_T("default"), _T("0"));
                 CFG_EndAttr(skin_);
                 if (CFG_CmpAttr(_T("system"), _T("1")))
-                    AddSystemSkin(skin_.GetSize());
+                    AddSystemSkin(static_cast<SKINID>(skin_.size()));
                 if (CFG_CmpAttr(_T("system"), _T("0")) &&
                     CFG_CmpAttr(_T("default"), _T("1")))
-                    SetShownSkin(skin_.GetSize());
+                    SetShownSkin(static_cast<SKINID>(skin_.size()));
             }
 
             // font config
@@ -69,7 +69,7 @@ void UIConfig::LoadConfig(LPCTSTR v_relativepath/* = DEFAULT_RESFILE*/) {
                 CFG_EndAttr(font_);
                 if (CFG_CmpAttr(_T("default"), _T("1")) &&
                     CFG_CmpAttr(_T("lang"), lang_[shownlang_][_T("lang")]))
-                    SetShownFont(font_.GetSize());
+                    SetShownFont(static_cast<FONTID>(font_.size()));
             }
         }
 
@@ -90,10 +90,11 @@ void UIConfig::LoadConfig(LPCTSTR v_relativepath/* = DEFAULT_RESFILE*/) {
                 CFG_AddAttrDef(_T("default"), 0);
                 CFG_EndAttr(lang_);
                 if (CFG_CmpAttr(_T("default"), _T("1")))
-                    SetShownLang(lang_.GetSize());
+                    SetShownLang(static_cast<LANGID>(lang_.size()));
             }
         }
     }
+    UIResource::ReleaseRes(config);
 }
 
 LANGID UIConfig::GetShownLang() {
@@ -110,9 +111,9 @@ SKINID UIConfig::GetShownSkin() {
 
 // TODO
 void UIConfig::SetShownLang(LANGID v_id) {
-    lang_str_.Clear();
-    UIXmlLoader file(lang_[v_id - 1][_T("file")]);
-    for (xmlnode node = file.GetRoot()->first_node();
+    lang_str_.clear();
+    UIXmlLoader *file = (UIXmlLoader*)UIResource::LoadRes(kFT_XML, lang_[v_id - 1][_T("file")]);
+    for (xmlnode node = file->GetRoot()->first_node();
          node != nullptr;
          node = node->next_sibling()) {
         UIXmlNode tmp(node);
@@ -122,6 +123,7 @@ void UIConfig::SetShownLang(LANGID v_id) {
         CFG_EndAttr(lang_str_);
     }
     shownlang_ = v_id;
+    UIResource::ReleaseRes(file);
 }
 
 void UIConfig::SetShownFont(FONTID v_id) {
@@ -129,9 +131,9 @@ void UIConfig::SetShownFont(FONTID v_id) {
 }
 
 void UIConfig::SetShownSkin(SKINID v_id) {
-    res_id_.Clear();
-    UIXmlLoader file(skin_[v_id - 1][_T("value")] + _T("\\resid.xml"));
-    for (xmlnode node = file.GetRoot()->first_node();
+    res_id_.clear();
+    UIXmlLoader *file = (UIXmlLoader*)UIResource::LoadRes(kFT_XML, skin_[v_id - 1][_T("value")] + _T("\\resid.xml"));
+    for (xmlnode node = file->GetRoot()->first_node();
          node != nullptr;
          node = node->next_sibling()) {
         UIXmlNode tmp(node);
@@ -142,11 +144,12 @@ void UIConfig::SetShownSkin(SKINID v_id) {
         CFG_EndAttr(res_id_);
     }
     shownskin_ = v_id;
+    UIResource::ReleaseRes(file);
 }
 
 void UIConfig::AddSystemSkin(SKINID v_id) {
-    UIXmlLoader file(skin_[v_id - 1][_T("value")] + _T("\\resid.xml"));
-    for (xmlnode node = file.GetRoot()->first_node();
+    UIXmlLoader *file = (UIXmlLoader*)UIResource::LoadRes(kFT_XML, skin_[v_id - 1][_T("value")] + _T("\\resid.xml"));
+    for (xmlnode node = file->GetRoot()->first_node();
          node != nullptr;
          node = node->next_sibling()) {
         UIXmlNode tmp(node);
@@ -156,12 +159,13 @@ void UIConfig::AddSystemSkin(SKINID v_id) {
         CFG_AddAttr(_T("file"));
         CFG_EndAttr(sys_res_id_);
     }
+    UIResource::ReleaseRes(file);
 }
 
 UIAttr* UIConfig::FindDlg(LPCTSTR v_name) {
-    int ret = dlg_.FindNextAttr(0, _T("name"), v_name);
-    if (ret != -1)
-        return &dlg_[ret];
+    UIAttr* ret = UIUtils::FindNextCFGItem(dlg_, 0, _T("name"), v_name);
+    if (ret)
+        return ret;
     UIHandleError(kLL_Warning, kEC_IDInvalid,
                   _T("Config dlg name %s invalid!"), v_name);
     return nullptr;
@@ -169,19 +173,16 @@ UIAttr* UIConfig::FindDlg(LPCTSTR v_name) {
 
 CUStr UIConfig::FindDlgFile(LPCTSTR v_name) {
     UIAttr* tmp = FindDlg(v_name);
-    if (tmp)
-        return tmp->GetValue(_T("file"));
-    else
-        return CUStr();
+    return tmp ? (*tmp)[_T("file")] : CUStr();
 }
 
 UIAttr* UIConfig::FindResid(LPCTSTR v_name) {
-    int ret = res_id_.FindNextAttr(0, _T("name"), v_name);
-    if (ret != -1)
-        return &res_id_[ret];
-    ret = sys_res_id_.FindNextAttr(0, _T("name"), v_name);
-    if (ret != -1)
-        return &sys_res_id_[ret];
+    UIAttr* ret = UIUtils::FindNextCFGItem(res_id_, 0, _T("name"), v_name);
+    if (ret)
+        return ret;
+    ret = UIUtils::FindNextCFGItem(sys_res_id_, 0, _T("name"), v_name);
+    if (ret)
+        return ret;
     UIHandleError(kLL_Warning, kEC_IDInvalid,
                   _T("Config resid name %s invalid!"), v_name);
     return nullptr;
@@ -189,10 +190,7 @@ UIAttr* UIConfig::FindResid(LPCTSTR v_name) {
 
 CUStr UIConfig::FindResidFile(LPCTSTR v_name) {
     UIAttr* resid = FindResid(v_name);
-    if (resid)
-        return resid->GetValue(_T("file"));
-    else
-        return CUStr();
+    return resid ? (*resid)[_T("file")] : CUStr();
 }
 
 CUStr UIConfig::GetStrPath(LPCTSTR v_str) {
@@ -207,9 +205,9 @@ CUStr UIConfig::GetStrPath(LPCTSTR v_str) {
 }
 
 UIAttr* UIConfig::FindLangMap(LPCTSTR v_name) {
-    int ret = lang_str_.FindNextAttr(0, _T("name"), v_name);
-    if (ret != -1)
-        return &lang_str_[ret];
+    UIAttr* ret = UIUtils::FindNextCFGItem(lang_str_, 0, _T("name"), v_name);
+    if (ret)
+        return ret;
     UIHandleError(kLL_Warning, kEC_IDInvalid,
                   _T("Config langstr name %s invalid!"), v_name);
     return nullptr;
@@ -217,10 +215,7 @@ UIAttr* UIConfig::FindLangMap(LPCTSTR v_name) {
 
 CUStr UIConfig::FindLangMapValue(LPCTSTR v_name) {
     UIAttr* langstr = FindLangMap(v_name);
-    if (!langstr)
-        return CUStr();
-    else
-        return langstr->GetValue(_T("value"));
+    return langstr ? (*langstr)[_T("value")] : CUStr();
 }
 
 CUStr UIConfig::TranslateStr(LPCTSTR v_str) {

@@ -44,8 +44,8 @@
 #include "Utils/UIUnzip.h"
 
 #include "Core/UIInterface.h"
-#include "Core/Resource/UIResource.h"
 #include "Core/Render/UIRender.h"
+#include "Core/Resource/UIResource.h"
 #include "Core/UIConfig.h"
 #include "Core/UISystem.h"
 #include "Core/UIDlgBuilder.h"

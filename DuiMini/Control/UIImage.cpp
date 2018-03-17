@@ -14,19 +14,20 @@ namespace DuiMini {
 UIImage::UIImage() {}
 
 UIImage::~UIImage() {
-    delete img_;
+    UIResource::ReleaseRes(img_);
     img_ = nullptr;
 }
 
 bool UIImage::SetFile(LPCTSTR v_path) {
-    UIRenderImage* tmp = new UIRenderImage();
-    if (tmp->Load(v_path)) {
-        delete img_;
+    bool res = false;
+    UIRenderImage* tmp = (UIRenderImage*)UIResource::LoadRes(kFT_PIC, v_path, &res);
+    if (res) {
+        UIResource::ReleaseRes(img_);
         img_ = tmp;
         SetAttribute(_T("file"), v_path);
         return true;
     }
-    delete tmp;
+    UIResource::ReleaseRes(tmp);
     tmp = nullptr;
     return false;
 }

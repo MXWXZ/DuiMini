@@ -38,68 +38,15 @@ UIRect UIUtils::GetWorkAreaSize() {
     return ret;
 }
 
-////////////////////////////////////////
-
-UIAttr::UIAttr() {}
-
-UIAttr::~UIAttr() {}
-
-UStr& UIAttr::operator[](LPCTSTR v_name) {
-    return attribute_[v_name];
-}
-
-CUStr UIAttr::GetValue(LPCTSTR v_name) const {
-    SSMapCIt it = attribute_.find(v_name);
-    if (it != attribute_.end())
-        return it->second;
-    else
-        return CUStr();
-}
-
-SSMapIt UIAttr::GetBegin() {
-    return attribute_.begin();
-}
-
-SSMapIt UIAttr::GetEnd() {
-    return attribute_.end();
-}
-
-////////////////////////////////////////
-
-UIAttrSet::UIAttrSet() {}
-
-UIAttrSet::~UIAttrSet() {}
-
-UIAttr& UIAttrSet::operator[] (const int v_pos) {
-    return attribute_set_[v_pos];
-}
-
-CUIAttr UIAttrSet::GetValue(const int v_pos) {
-    if (v_pos >= size_)
-        return UIAttr();
-    return attribute_set_[v_pos];
-}
-
-void UIAttrSet::AddAttr(const UIAttr &v_value) {
-    attribute_set_[size_++] = v_value;
-}
-
-int UIAttrSet::GetSize() const {
-    return size_;
-}
-
-void UIAttrSet::Clear() {
-    attribute_set_.clear();
-    size_ = 0;
-}
-
-int UIAttrSet::FindNextAttr(int v_start, LPCTSTR v_attr,
-                            LPCTSTR v_value/* = _T("")*/) {
-    for (int i = v_start; i < size_; ++i)
-        if (!attribute_set_[i].GetValue(v_attr).IsEmpty())
-            if (CmpStr(v_value, _T("")) || attribute_set_[i][v_attr] == v_value)
-                return i;
-    return -1;
+UIAttr* UIUtils::FindNextCFGItem(UICFGItem &v_item, UINT v_start,
+                                  LPCTSTR v_name, LPCTSTR v_value) {
+    if (v_start >= v_item.size())
+        return nullptr;
+    UICFGItemIt &itend = v_item.end();
+    for (UICFGItemIt it = v_item.begin() + v_start; it != itend; ++it)
+        if (CmpStr((*it)[v_name], v_value))
+            return &(*it);
+    return nullptr;
 }
 
 ////////////////////////////////////////
