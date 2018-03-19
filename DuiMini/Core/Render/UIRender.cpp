@@ -150,6 +150,16 @@ bool UIRender::DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
     return ret;
 }
 
+bool UIRender::DrawString(LPCTSTR v_text, const UIFont &v_font,
+                          const UIRect &v_rect) {
+    if (!render_)
+        return false;
+    bool ret = render_->DrawString(v_text, v_font, v_rect);
+    if (!ret)
+        UIHandleError();
+    return ret;
+}
+
 IUIRender* UIRender::SelectRender(IUIRender** v_pointer) {
     switch (render_mode_) {
     case kRM_GDIPlus:

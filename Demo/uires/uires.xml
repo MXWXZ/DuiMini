@@ -9,6 +9,6 @@
     <res type="lang" lang="zh-cn" file="string\zh-CN.xml" default="1" />
     <res type="lang" lang="en-us" file="string\en-US.xml" />
     <!-- font setting -->
-    <style type="font" lang="zh-cn" name="default" font="Microsoft YaHei UI" size="12" default="1" />
-    <style type="font" lang="en-us" name="default" font="Segoe UI" size="12" default="1" />
+    <style type="font" lang="zh-cn" name="zh-cn_default" font="Microsoft YaHei UI" size="14" default="1" />
+    <style type="font" lang="en-us" name="en-us_default" font="Segoe UI" size="14" default="1" />
 </root>

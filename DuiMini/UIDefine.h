@@ -36,7 +36,8 @@
 #define CTRLNAME_CONTAINER      _T("container")
 #define CTRLNAME_DIALOG         _T("dlg")
 #define CTRLNAME_IMAGE          _T("img")
-#define CTRLNAME_BUTTON          _T("btn")
+#define CTRLNAME_BUTTON         _T("btn")
+#define CTRLNAME_TEXT           _T("txt")
 
 // rapidxml
 typedef rapidxml::xml_document<TCHAR> xmldoc;
@@ -44,10 +45,12 @@ typedef rapidxml::xml_node<TCHAR>* xmlnode;
 typedef rapidxml::xml_attribute<TCHAR>* xmlattr;
 
 #define CmpStr(x,y) _tcscmp(x,y) == 0
+typedef long long LL;
 typedef unsigned char ALPHA;
 typedef unsigned short SKINID;
 typedef unsigned short LANGID;
 typedef unsigned short FONTID;
+typedef unsigned char COLOR;
 
 #define STAY -1
 

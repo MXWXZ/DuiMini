@@ -24,8 +24,8 @@ void UIControl::SetAttribute(LPCTSTR v_name, LPCTSTR v_value) {
 
 void UIControl::AfterSetAttribute() {
     UpdatePos();
-    Event(UIEvent(kWM_LangChange, 0, UIConfig::GetShownLang()));
-    Event(UIEvent(kWM_SkinChange, 0, UIConfig::GetShownSkin()));
+    Event(UIEvent(kWM_LangChange, 0, UIConfig::GetShownLangID()));
+    Event(UIEvent(kWM_SkinChange, 0, UIConfig::GetShownSkinID()));
     INIT_STATE(DisableCtrl);
     INIT_STATE(VisibleCtrl);
     INIT_STATE(AttachBackground); 
@@ -164,9 +164,9 @@ int UIControl::ParsePosStr(LPCTSTR v_str, StrLoc v_loc,
         }
     }
     if (str[0] == '$') {
-        return str.Right(str.GetLength() - 1).Str2Int();
+        return static_cast<int>(str.Right(str.GetLength() - 1).Str2LL());
     } else if (str[0] == '|') {
-        int offset = str.Right(str.GetLength() - 1).Str2Int();
+        LL offset = str.Right(str.GetLength() - 1).Str2LL();
         // ONLY 2nd layer control can be relative to parent
         int center;
         if (v_loc == left || v_loc == right)
@@ -175,7 +175,7 @@ int UIControl::ParsePosStr(LPCTSTR v_str, StrLoc v_loc,
             center = (parentrc.top + parentrc.bottom) / 2;
         return center + offset;
     } else if (str[0] == '%') {
-        int percent = str.Right(str.GetLength() - 1).Str2Int();
+        LL percent = str.Right(str.GetLength() - 1).Str2LL();
         int ret;
         if (v_loc == left || v_loc == right)
             ret = parentrc.left + (parentrc.right - parentrc.left)*percent / 100;
@@ -183,7 +183,7 @@ int UIControl::ParsePosStr(LPCTSTR v_str, StrLoc v_loc,
             ret = parentrc.top + (parentrc.bottom - parentrc.top)*percent / 100;
         return ret;
     } else {
-        int offset = str.Str2Int();
+        LL offset = str.Str2LL();
         if (v_loc == left || v_loc == right) {
             if (str[0] == '-')
                 return parentrc.right + offset;
@@ -203,11 +203,11 @@ UIRect UIControl::ParsePosStr(LPCTSTR v_str,
                               UIRect* v_parentrect/* = nullptr*/) const {
     UIRect ret;
     CUStr tmp = v_str;
-    int seppos1 = tmp.Find(_T(","));
+    size_t seppos1 = static_cast<size_t>(tmp.Find(_T(",")));
     ret.left = ParsePosStr(tmp.Left(seppos1), left, v_parentrect);
-    int seppos2 = tmp.Find(_T(","), seppos1 + 1);
+    size_t seppos2 = static_cast<size_t>(tmp.Find(_T(","), seppos1 + 1));
     ret.top = ParsePosStr(tmp.Mid(seppos1 + 1, seppos2 - seppos1 - 1), top, v_parentrect);
-    int seppos3 = tmp.Find(_T(","), seppos2 + 1);
+    size_t seppos3 = static_cast<size_t>(tmp.Find(_T(","), seppos2 + 1));
     ret.right = ParsePosStr(tmp.Mid(seppos2 + 1, seppos3 - seppos2 - 1), right, v_parentrect);
     ret.bottom = ParsePosStr(tmp.Right(tmp.GetLength() - seppos3 - 1), bottom, v_parentrect);
     return ret;
@@ -225,20 +225,20 @@ bool UIControl::PtInRect(POINT v_pt) {
 
 UIRect UIControl::UpdatePos() {
     UStr attr = GetAttribute(_T("pos"));
-    int septimes = attr.Replace(_T(","), _T(","));
+    LL septimes = attr.Replace(_T(","), _T(","));
     if (septimes == 1) {    // pos=x,x
-        int seppos = attr.Find(_T(","));
+        LL seppos = attr.Find(_T(","));
         rect_.left = ParsePosStr(attr.Left(seppos), left);
         rect_.top = ParsePosStr(attr.Right(attr.GetLength() - seppos - 1), top);
         if (GetAttribute(_T("width")) == _T("0") &&
             GetAttribute(_T("height")) == _T("0")) {
             UStr size = GetAttribute(_T("size"));
-            int tmppos = size.Find(_T(","));
-            rect_.right = rect_.left + size.Left(tmppos).Str2Int();
-            rect_.bottom = rect_.top + size.Right(size.GetLength() - tmppos - 1).Str2Int();
+            LL tmppos = size.Find(_T(","));
+            rect_.right = rect_.left + (long)size.Left(tmppos).Str2LL();
+            rect_.bottom = rect_.top + (long)size.Right(size.GetLength() - tmppos - 1).Str2LL();
         } else {
-            rect_.right = rect_.left + GetAttribute(_T("width")).Str2Int();
-            rect_.bottom = rect_.top + GetAttribute(_T("height")).Str2Int();
+            rect_.right = rect_.left + (long)GetAttribute(_T("width")).Str2LL();
+            rect_.bottom = rect_.top + (long)GetAttribute(_T("height")).Str2LL();
         }
     } else {    // pos=x,x,x,x
         rect_ = ParsePosStr(attr);

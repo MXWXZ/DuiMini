@@ -82,6 +82,8 @@ UIControl* UIDlgBuilder::Parse(UIWindow* v_wnd, xmlnode v_root,
                 new_ctrl = new UIImage;
             if (CmpStr(ctrl_name, CTRLNAME_BUTTON))
                 new_ctrl = new UIButton;
+            if (CmpStr(ctrl_name, CTRLNAME_TEXT))
+                new_ctrl = new UIText;
             break;
         }
         case 9:

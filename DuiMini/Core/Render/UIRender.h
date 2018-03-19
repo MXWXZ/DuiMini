@@ -52,6 +52,8 @@ public:
     bool DrawImage(UIRenderImage* v_img, const UIRect& v_destrect);
     bool DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
                    const UIRect& v_srcrect);
+    bool DrawString(LPCTSTR v_text, const UIFont &v_font,
+                    const UIRect& v_rect);
 
 private:
     static IUIRender* SelectRender(IUIRender** v_pointer);

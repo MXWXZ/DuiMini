@@ -32,7 +32,7 @@ class DUIMINI_API UIWindow {
 public:
     UIWindow();
     explicit UIWindow(LPCTSTR v_name);
-    ~UIWindow();
+    virtual ~UIWindow();
 
 public:
     UIDialog* GetDialog() const;

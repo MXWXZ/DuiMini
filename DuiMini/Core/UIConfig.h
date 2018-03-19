@@ -14,17 +14,17 @@ struct DUIMINI_API UIFont {
     UStr name_;
     UStr lang_;
     UStr font_;
-    UINT size_;
-    bool bold_;
-    bool italic_;
-    bool underline_;
-    bool strikeout_;
+    USHORT size_ = 0;
+    bool bold_ = false;
+    bool italic_ = false;
+    bool underline_ = false;
+    bool strikeout_ = false;
 };
 
 ////////////////////////////////////////
 
-#define GetAttrPath(x) UIConfig::GetStrPath(x)
-#define GetAttrStr(x) UIConfig::TranslateStr(x)
+#define UIGetStrPath(x) UIConfig::GetStrPath(x)
+#define UITranslateStr(x) UIConfig::TranslateStr(x)
 
 class DUIMINI_API UIConfig {
 public:
@@ -35,10 +35,15 @@ public:
     */
     static void LoadConfig(LPCTSTR v_relativepath = DEFAULT_RESFILE);
 
-    // Get Shown lang config
-    static LANGID GetShownLang();
-    static FONTID GetShownFont();
-    static SKINID GetShownSkin();
+    // Get shown config id
+    static LANGID GetShownLangID();
+    static FONTID GetShownFontID();
+    static SKINID GetShownSkinID();
+
+    // Get shown config
+    static UIAttr* GetShownLang();
+    static UIAttr* GetShownFont();
+    static UIAttr* GetShownSkin();
 
     /**
     * Set Shown Config
@@ -84,6 +89,19 @@ public:
     static CUStr FindLangMapValue(LPCTSTR v_name);    // return value directly
 
     /**
+     * Get current font style
+     * @return   font style
+     */
+    static UIFont GetFontStyle();
+    /**
+     * Find font
+     * @param    LPCTSTR v_name:font name
+     * @return   font attr structure, nullptr for not find
+     */
+    static UIAttr* FindFont(LPCTSTR v_name);
+    static UIFont FindFontValue(LPCTSTR v_name);    // return value directly
+
+    /**
     * Translate string from string(langstr or plain string)
     * @param    LPCTSTR v_str:str need to translate
     * @return   translated string, if langstr not find, return v_str.
@@ -112,5 +130,6 @@ private:
     static UICFGItem res_id_;         // shown skin resid
     static UICFGItem sys_res_id_;     // system skin id
     static UICFGItem lang_str_;       // shown language str
+    static UIFont font_style_;        // shown font style
 };
 }   // namespace DuiMini

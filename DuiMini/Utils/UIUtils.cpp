@@ -208,7 +208,7 @@ UIString::UIString(const int v_digit) {
     buffer_ = buf;
 }
 
-UIString::UIString(LPCTSTR v_str, int v_len /*= -1*/) {
+UIString::UIString(LPCTSTR v_str, size_t v_len /*= -1*/) {
     Assign(v_str, v_len);
 }
 
@@ -218,8 +218,8 @@ UIString::UIString(const UIString& v_src) {
 
 UIString::~UIString() {}
 
-int UIString::GetLength() const {
-    return static_cast<int>(buffer_.length());
+size_t UIString::GetLength() const {
+    return buffer_.length();
 }
 
 UIString::operator LPCTSTR() const {
@@ -230,8 +230,8 @@ void UIString::Append(LPCTSTR v_str) {
     buffer_.append(v_str);
 }
 
-void UIString::Assign(LPCTSTR v_str, int v_len /*= -1*/) {
-    if (v_len == -1)
+void UIString::Assign(LPCTSTR v_str, size_t v_len /*= -1*/) {
+    if (v_len == size_t(-1))
         buffer_.assign(v_str);
     else
         buffer_.assign(v_str, v_len);
@@ -249,11 +249,46 @@ LPCTSTR UIString::GetData() const {
     return buffer_.c_str();
 }
 
-int UIString::Str2Int() const {
-    return _ttoi(buffer_.c_str());
+LL UIString::Str2LL() const {
+    return _tcstoll(buffer_.c_str(), nullptr, 10);
 }
 
-TCHAR UIString::GetAt(int v_index) const {
+UIString UIString::Str2Hex() const {
+    UIString ret;
+    size_t len = buffer_.size();
+    TCHAR buf[10];
+    for (size_t i = 0; i < len; ++i) {
+        if (buffer_[i] >= 256 || buffer_[i] < 0)
+            break;
+        _stprintf(buf, _T("%X"), static_cast<unsigned char>(buffer_[i]));
+        ret += buf;
+    }
+    return ret;
+}
+
+UIString UIString::Int2Hex() const {
+    TCHAR buf[64];
+    _itot(Str2LL(), buf, 16);
+    UIString ret = buf;
+    ret.MakeUpper();
+    return ret;
+}
+
+UIString UIString::Hex2Str() const {
+    UIString ret;
+    size_t len = buffer_.size();
+    if (len % 2)
+        --len;
+    TCHAR buf[3] = { 0 };
+    for (size_t i = 0; i < len; i+=2) {
+        buf[0] = buffer_[i];
+        buf[1] = buffer_[i + 1];
+        ret += UIString(_tcstol(buf, nullptr, 16));
+    }
+    return ret;
+}
+
+TCHAR UIString::GetAt(size_t v_index) const {
     return buffer_[v_index];
 }
 
@@ -295,7 +330,7 @@ bool UIString::operator <  (LPCTSTR v_str) const { return (Compare(v_str) < 0); 
 bool UIString::operator >= (LPCTSTR v_str) const { return (Compare(v_str) >= 0); }
 bool UIString::operator >  (LPCTSTR v_str) const { return (Compare(v_str) > 0); }
 
-void UIString::SetAt(int v_index, TCHAR v_ch) {
+void UIString::SetAt(size_t v_index, TCHAR v_ch) {
     buffer_[v_index] = v_ch;
 }
 
@@ -315,35 +350,38 @@ void UIString::MakeLower() {
     std::transform(buffer_.begin(), buffer_.end(), buffer_.begin(), ::tolower);
 }
 
-UIString UIString::Left(int v_len) const {
+UIString UIString::Left(size_t v_len) const {
     return UIString(buffer_.c_str(), v_len);
 }
 
-UIString UIString::Mid(int v_pos, int v_len) const {
+UIString UIString::Mid(size_t v_pos, size_t v_len) const {
     return UIString(buffer_.substr(v_pos, v_len).c_str());
 }
 
-UIString UIString::Right(int v_len) const {
-    int pos = GetLength() - v_len;
+UIString UIString::Right(size_t v_len) const {
+    LL pos = GetLength() - v_len;
     if (pos < 0) {
         pos = 0;
         v_len = GetLength();
     }
-    return Mid(pos, v_len);
+    return Mid(static_cast<size_t>(pos), v_len);
 }
 
-int UIString::Find(TCHAR v_ch, int v_pos /*= 0*/) const {
-    return static_cast<int>(buffer_.find(v_ch, v_pos));
+LL UIString::Find(TCHAR v_ch, size_t v_pos /*= 0*/) const {
+    size_t ret = buffer_.find(v_ch, v_pos);
+    return ret == tstring::npos ? -1 : (LL)ret;
 }
 
-int UIString::Find(LPCTSTR v_str, int v_pos /*= 0*/) const {
-    return static_cast<int>(buffer_.find(v_str, v_pos));
+LL UIString::Find(LPCTSTR v_str, size_t v_pos /*= 0*/) const {
+    size_t ret = buffer_.find(v_str, v_pos);
+    return ret == tstring::npos ? -1 : (LL)ret;
 }
 
-int UIString::Replace(LPCTSTR v_str_from, LPCTSTR v_str_to) {
-    int cnt = 0;
+LL UIString::Replace(LPCTSTR v_str_from, LPCTSTR v_str_to) {
+    LL cnt = 0;
+    size_t steplen = _tcslen(v_str_to);
     for (tstring::size_type pos(0); pos != tstring::npos;
-         pos += _tcslen(v_str_to)) {
+         pos += steplen) {
         if ((pos = buffer_.find(v_str_from, pos)) != tstring::npos) {
             buffer_.replace(pos, _tcslen(v_str_from), v_str_to);
             ++cnt;
@@ -515,6 +553,38 @@ POINT UIEvent::GetPos() const {
     ret.x = GET_X_LPARAM(lparam_);
     ret.y = GET_Y_LPARAM(lparam_);
     return ret;
+}
+
+UIColor::UIColor() {}
+
+UIColor::UIColor(LPCTSTR v_colorstr) {
+    UStr str(v_colorstr);
+    SetColor((ALPHA)str.Mid(1, 2).Hex2Str().Str2LL(),
+             (COLOR)str.Mid(3, 2).Hex2Str().Str2LL(),
+             (COLOR)str.Mid(5, 2).Hex2Str().Str2LL(),
+             (COLOR)str.Mid(7, 2).Hex2Str().Str2LL());
+}
+
+UIColor::UIColor(COLOR v_r, COLOR v_g, COLOR v_b) {
+    SetColor(255, v_r, v_g, v_b);
+}
+
+UIColor::UIColor(ALPHA v_a, COLOR v_r, COLOR v_g, COLOR v_b) {
+    SetColor(v_a, v_r, v_g, v_b);
+}
+
+UIColor::~UIColor() {}
+
+void UIColor::SetColor(ALPHA v_a, COLOR v_r, COLOR v_g, COLOR v_b) {
+    a_ = v_a;
+    r_ = v_r;
+    g_ = v_g;
+    b_ = v_b;
+}
+
+CUStr UIColor::GetColorStr() const {
+    return UStr(_T("#")) + UStr(a_).Int2Hex() + UStr(r_).Int2Hex() +
+        UStr(g_).Int2Hex() + UStr(b_).Int2Hex();
 }
 
 }   // namespace DuiMini

@@ -16,20 +16,24 @@ public:
     explicit UIString(const TCHAR v_ch);
     explicit UIString(const int v_digit);
     UIString(const UIString& v_src);
-    UIString(LPCTSTR v_str, int v_len = -1);
+    UIString(LPCTSTR v_str, size_t v_len = -1);
     ~UIString();
 
 public:
     void Empty();
-    int GetLength() const;
+    size_t GetLength() const;
     bool IsEmpty() const;
-    TCHAR GetAt(int v_index) const;
+    TCHAR GetAt(size_t v_index) const;
     void Append(LPCTSTR v_str);
-    void Assign(LPCTSTR v_str, int v_len = -1);
+    void Assign(LPCTSTR v_str, size_t v_len = -1);
     LPCTSTR GetData() const;
-    int Str2Int() const;
+    LL Str2LL() const;
+    UIString Str2Hex() const;
+    UIString Int2Hex() const;
+    UIString Hex2Str() const;
 
-    void SetAt(int v_index, TCHAR v_ch);
+
+    void SetAt(size_t v_index, TCHAR v_ch);
     operator LPCTSTR() const;
 
     TCHAR operator[] (int v_index) const;
@@ -52,13 +56,13 @@ public:
     void MakeUpper();
     void MakeLower();
 
-    UIString Left(int v_len) const;
-    UIString Mid(int v_pos, int v_len) const;
-    UIString Right(int v_len) const;
+    UIString Left(size_t v_len) const;
+    UIString Mid(size_t v_pos, size_t v_len) const;
+    UIString Right(size_t v_len) const;
 
-    int Find(TCHAR v_ch, int v_pos = 0) const;
-    int Find(LPCTSTR v_str, int v_pos = 0) const;
-    int Replace(LPCTSTR v_str_from, LPCTSTR v_str_to);
+    LL Find(TCHAR v_ch, size_t v_pos = 0) const;
+    LL Find(LPCTSTR v_str, size_t v_pos = 0) const;
+    LL Replace(LPCTSTR v_str_from, LPCTSTR v_str_to);
 
     int __cdecl Format(LPCTSTR v_str, ...);
 
@@ -137,6 +141,31 @@ public:
 
 private:
     RECT rect_{ 0,0,0,0 };
+};
+
+////////////////////////////////////////
+
+class DUIMINI_API UIColor {
+public:
+    UIColor();
+    UIColor(LPCTSTR v_colorstr);
+    UIColor(COLOR v_r, COLOR v_g, COLOR v_b);
+    UIColor(ALPHA v_a, COLOR v_r, COLOR v_g, COLOR v_b);
+    ~UIColor();
+
+public:
+    void SetColor(ALPHA v_a, COLOR v_r, COLOR v_g, COLOR v_b);
+    CUStr GetColorStr() const;
+    ALPHA &a = a_;
+    COLOR &r = r_;
+    COLOR &g = g_;
+    COLOR &b = b_;
+
+private:
+    ALPHA a_ = 255;
+    COLOR r_ = 0;
+    COLOR g_ = 0;
+    COLOR b_ = 0;
 };
 
 ////////////////////////////////////////

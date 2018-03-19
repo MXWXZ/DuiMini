@@ -20,11 +20,12 @@ UIImage::~UIImage() {
 
 bool UIImage::SetFile(LPCTSTR v_path) {
     bool res = false;
-    UIRenderImage* tmp = (UIRenderImage*)UIResource::LoadRes(kFT_PIC, v_path, &res);
+    UStr path = UIGetStrPath(v_path);
+    UIRenderImage* tmp = (UIRenderImage*)UIResource::LoadRes(kFT_PIC, path, &res);
     if (res) {
         UIResource::ReleaseRes(img_);
         img_ = tmp;
-        SetAttribute(_T("file"), v_path);
+        SetAttribute(_T("file"), path);
         return true;
     }
     UIResource::ReleaseRes(tmp);
@@ -131,7 +132,7 @@ void UIImage::Paint(bool v_background/* = false*/) {
 }
 
 bool UIImage::OnSkinChange(const UIEvent& v_event) {
-    SetFile(GetAttrPath(GetFile()));
+    SetFile(GetFile());
     return UIControl::OnSkinChange(v_event);
 }
 

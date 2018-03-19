@@ -313,14 +313,14 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
     }
     case WM_NCHITTEST:
     {
-        if (GetDialog()->GetAttribute(_T("resizable")).Str2Int()) {
+        if (GetDialog()->GetAttribute(_T("resizable")).Str2LL()) {
             POINT pt;
             pt.x = GET_X_LPARAM(v_lparam);
             pt.y = GET_Y_LPARAM(v_lparam);
-            int border_left = GetDialog()->GetAttribute(_T("sizebox_left")).Str2Int();
-            int border_top = GetDialog()->GetAttribute(_T("sizebox_top")).Str2Int();
-            int border_right = GetDialog()->GetAttribute(_T("sizebox_right")).Str2Int();
-            int border_bottom = GetDialog()->GetAttribute(_T("sizebox_bottom")).Str2Int();
+            LL border_left = GetDialog()->GetAttribute(_T("sizebox_left")).Str2LL();
+            LL border_top = GetDialog()->GetAttribute(_T("sizebox_top")).Str2LL();
+            LL border_right = GetDialog()->GetAttribute(_T("sizebox_right")).Str2LL();
+            LL border_bottom = GetDialog()->GetAttribute(_T("sizebox_bottom")).Str2LL();
 
             if (pt.x < rect_.left + border_left && pt.y < rect_.top + border_top)
                 return HTTOPLEFT;

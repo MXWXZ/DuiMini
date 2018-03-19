@@ -21,6 +21,7 @@ enum ErrorCode {
     kEC_CtrlFormatInvalid,
     kEC_RegWndFailed,
     kEC_ThirdPartFail,
+    kEC_FontLangMismatch,
 
     kEC_FatalError_,      // greater than this will quit the program
 

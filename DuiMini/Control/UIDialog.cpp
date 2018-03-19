@@ -36,11 +36,11 @@ bool UIDialog::AllowWindowResize(BOOL v_resizable/* = TRUE*/) {
 void UIDialog::SetSizeBox(LPCTSTR v_sizestr) {
     SetAttribute(_T("sizebox"), v_sizestr);
     UStr tmp = v_sizestr;
-    int seppos1 = tmp.Find(_T(","));
+    size_t seppos1 = static_cast<size_t>(tmp.Find(_T(",")));
     SetAttribute(_T("sizebox_left"), tmp.Left(seppos1));
-    int seppos2 = tmp.Find(_T(","), seppos1 + 1);
+    size_t seppos2 = static_cast<size_t>(tmp.Find(_T(","), seppos1 + 1));
     SetAttribute(_T("sizebox_top"), tmp.Mid(seppos1 + 1, seppos2 - seppos1 - 1));
-    int seppos3 = tmp.Find(_T(","), seppos2 + 1);
+    size_t seppos3 = static_cast<size_t>(tmp.Find(_T(","), seppos2 + 1));
     SetAttribute(_T("sizebox_right"), tmp.Mid(seppos2 + 1, seppos3 - seppos2 - 1));
     SetAttribute(_T("sizebox_bottom"), tmp.Right(tmp.GetLength() - seppos3 - 1));
 }
@@ -63,8 +63,9 @@ CUStr UIDialog::GetTitle() const {
 }
 
 void UIDialog::SetTitle(LPCTSTR v_title) {
-    SetWindowText(basewnd_->GetHWND(), v_title);
-    SetAttribute(_T("title"), v_title);
+    UStr str = UITranslateStr(v_title);
+    SetWindowText(basewnd_->GetHWND(), str);
+    SetAttribute(_T("title"), str);
 }
 
 bool UIDialog::ShowTaskBar(BOOL v_show/* = TRUE*/) {
@@ -87,7 +88,7 @@ void UIDialog::SetAlpha(ALPHA v_alpha) {
 }
 
 ALPHA UIDialog::GetAlpha() const {
-    return (ALPHA)(GetAttribute(_T("alpha")).Str2Int());
+    return (ALPHA)(GetAttribute(_T("alpha")).Str2LL());
 }
 
 void UIDialog::SetMinWidth(long v_width) {
@@ -95,7 +96,7 @@ void UIDialog::SetMinWidth(long v_width) {
 }
 
 long UIDialog::GetMinWidth() const {
-    return GetAttribute(_T("minwidth")).Str2Int();
+    return static_cast<long>(GetAttribute(_T("minwidth")).Str2LL());
 }
 
 void UIDialog::SetMaxWidth(long v_width) {
@@ -103,7 +104,7 @@ void UIDialog::SetMaxWidth(long v_width) {
 }
 
 long UIDialog::GetMaxWidth() const {
-    return GetAttribute(_T("maxwidth")).Str2Int();
+    return static_cast<long>(GetAttribute(_T("maxwidth")).Str2LL());
 }
 
 void UIDialog::SetMinHeight(long v_height) {
@@ -111,7 +112,7 @@ void UIDialog::SetMinHeight(long v_height) {
 }
 
 long UIDialog::GetMinHeight() const {
-    return GetAttribute(_T("minheight")).Str2Int();
+    return static_cast<long>(GetAttribute(_T("minheight")).Str2LL());
 }
 
 void UIDialog::SetMaxHeight(long v_height) {
@@ -119,7 +120,7 @@ void UIDialog::SetMaxHeight(long v_height) {
 }
 
 long UIDialog::GetMaxHeight() const {
-    return GetAttribute(_T("maxheight")).Str2Int();
+    return static_cast<long>(GetAttribute(_T("maxheight")).Str2LL());
 }
 
 void UIDialog::AfterSetAttribute() {
@@ -144,11 +145,11 @@ bool UIDialog::Event(const UIEvent& v_event) {
             break;
         UIRect test, tmprect = GetPos();
         UStr tmp = GetAttribute(_T("caption"));
-        int seppos1 = tmp.Find(_T(","));
+        size_t seppos1 = static_cast<size_t>(tmp.Find(_T(",")));
         test.left = ParsePosStr(tmp.Left(seppos1), left, &tmprect);
-        int seppos2 = tmp.Find(_T(","), seppos1 + 1);
+        size_t seppos2 = static_cast<size_t>(tmp.Find(_T(","), seppos1 + 1));
         test.top = ParsePosStr(tmp.Mid(seppos1 + 1, seppos2 - seppos1 - 1), top, &tmprect);
-        int seppos3 = tmp.Find(_T(","), seppos2 + 1);
+        size_t seppos3 = static_cast<size_t>(tmp.Find(_T(","), seppos2 + 1));
         test.right = ParsePosStr(tmp.Mid(seppos2 + 1, seppos3 - seppos2 - 1), right, &tmprect);
         test.bottom = ParsePosStr(tmp.Right(tmp.GetLength() - seppos3 - 1), bottom, &tmprect);
         POINT pt = v_event.GetPos();
@@ -167,7 +168,7 @@ bool UIDialog::Event(const UIEvent& v_event) {
 }
 
 bool UIDialog::OnLangChange(const UIEvent& v_event) {
-    SetTitle(GetAttrStr(GetTitle()));
+    SetTitle(GetTitle());
     return UIContainer::OnLangChange(v_event);
 }
 

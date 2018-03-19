@@ -21,6 +21,7 @@ UICFGItem UIConfig::font_;
 UICFGItem UIConfig::sys_res_id_;
 UICFGItem UIConfig::res_id_;
 UICFGItem UIConfig::lang_str_;
+UIFont    UIConfig::font_style_;
 
 #define CFG_BeginAttr  UIAttr _now
 #define CFG_EndAttr(x) x.push_back(_now)
@@ -68,7 +69,7 @@ void UIConfig::LoadConfig(LPCTSTR v_relativepath/* = DEFAULT_RESFILE*/) {
                 CFG_AddAttrDef(_T("default"), 0);
                 CFG_EndAttr(font_);
                 if (CFG_CmpAttr(_T("default"), _T("1")) &&
-                    CFG_CmpAttr(_T("lang"), lang_[shownlang_][_T("lang")]))
+                    CFG_CmpAttr(_T("lang"), lang_[shownlang_ - 1][_T("lang")]))
                     SetShownFont(static_cast<FONTID>(font_.size()));
             }
         }
@@ -97,20 +98,36 @@ void UIConfig::LoadConfig(LPCTSTR v_relativepath/* = DEFAULT_RESFILE*/) {
     UIResource::ReleaseRes(config);
 }
 
-LANGID UIConfig::GetShownLang() {
+LANGID UIConfig::GetShownLangID() {
     return shownlang_;
 }
 
-FONTID UIConfig::GetShownFont() {
+FONTID UIConfig::GetShownFontID() {
     return shownfont_;
 }
 
-SKINID UIConfig::GetShownSkin() {
+SKINID UIConfig::GetShownSkinID() {
     return shownskin_;
 }
 
-// TODO
+UIAttr* UIConfig::GetShownLang() {
+    return &lang_[GetShownLangID() - 1];
+}
+
+UIAttr* UIConfig::GetShownFont() {
+    return &font_[GetShownFontID() - 1];
+}
+
+UIAttr* UIConfig::GetShownSkin() {
+    return &skin_[GetShownSkinID() - 1];
+}
+
 void UIConfig::SetShownLang(LANGID v_id) {
+    if (v_id > lang_.size()) {
+        UIHandleError(kLL_Warning, kEC_IDInvalid, _T("Lang id \"%hu\" invalid!"), v_id);
+        return;
+    }
+
     lang_str_.clear();
     UIXmlLoader *file = (UIXmlLoader*)UIResource::LoadRes(kFT_XML, lang_[v_id - 1][_T("file")]);
     for (xmlnode node = file->GetRoot()->first_node();
@@ -127,10 +144,33 @@ void UIConfig::SetShownLang(LANGID v_id) {
 }
 
 void UIConfig::SetShownFont(FONTID v_id) {
+    if (v_id > font_.size()) {
+        UIHandleError(kLL_Warning, kEC_IDInvalid, _T("Font id \"%hu\" invalid!"), v_id);
+        return;
+    }
+
+    UIAttr &nowfont = font_[v_id - 1];
+    if (nowfont[_T("lang")] != lang_[shownlang_ - 1][_T("lang")])
+        UIHandleError(kLL_Warning, kEC_FontLangMismatch, _T("Font \"%s\" mismatch language \"%s\""),
+                      nowfont[_T("font")].GetData(), lang_[shownlang_ - 1][_T("lang")]);
+
+    font_style_.name_ = nowfont[_T("name")];
+    font_style_.lang_ = nowfont[_T("lang")];
+    font_style_.font_ = nowfont[_T("font")];
+    font_style_.size_ = static_cast<USHORT>(nowfont[_T("size")].Str2LL());
+    font_style_.bold_ = nowfont[_T("bold")].Str2LL();
+    font_style_.italic_ = nowfont[_T("italic")].Str2LL();
+    font_style_.underline_ = nowfont[_T("underline")].Str2LL();
+    font_style_.strikeout_ = nowfont[_T("strikeout")].Str2LL();
     shownfont_ = v_id;
 }
 
 void UIConfig::SetShownSkin(SKINID v_id) {
+    if (v_id > skin_.size()) {
+        UIHandleError(kLL_Warning, kEC_IDInvalid, _T("Skin id \"%hu\" invalid!"), v_id);
+        return;
+    }
+
     res_id_.clear();
     UIXmlLoader *file = (UIXmlLoader*)UIResource::LoadRes(kFT_XML, skin_[v_id - 1][_T("value")] + _T("\\resid.xml"));
     for (xmlnode node = file->GetRoot()->first_node();
@@ -148,6 +188,11 @@ void UIConfig::SetShownSkin(SKINID v_id) {
 }
 
 void UIConfig::AddSystemSkin(SKINID v_id) {
+    if (v_id > skin_.size()) {
+        UIHandleError(kLL_Warning, kEC_IDInvalid, _T("Skin id \"%hu\" invalid!"), v_id);
+        return;
+    }
+
     UIXmlLoader *file = (UIXmlLoader*)UIResource::LoadRes(kFT_XML, skin_[v_id - 1][_T("value")] + _T("\\resid.xml"));
     for (xmlnode node = file->GetRoot()->first_node();
          node != nullptr;
@@ -216,6 +261,36 @@ UIAttr* UIConfig::FindLangMap(LPCTSTR v_name) {
 CUStr UIConfig::FindLangMapValue(LPCTSTR v_name) {
     UIAttr* langstr = FindLangMap(v_name);
     return langstr ? (*langstr)[_T("value")] : CUStr();
+}
+
+UIFont UIConfig::GetFontStyle() {
+    return font_style_;
+}
+
+UIAttr* UIConfig::FindFont(LPCTSTR v_name) {
+    UIAttr* ret = UIUtils::FindNextCFGItem(font_, 0, _T("name"), v_name);
+    if (ret)
+        return ret;
+    UIHandleError(kLL_Warning, kEC_IDInvalid,
+                  _T("Config font name %s invalid!"), v_name);
+    return nullptr;
+}
+
+UIFont UIConfig::FindFontValue(LPCTSTR v_name) {
+    UIAttr* tmp = FindFont(v_name);
+    if (!tmp)
+        return UIFont();
+    UIAttr &retfont = *tmp;
+    UIFont ret;
+    ret.name_ = retfont[_T("name")];
+    ret.lang_ = retfont[_T("lang")];
+    ret.font_ = retfont[_T("font")];
+    ret.size_ = static_cast<USHORT>(retfont[_T("size")].Str2LL());
+    ret.bold_ = retfont[_T("bold")].Str2LL();
+    ret.italic_ = retfont[_T("italic")].Str2LL();
+    ret.underline_ = retfont[_T("underline")].Str2LL();
+    ret.strikeout_ = retfont[_T("strikeout")].Str2LL();
+    return ret;
 }
 
 CUStr UIConfig::TranslateStr(LPCTSTR v_str) {

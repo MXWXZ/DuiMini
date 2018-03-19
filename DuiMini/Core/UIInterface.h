@@ -15,7 +15,6 @@ namespace DuiMini {
  */
 class DUIMINI_API IUIRes {
 public:
-    virtual ~IUIRes() {}
 
     /**
     * Set resource information
@@ -65,6 +64,8 @@ public:
  */
 class DUIMINI_API UIWindow;
 class DUIMINI_API UIRenderImage;
+struct DUIMINI_API UIFont;
+class DUIMINI_API UIRect;
 class DUIMINI_API IUIRender {
 public:
     virtual bool GlobalInit() = 0;
@@ -76,6 +77,8 @@ public:
 
     virtual bool DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
                            const UIRect& v_srcrect) = 0;
+    virtual bool DrawString(LPCTSTR v_text, const UIFont &v_font,
+                            const UIRect &v_rect) = 0;
 };
 
 class DUIMINI_API IUIRenderImage {

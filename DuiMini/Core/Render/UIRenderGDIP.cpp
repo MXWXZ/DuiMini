@@ -137,6 +137,23 @@ bool UIRenderGDIP::DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
     return true;
 }
 
+bool UIRenderGDIP::DrawString(LPCTSTR v_text, const UIFont &v_font,
+                              const UIRect &v_rect) {
+    Gdiplus::FontFamily fontfamily(v_font.font_);
+    Gdiplus::Font font(&fontfamily, v_font.size_, Gdiplus::FontStyleRegular,
+                       Gdiplus::UnitPixel);
+    Gdiplus::StringFormat format;
+    if (graph_->DrawString(v_text, -1, &font,
+                           Gdiplus::RectF((Gdiplus::REAL)v_rect.left, (Gdiplus::REAL)v_rect.top,
+                           (Gdiplus::REAL)v_rect.width(), (Gdiplus::REAL)v_rect.height()),
+                           &format, &Gdiplus::SolidBrush(Gdiplus::Color::White)) != Gdiplus::Ok) {
+        UISetError(kLL_Warning, kEC_ThirdPartFail,
+                   _T("GDI+ DrawString fail!"));
+        return false;
+    }
+    return true;
+}
+
 ////////////////////////////////////////
 
 UIRenderImageGDIP::UIRenderImageGDIP() {}

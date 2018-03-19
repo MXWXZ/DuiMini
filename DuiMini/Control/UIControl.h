@@ -18,7 +18,7 @@ namespace DuiMini {
 #define STATE_FUNC_START(attr, param)            \
     LPCTSTR _attrstr = attr;                     \
     BOOL &_myparam = param;                      \
-    bool ret = GetAttribute(_attrstr).Str2Int(); \
+    bool ret = GetAttribute(_attrstr).Str2LL(); \
     if (_myparam >= 0) {
 #define STATE_FUNC_END                           \
         SetAttribute(_attrstr, UStr(_myparam));  \
