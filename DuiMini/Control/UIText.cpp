@@ -31,6 +31,39 @@ void UIText::SetFont(const UIFont &font) {
     SetAttribute(_T("fontstrikeout"), UStr(font.strikeout_));
 }
 
+void UIText::SetColor(LPCTSTR v_color) {
+    SetAttribute(_T("color"), v_color);
+}
+
+UIColor UIText::GetColor() const {
+    return UIColor(GetAttribute(_T("color")));
+}
+
+void UIText::SetTrimming(LPCTSTR v_trimming) {
+    SetAttribute(_T("trimming"), v_trimming);
+}
+
+StringTrimming UIText::GetTrimming() const {
+    UStr trimming = GetAttribute(_T("trimming"));
+    if (trimming == _T("none"))
+        return kST_None;
+    if (trimming == _T("ch"))
+        return kST_Ch;
+    if (trimming == _T("word"))
+        return kST_Word;
+    if (trimming == _T("dotch"))
+        return kST_DotCh;
+    if (trimming == _T("dotword"))
+        return kST_DotWord;
+    if (trimming == _T("dotmid"))
+        return kST_DotMid;
+}
+
+bool UIText::AutoWrap(BOOL v_autowrap/* = TRUE*/) {
+    STATE_FUNC_START(_T("autowrap"), v_autowrap)
+        STATE_FUNC_END
+}
+
 LPVOID UIText::GetInterface(LPCTSTR v_name) {
     if (CmpStr(v_name, CTRLNAME_TEXT))
         return this;
@@ -40,7 +73,11 @@ LPVOID UIText::GetInterface(LPCTSTR v_name) {
 void UIText::Paint(bool v_background/* = false*/) {
     if (!basewnd_)
         return;
-    basewnd_->GetRender()->DrawString(GetText(), font_, rect_);
+    UIFontFormat format;
+    format.color_ = GetColor();
+    format.trimming_ = GetTrimming();
+    format.autowrap_ = AutoWrap(STAY);
+    basewnd_->GetRender()->DrawString(GetText(), font_, format, rect_);
 }
 
 void UIText::SetAttribute(LPCTSTR v_name, LPCTSTR v_value) {

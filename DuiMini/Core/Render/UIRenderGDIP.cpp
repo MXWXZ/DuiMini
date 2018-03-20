@@ -136,17 +136,31 @@ bool UIRenderGDIP::DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
 }
 
 bool UIRenderGDIP::DrawString(LPCTSTR v_text, const UIFont &v_font,
-                              const UIRect &v_rect) {
+                              const UIFontFormat &v_format, UIRect &v_rect) {
     if (!graph_)
         return false;
     Gdiplus::FontFamily fontfamily(v_font.font_);
-    Gdiplus::Font font(&fontfamily, v_font.size_, Gdiplus::FontStyleRegular,
-                       Gdiplus::UnitPixel);
+    Gdiplus::FontStyle fontstyle = Gdiplus::FontStyleRegular;
+    if (v_font.bold_ && !v_font.italic_)
+        fontstyle = Gdiplus::FontStyleBold;
+    if (!v_font.bold_ && v_font.italic_)
+        fontstyle = Gdiplus::FontStyleItalic;
+    if (v_font.bold_ && v_font.italic_)
+        fontstyle = Gdiplus::FontStyleBoldItalic;
+    if (v_font.underline_)
+        fontstyle = (Gdiplus::FontStyle)(fontstyle | Gdiplus::FontStyleUnderline);
+    if (v_font.strikeout_)
+        fontstyle = (Gdiplus::FontStyle)(fontstyle | Gdiplus::FontStyleStrikeout);
+    Gdiplus::Font font(&fontfamily, v_font.size_, fontstyle, Gdiplus::UnitPixel);
     Gdiplus::StringFormat format;
-    if (graph_->DrawString(v_text, -1, &font,
-                           Gdiplus::RectF((Gdiplus::REAL)v_rect.left, (Gdiplus::REAL)v_rect.top,
-                           (Gdiplus::REAL)v_rect.width(), (Gdiplus::REAL)v_rect.height()),
-                           &format, &Gdiplus::SolidBrush(Gdiplus::Color::White)) != Gdiplus::Ok) {
+    format.SetTrimming((Gdiplus::StringTrimming)v_format.trimming_);
+    if (!v_format.autowrap_)
+        format.SetFormatFlags(Gdiplus::StringFormatFlagsNoWrap);
+    Gdiplus::RectF rect(v_rect.left, v_rect.top, v_rect.width(), v_rect.height());
+    Gdiplus::SolidBrush color(Gdiplus::Color(v_format.color_.a, v_format.color_.r, v_format.color_.g, v_format.color_.b));
+    
+    if (graph_->DrawString(v_text, -1, &font, rect, &format,
+                           &color) != Gdiplus::Ok) {
         UISetError(kLL_Warning, kEC_ThirdPartFail,
                    _T("GDI+ DrawString fail!"));
         return false;

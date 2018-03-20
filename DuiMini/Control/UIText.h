@@ -14,9 +14,14 @@ public:
     virtual ~UIText();
 
 public:
-    CUStr GetText() const;
     void SetText(LPCTSTR v_text);
+    CUStr GetText() const;
     void SetFont(const UIFont &font);
+    void SetColor(LPCTSTR v_color);
+    UIColor GetColor() const;
+    void SetTrimming(LPCTSTR v_trimming);
+    StringTrimming GetTrimming() const;
+    bool AutoWrap(BOOL v_autowrap = TRUE);
 
 public:
     ATTR_MAP_BEGIN
@@ -29,6 +34,9 @@ public:
         DEFAULT_ATTR(_T("fontitalic"), UStr(nowfont.italic_))
         DEFAULT_ATTR(_T("fontunderline"), UStr(nowfont.underline_))
         DEFAULT_ATTR(_T("fontstrikeout"), UStr(nowfont.strikeout_))
+        DEFAULT_ATTR(_T("color"), _T("#FF000000"))
+        DEFAULT_ATTR(_T("trimming"), _T("none"))
+        DEFAULT_ATTR(_T("autowrap"), _T("0"))
         PARENT_ATTR(UIControl)
         DEFAULT_ATTR(_T("background"), _T("1"))
         ATTR_MAP_END

@@ -68,8 +68,5 @@ public:
 
 protected:
     OVERRIDE_MSGFUNC(OnLangChange)
-
-protected:
-    UIRect   caption_rect_;
 };
 }   // namespace DuiMini

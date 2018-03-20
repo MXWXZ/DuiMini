@@ -65,6 +65,7 @@ public:
 class DUIMINI_API UIWindow;
 class DUIMINI_API UIRenderImage;
 struct DUIMINI_API UIFont;
+struct DUIMINI_API UIFontFormat;
 class DUIMINI_API UIRect;
 class DUIMINI_API IUIRender {
 public:
@@ -78,7 +79,7 @@ public:
     virtual bool DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
                            const UIRect& v_srcrect) = 0;
     virtual bool DrawString(LPCTSTR v_text, const UIFont &v_font,
-                            const UIRect &v_rect) = 0;
+                            const UIFontFormat &v_format, UIRect &v_rect) = 0;
 };
 
 class DUIMINI_API IUIRenderImage {

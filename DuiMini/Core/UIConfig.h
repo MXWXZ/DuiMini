@@ -19,6 +19,12 @@ struct DUIMINI_API UIFont {
     bool strikeout_ = false;
 };
 
+struct DUIMINI_API UIFontFormat {
+    UIColor color_;
+    StringTrimming trimming_ = kST_None;
+    bool autowrap_ = false;
+};
+
 ////////////////////////////////////////
 
 #define UIGetStrPath(x) UIConfig::GetStrPath(x)

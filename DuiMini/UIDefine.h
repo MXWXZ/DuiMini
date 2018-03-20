@@ -62,6 +62,15 @@ typedef unsigned char COLOR;
 #define WStr2Str(wstr,str,len) WideCharToMultiByte(CP_ACP, 0, wstr, -1, str, len, NULL, NULL)
 
 // enum define
+// font string trimming
+enum StringTrimming {
+    kST_None = 0,
+    kST_Ch = 1,
+    kST_Word = 2,
+    kST_DotCh = 3,
+    kST_DotWord = 4,
+    kST_DotMid = 5
+};
 // TODO: Add new Msg
 enum WindowMessage {
     //      Msg                 WPARAM              LPARAM

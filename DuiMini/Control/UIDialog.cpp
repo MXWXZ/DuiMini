@@ -47,11 +47,16 @@ CUStr UIDialog::GetSizeBox() const {
 
 void UIDialog::SetCaptionRect(LPCTSTR v_pos) {
     SetAttribute(_T("caption"), v_pos);
-    caption_rect_ = ParsePosStr(v_pos, &GetPos());
 }
 
 UIRect UIDialog::GetCaptionRect() const {
-    return caption_rect_;
+    UIRect test, tmprect = GetPos();
+    UStr tmp = GetAttribute(_T("caption"));
+    test.left = ParsePosStr(DivideStr(tmp, 1), left, &tmprect);
+    test.top = ParsePosStr(DivideStr(tmp, 2), top, &tmprect);
+    test.right = ParsePosStr(DivideStr(tmp, 3), right, &tmprect);
+    test.bottom = ParsePosStr(DivideStr(tmp, 4), bottom, &tmprect);
+    return test;
 }
 
 CUStr UIDialog::GetTitle() const {
@@ -145,15 +150,9 @@ bool UIDialog::Event(const UIEvent& v_event) {
         // move window
         if (!AllowWindowMove(STAY))
             break;
-        UIRect test, tmprect = GetPos();
-        UStr tmp = GetAttribute(_T("caption"));
-        test.left   = ParsePosStr(DivideStr(tmp, 1), left,   &tmprect);
-        test.top    = ParsePosStr(DivideStr(tmp, 2), top,    &tmprect);
-        test.right  = ParsePosStr(DivideStr(tmp, 3), right,  &tmprect);
-        test.bottom = ParsePosStr(DivideStr(tmp, 4), bottom, &tmprect);
 
         POINT pt = v_event.GetPos();
-        if (!::PtInRect(&test.rect(), pt))
+        if (!::PtInRect(&GetCaptionRect().rect(), pt))
             break;
 
         ReleaseCapture();   // must do this

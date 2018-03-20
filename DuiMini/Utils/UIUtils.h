@@ -150,12 +150,14 @@ private:
 class DUIMINI_API UIColor {
 public:
     UIColor();
+    UIColor(const UIColor &v_color);
     UIColor(LPCTSTR v_colorstr);
     UIColor(COLOR v_r, COLOR v_g, COLOR v_b);
     UIColor(ALPHA v_a, COLOR v_r, COLOR v_g, COLOR v_b);
     ~UIColor();
 
 public:
+    const UIColor& operator=(const UIColor &v_color);
     void SetColor(ALPHA v_a, COLOR v_r, COLOR v_g, COLOR v_b);
     CUStr GetColorStr() const;
     ALPHA &a = a_;

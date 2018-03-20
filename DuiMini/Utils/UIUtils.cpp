@@ -558,12 +558,39 @@ POINT UIEvent::GetPos() const {
 
 UIColor::UIColor() {}
 
+UIColor::UIColor(const UIColor &v_color) {
+    SetColor(v_color.a, v_color.r, v_color.g, v_color.b);
+}
+
 UIColor::UIColor(LPCTSTR v_colorstr) {
     UStr str(v_colorstr);
-    SetColor((ALPHA)str.Mid(1, 2).Hex2Str().Str2LL(),
-             (COLOR)str.Mid(3, 2).Hex2Str().Str2LL(),
-             (COLOR)str.Mid(5, 2).Hex2Str().Str2LL(),
-             (COLOR)str.Mid(7, 2).Hex2Str().Str2LL());
+    if (str == _T("black"))
+        str = _T("#000000");
+    else if (str == _T("white"))
+        str = _T("#FFFFFF");
+    else if (str == _T("red"))
+        str = _T("#FF0000");
+    else if (str == _T("green"))
+        str = _T("#00FF00");
+    else if (str == _T("blue"))
+        str = _T("#0000FF");
+    else if (str == _T("yellow"))
+        str = _T("#FFFF00");
+    else if (str == _T("cyan"))
+        str = _T("#00FFFF");
+    else if (str == _T("purple"))
+        str = _T("#FF00FF");
+    else if (str == _T("gray"))
+        str = _T("#C0C0C0");
+    if (str.GetLength() == 9)
+        SetColor((ALPHA)str.Mid(1, 2).Hex2Str().Str2LL(),
+                 (COLOR)str.Mid(3, 2).Hex2Str().Str2LL(),
+                 (COLOR)str.Mid(5, 2).Hex2Str().Str2LL(),
+                 (COLOR)str.Mid(7, 2).Hex2Str().Str2LL());
+    else
+        SetColor(255, (COLOR)str.Mid(1, 2).Hex2Str().Str2LL(),
+                 (COLOR)str.Mid(3, 2).Hex2Str().Str2LL(),
+                 (COLOR)str.Mid(5, 2).Hex2Str().Str2LL());
 }
 
 UIColor::UIColor(COLOR v_r, COLOR v_g, COLOR v_b) {
@@ -575,6 +602,11 @@ UIColor::UIColor(ALPHA v_a, COLOR v_r, COLOR v_g, COLOR v_b) {
 }
 
 UIColor::~UIColor() {}
+
+const UIColor& UIColor::operator=(const UIColor &v_color) {
+    SetColor(v_color.a, v_color.r, v_color.g, v_color.b);
+    return *this;
+}
 
 void UIColor::SetColor(ALPHA v_a, COLOR v_r, COLOR v_g, COLOR v_b) {
     a_ = v_a;
