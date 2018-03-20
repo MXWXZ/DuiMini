@@ -3,9 +3,7 @@
  * All rights reserved.
  *
  * @Author:MXWXZ
- * @Date:2018/01/28
- *
- * @Description:
+ * @Date:2018/03/20
  */
 #pragma once
 
@@ -32,7 +30,7 @@ public:
     void Paint(bool v_background = false) override;
 
 protected:
-    bool OnSkinChange(const UIEvent& v_event) override;
+    OVERRIDE_MSGFUNC(OnSkinChange)
 
 protected:
     UIRenderImage *img_ = nullptr;

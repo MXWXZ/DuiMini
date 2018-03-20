@@ -1,11 +1,9 @@
 /**
- * Copyright (c) 2017-2050
+ * Copyright (c) 2018-2050
  * All rights reserved.
  *
  * @Author:MXWXZ
- * @Date:2017/11/28
- *
- * @Description:
+ * @Date:2018/03/20
  */
 #include "stdafx.h"
 #include "UIDialog.h"
@@ -23,6 +21,8 @@ bool UIDialog::AllowWindowMove(BOOL v_movable/* = TRUE*/) {
 
 bool UIDialog::AllowWindowResize(BOOL v_resizable/* = TRUE*/) {
     STATE_FUNC_START(_T("resizable"), v_resizable) {
+        if (!basewnd_)
+            return false;
         LONG style = GetWindowLong(basewnd_->GetHWND(), GWL_STYLE);
         if (v_resizable == TRUE)
             style |= WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_THICKFRAME;
@@ -35,14 +35,10 @@ bool UIDialog::AllowWindowResize(BOOL v_resizable/* = TRUE*/) {
 
 void UIDialog::SetSizeBox(LPCTSTR v_sizestr) {
     SetAttribute(_T("sizebox"), v_sizestr);
-    UStr tmp = v_sizestr;
-    size_t seppos1 = static_cast<size_t>(tmp.Find(_T(",")));
-    SetAttribute(_T("sizebox_left"), tmp.Left(seppos1));
-    size_t seppos2 = static_cast<size_t>(tmp.Find(_T(","), seppos1 + 1));
-    SetAttribute(_T("sizebox_top"), tmp.Mid(seppos1 + 1, seppos2 - seppos1 - 1));
-    size_t seppos3 = static_cast<size_t>(tmp.Find(_T(","), seppos2 + 1));
-    SetAttribute(_T("sizebox_right"), tmp.Mid(seppos2 + 1, seppos3 - seppos2 - 1));
-    SetAttribute(_T("sizebox_bottom"), tmp.Right(tmp.GetLength() - seppos3 - 1));
+    SetAttribute(_T("sizebox_left"), DivideStr(v_sizestr, 1));
+    SetAttribute(_T("sizebox_top"), DivideStr(v_sizestr, 2));
+    SetAttribute(_T("sizebox_right"), DivideStr(v_sizestr, 3));
+    SetAttribute(_T("sizebox_bottom"), DivideStr(v_sizestr, 4));
 }
 
 CUStr UIDialog::GetSizeBox() const {
@@ -63,6 +59,8 @@ CUStr UIDialog::GetTitle() const {
 }
 
 void UIDialog::SetTitle(LPCTSTR v_title) {
+    if (!basewnd_)
+        return;
     UStr str = UITranslateStr(v_title);
     SetWindowText(basewnd_->GetHWND(), str);
     SetAttribute(_T("title"), str);
@@ -70,6 +68,8 @@ void UIDialog::SetTitle(LPCTSTR v_title) {
 
 bool UIDialog::ShowTaskBar(BOOL v_show/* = TRUE*/) {
     STATE_FUNC_START(_T("appwin"), v_show) {
+        if (!basewnd_)
+            return false;
         LONG style = GetWindowLong(basewnd_->GetHWND(), GWL_EXSTYLE);
         if (v_show == TRUE) {
             style &= ~WS_EX_TOOLWINDOW;
@@ -88,7 +88,7 @@ void UIDialog::SetAlpha(ALPHA v_alpha) {
 }
 
 ALPHA UIDialog::GetAlpha() const {
-    return (ALPHA)(GetAttribute(_T("alpha")).Str2LL());
+    return (ALPHA)GetAttribute(_T("alpha")).Str2LL();
 }
 
 void UIDialog::SetMinWidth(long v_width) {
@@ -96,7 +96,7 @@ void UIDialog::SetMinWidth(long v_width) {
 }
 
 long UIDialog::GetMinWidth() const {
-    return static_cast<long>(GetAttribute(_T("minwidth")).Str2LL());
+    return GetAttribute(_T("minwidth")).Str2LL();
 }
 
 void UIDialog::SetMaxWidth(long v_width) {
@@ -104,7 +104,7 @@ void UIDialog::SetMaxWidth(long v_width) {
 }
 
 long UIDialog::GetMaxWidth() const {
-    return static_cast<long>(GetAttribute(_T("maxwidth")).Str2LL());
+    return GetAttribute(_T("maxwidth")).Str2LL();
 }
 
 void UIDialog::SetMinHeight(long v_height) {
@@ -112,7 +112,7 @@ void UIDialog::SetMinHeight(long v_height) {
 }
 
 long UIDialog::GetMinHeight() const {
-    return static_cast<long>(GetAttribute(_T("minheight")).Str2LL());
+    return GetAttribute(_T("minheight")).Str2LL();
 }
 
 void UIDialog::SetMaxHeight(long v_height) {
@@ -120,11 +120,13 @@ void UIDialog::SetMaxHeight(long v_height) {
 }
 
 long UIDialog::GetMaxHeight() const {
-    return static_cast<long>(GetAttribute(_T("maxheight")).Str2LL());
+    return GetAttribute(_T("maxheight")).Str2LL();
 }
 
 void UIDialog::AfterSetAttribute() {
     UIContainer::AfterSetAttribute();
+    if (!basewnd_)
+        return;
     // Init dlg pos
     basewnd_->SetWindowPos(GetPos());
     SetSizeBox(GetSizeBox());           // Init size box
@@ -145,18 +147,17 @@ bool UIDialog::Event(const UIEvent& v_event) {
             break;
         UIRect test, tmprect = GetPos();
         UStr tmp = GetAttribute(_T("caption"));
-        size_t seppos1 = static_cast<size_t>(tmp.Find(_T(",")));
-        test.left = ParsePosStr(tmp.Left(seppos1), left, &tmprect);
-        size_t seppos2 = static_cast<size_t>(tmp.Find(_T(","), seppos1 + 1));
-        test.top = ParsePosStr(tmp.Mid(seppos1 + 1, seppos2 - seppos1 - 1), top, &tmprect);
-        size_t seppos3 = static_cast<size_t>(tmp.Find(_T(","), seppos2 + 1));
-        test.right = ParsePosStr(tmp.Mid(seppos2 + 1, seppos3 - seppos2 - 1), right, &tmprect);
-        test.bottom = ParsePosStr(tmp.Right(tmp.GetLength() - seppos3 - 1), bottom, &tmprect);
+        test.left   = ParsePosStr(DivideStr(tmp, 1), left,   &tmprect);
+        test.top    = ParsePosStr(DivideStr(tmp, 2), top,    &tmprect);
+        test.right  = ParsePosStr(DivideStr(tmp, 3), right,  &tmprect);
+        test.bottom = ParsePosStr(DivideStr(tmp, 4), bottom, &tmprect);
+
         POINT pt = v_event.GetPos();
         if (!::PtInRect(&test.rect(), pt))
             break;
 
-        ReleaseCapture();
+        ReleaseCapture();   // must do this
+
         basewnd_->SendWindowMessage(WM_NCLBUTTONDOWN, HTCAPTION,
                                     v_event.GetLParam());
         basewnd_->SendWindowMessage(WM_LBUTTONUP, v_event.GetWParam(),

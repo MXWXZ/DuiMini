@@ -1,11 +1,9 @@
 /**
- * Copyright (c) 2017-2050
+ * Copyright (c) 2018-2050
  * All rights reserved.
  *
  * @Author:MXWXZ
- * @Date:2017/10/17
- *
- * @Description:
+ * @Date:2018/03/20
  */
 #include "stdafx.h"
 #include "UIUnzip.h"
@@ -13,10 +11,9 @@
 namespace DuiMini {
 ZFile UIUnzip::OpenZip(LPCTSTR v_fullpath) {
 #ifdef _UNICODE
-    int len = WideCharToMultiByte(CP_ACP, 0, v_fullpath, -1, NULL,
-                                  0, NULL, NULL);
+    int len = GetWStr2Strlen(v_fullpath);
     LPSTR str = new char[len];
-    WideCharToMultiByte(CP_ACP, 0, v_fullpath, -1, str, len, NULL, NULL);
+    WStr2Str(v_fullpath, str, len);
 #else
     LPCSTR str = v_fullpath;
 #endif
@@ -45,9 +42,9 @@ long UIUnzip::LocateZipItem(ZFile v_fp, LPCTSTR v_relativepath) {
     formatpath.Replace(_T("\\"), _T("/"));
     LPCTSTR tmppath = formatpath.GetData();
 #ifdef _UNICODE
-    int len = WideCharToMultiByte(CP_ACP, 0, tmppath, -1, NULL, 0, NULL, NULL);
+    int len = GetWStr2Strlen(tmppath);
     LPSTR str = new char[len];
-    WideCharToMultiByte(CP_ACP, 0, tmppath, -1, str, len, NULL, NULL);
+    WStr2Str(tmppath, str, len);
 #else
     LPCSTR str = tmppath;
 #endif
@@ -58,7 +55,7 @@ long UIUnzip::LocateZipItem(ZFile v_fp, LPCTSTR v_relativepath) {
         char* name = new char[buf];
         if (unzGetCurrentFileInfo64(v_fp, &zFileInfo, name,
                                     buf, NULL, 0, NULL, 0) == UNZ_OK)
-            ret = static_cast<long>(zFileInfo.uncompressed_size);
+            ret = zFileInfo.uncompressed_size;
     }
 #ifdef _UNICODE
     delete[]str;

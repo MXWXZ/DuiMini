@@ -1,11 +1,9 @@
 /**
- * Copyright (c) 2017-2050
+ * Copyright (c) 2018-2050
  * All rights reserved.
  *
  * @Author:MXWXZ
- * @Date:2017/12/05
- *
- * @Description:
+ * @Date:2018/03/20
  */
 #pragma once
 #include "Core/UIDlgBuilder.h"
@@ -13,18 +11,18 @@
 namespace DuiMini {
 #define MSG_MAP_BEGIN(theclass) virtual void _CtrlBindMsgHandler() { \
                                     typedef theclass _thisclass;
-#define ON_PARENT_MSG(parentclass) parentclass::_CtrlBindMsgHandler();
-#define MSG_MAP_END   }
-#define ON_CONTROL_MSG(name, msg, func)   BindMsgHandler(name, msg, static_cast<MsgHandleFun>(&_thisclass::func));
+#define ON_CONTROL_MSG(name, msg, func)   BindMsgHandler(name, msg, (MsgHandleFun)(&_thisclass::func));
+#define ON_PARENT_MSG(parentclass)  parentclass::_CtrlBindMsgHandler();
+#define MSG_MAP_END             }
 
-#define VAR_MAP_BEGIN           virtual void _CtrlBindVar() {       \
-                                UIControl** tmp = nullptr;
-#define ON_CONTROL_VAR(name, var)    tmp = (UIControl**)&var;       \
-                                     *tmp = FindCtrlFromName(name); \
-                                     if (!var)                      \
-                                        UIHandleError(kLL_Warning, kEC_IDInvalid, _T("Ctrl name \"%s\" invalid!"), name);
-#define ON_PARENT_VAR(parentclass) parentclass::_CtrlBindVar();
-#define VAR_MAP_END   }
+#define VAR_MAP_BEGIN               virtual void _CtrlBindVar() {       \
+                                        UIControl** tmp = nullptr;
+#define ON_CONTROL_VAR(name, var)       tmp = (UIControl**)&var;       \
+                                        *tmp = FindCtrlFromName(name); \
+                                        if (!var)                      \
+                                            UIHandleError(kLL_Warning, kEC_IDInvalid, _T("Ctrl name \"%s\" invalid!"), name);
+#define ON_PARENT_VAR(parentclass)      parentclass::_CtrlBindVar();
+#define VAR_MAP_END                 }
 
 typedef bool(UIWindow::*MsgHandleFun)(const UIEvent& v_event);
 
@@ -38,8 +36,8 @@ public:
     UIDialog* GetDialog() const;
     HWND GetHWND() const;
 
-    LPCTSTR SetDlgName(LPCTSTR v_dlgname);  // Please ONLY set before create
-    LPCTSTR GetDlgName() const;
+    void  SetDlgName(LPCTSTR v_dlgname);  // Please ONLY set before create
+    CUStr GetDlgName() const;
 
     /**
     * Create and run window
@@ -95,7 +93,7 @@ public:
     * @param    UIControl* v_ctrl:created ctrl pointer
     * @return   finish created ctrl pointer
     */
-    void FinishCreateControl(UIControl* v_ctrl);
+    bool FinishCreateControl(UIControl* v_ctrl);
 
     void Close() const;
     void Maximize() const;
@@ -125,7 +123,7 @@ protected:
                                     WPARAM v_wparam, LPARAM v_lparam);
     bool Paint();
 
-    UIDlgBuilder* SetDlgBuilder(LPCTSTR v_dlgname);
+    bool SetDlgBuilder(LPCTSTR v_dlgname);
 
     /**
     * Bind & Unbind message handler
@@ -145,7 +143,7 @@ protected:
     UIDlgBuilder*    builder_ = nullptr;          // dlg builder
     UIRender*        render_ = nullptr;           // render
     UIRect           rect_;                       // window rect
-    static int       classname_cnt_;              // auto classname counter
+    static UINT      classname_cnt_;              // auto classname counter
 
     // Event system
     bool             mouse_tracking_ = false;     // mouse tracking state

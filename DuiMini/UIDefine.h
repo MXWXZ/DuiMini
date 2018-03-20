@@ -1,11 +1,9 @@
 /**
- * Copyright (c) 2017-2050
+ * Copyright (c) 2018-2050
  * All rights reserved.
  *
  * @Author:MXWXZ
- * @Date:2017/10/17
- *
- * @Description:The defination file of UI library
+ * @Date:2018/03/20
  */
 #pragma once
 
@@ -26,11 +24,13 @@
 
 #define DUIMINI_VERSION _T("1.0")             // UI library version
 
+// Default string
 #define RESOURCE_KIND       _T("ZIP")         // Custom resource type
 #define DEFAULT_RESFOLDER   _T("uires")       // Default res folder
 #define DEFAULT_RESFILE     _T("uires.xml")   // Default res file
 #define DEFAULT_RESIDFILE   _T("resid.xml")   // Default resid file
 
+// control
 // TODO: Add new Ctrl
 #define CTRLNAME_CONTROL        _T("ctrl")
 #define CTRLNAME_CONTAINER      _T("container")
@@ -39,21 +39,29 @@
 #define CTRLNAME_BUTTON         _T("btn")
 #define CTRLNAME_TEXT           _T("txt")
 
+// third-part
 // rapidxml
 typedef rapidxml::xml_document<TCHAR> xmldoc;
 typedef rapidxml::xml_node<TCHAR>* xmlnode;
 typedef rapidxml::xml_attribute<TCHAR>* xmlattr;
 
-#define CmpStr(x,y) _tcscmp(x,y) == 0
+// make type beautiful
 typedef long long LL;
 typedef unsigned char ALPHA;
 typedef unsigned short SKINID;
 typedef unsigned short LANGID;
 typedef unsigned short FONTID;
 typedef unsigned char COLOR;
-
 #define STAY -1
 
+// make function beautiful
+#define CmpStr(x, y) _tcscmp(x, y) == 0
+#define GetStr2WStrLen(str) MultiByteToWideChar(CP_UTF8, 0, str, -1, NULL, 0)
+#define Str2WStr(str, wstr, len) MultiByteToWideChar(CP_UTF8, 0, str, -1, wstr, len)
+#define GetWStr2Strlen(wstr) WideCharToMultiByte(CP_ACP, 0, wstr, -1, NULL, 0, NULL, NULL)
+#define WStr2Str(wstr,str,len) WideCharToMultiByte(CP_ACP, 0, wstr, -1, str, len, NULL, NULL)
+
+// enum define
 // TODO: Add new Msg
 enum WindowMessage {
     //      Msg                 WPARAM              LPARAM
@@ -83,13 +91,14 @@ enum WindowMessage {
     kWM_End_           // USELESS
 };
 
-#define GetStr2WStrLen(str) MultiByteToWideChar(CP_UTF8, 0, str, -1, NULL, 0)
-#define Str2WStr(str,wstr,len) MultiByteToWideChar(CP_UTF8, 0, str, -1, wstr, len)
-
+// string/wstring
 #ifdef _UNICODE
 typedef std::wstring tstring;
+#define tostring std::to_wstring
 #else
 typedef std::string tstring;
+#define tostring std::to_string
 #endif  // _UNICODE
 
+#pragma warning(disable: 4244)            // warnings when converting
 #pragma warning(disable: 4251)            // warnings when exporting string

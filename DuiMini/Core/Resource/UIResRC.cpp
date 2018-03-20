@@ -1,12 +1,10 @@
 /**
- * Copyright (c) 2017-2050
- * All rights reserved.
- *
- * @Author:MXWXZ
- * @Date:2017/11/02
- *
- * @Description:
- */
+* Copyright (c) 2018-2050
+* All rights reserved.
+*
+* @Author:MXWXZ
+* @Date:2018/03/20
+*/
 #include "stdafx.h"
 #include "UIResRC.h"
 
@@ -17,45 +15,15 @@ UIResRC::UIResRC(LPCTSTR v_info) {
     SetResInfo(v_info);
 }
 
-UIResRC::~UIResRC() {
-    if (zipcache_)
-        UIUnzip::CloseZip(zipcache_);
-}
+UIResRC::~UIResRC() {}
 
 void UIResRC::SetResInfo(LPCTSTR v_info) {
     resid_ = _ttoi(v_info);
-    tmpfullpath_ = _T("");
-    if (zipcache_)
-        UIUnzip::CloseZip(zipcache_);
+    UIResZip::SetResInfo(_T(""));
 }
 
-LPCTSTR UIResRC::GetResInfo() const {
-    return UStr(static_cast<int>(resid_));
-}
-
-long UIResRC::GetFileSize(LPCTSTR v_path) {
-    if (!zipcache_)
-        if (!OpenZip())
-            return -1;
-    long ret = UIUnzip::LocateZipItem(zipcache_, v_path);
-    if (ret == -1)
-        UISetError(kLL_Error, kEC_FileFail,
-                   _T("File \"%s\" in \"%s\" can't access!"),
-                   v_path, tmpfullpath_.GetData());
-    return ret;
-}
-
-bool UIResRC::GetFile(LPCTSTR v_path, BYTE* v_buffer, long v_size) {
-    if (!zipcache_)
-        if (!OpenZip())
-            return false;
-    if (!UIUnzip::UnZipData(zipcache_, v_buffer)) {
-        UISetError(kLL_Error, kEC_FileFail,
-                   _T("File \"%s\" in \"%s\" can't access!"),
-                   v_path, tmpfullpath_.GetData());
-        return false;
-    }
-    return true;
+CUStr UIResRC::GetResInfo() const {
+    return CUStr(resid_);
 }
 
 ZFile UIResRC::OpenZip() {
@@ -80,14 +48,9 @@ ZFile UIResRC::OpenZip() {
     fclose(fp);
     UnlockResource(globalsys);
     FreeResource(globalsys);
-    tmpfullpath_ = tmpfile;
+    fullpath_ = tmpfile;
 
-    zipcache_ = UIUnzip::OpenZip(tmpfullpath_);
-    if (!zipcache_)
-        UISetError(kLL_Error, kEC_FileFail,
-                   _T("File \"%s\" can't access!"),
-                   tmpfullpath_.GetData());
-    return zipcache_;
+    return UIResZip::OpenZip();
 }
 
 }  // namespace DuiMini

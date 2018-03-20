@@ -1,11 +1,9 @@
 /**
- * Copyright (c) 2017-2050
+ * Copyright (c) 2018-2050
  * All rights reserved.
  *
  * @Author:MXWXZ
- * @Date:2017/11/02
- *
- * @Description:exception handle
+ * @Date:2018/03/20
  */
 #pragma once
 

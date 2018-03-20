@@ -1,11 +1,9 @@
 /**
- * Copyright (c) 2017-2050
+ * Copyright (c) 2018-2050
  * All rights reserved.
  *
  * @Author:MXWXZ
- * @Date:2017/12/15
- *
- * @Description:
+ * @Date:2018/03/20
  */
 #pragma once
 
@@ -23,8 +21,8 @@ public:
     bool Load(LPCTSTR v_path);
     bool Release();
     void* GetInterface() const;
-    UINT GetWidth() const;
-    UINT GetHeight() const;
+    long GetWidth() const;
+    long GetHeight() const;
 
 private:
     IUIRenderImage* renderimg_ = nullptr;

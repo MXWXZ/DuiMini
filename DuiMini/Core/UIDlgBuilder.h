@@ -1,11 +1,9 @@
 /**
- * Copyright (c) 2017-2050
+ * Copyright (c) 2018-2050
  * All rights reserved.
  *
  * @Author:MXWXZ
- * @Date:2017/12/04
- *
- * @Description:
+ * @Date:2018/03/20
  */
 #pragma once
 
@@ -24,6 +22,8 @@ public:
      */
     UIControl* Init(xmlnode v_root, UIWindow* v_wnd);
 
+    void Release();
+
     /**
      * Create control
      * @param    UIControl* v_ctrl:allocated ctrl pointer
@@ -39,9 +39,9 @@ public:
     /**
      * Finish create control
      * @param    UIControl* v_ctrl:created ctrl pointer
-     * @return   finish created ctrl pointer
+     * @return   true for success
      */
-    void FinishCreateControl(UIControl* v_ctrl);
+    bool FinishCreateControl(UIControl* v_ctrl);
 
     UIDialog* GetCtrlRoot();
 

@@ -1,11 +1,9 @@
 /**
- * Copyright (c) 2017-2050
+ * Copyright (c) 2018-2050
  * All rights reserved.
  *
  * @Author:MXWXZ
- * @Date:2017/12/04
- *
- * @Description:
+ * @Date:2018/03/20
  */
 #include "stdafx.h"
 #include "UIDlgBuilder.h"
@@ -14,22 +12,24 @@ namespace DuiMini {
 UIDlgBuilder::UIDlgBuilder() {}
 
 UIDlgBuilder::~UIDlgBuilder() {
-    delete ctrl_root_;
-    ctrl_root_ = nullptr;
+    Release();
 }
 
 UIControl* UIDlgBuilder::Init(xmlnode v_root, UIWindow* v_wnd) {
-    if (!v_wnd)
-        return nullptr;
-    delete ctrl_root_;
-    ctrl_root_ = nullptr;
     xml_root_ = v_root;
     return Parse(v_wnd, xml_root_);
+}
+
+void UIDlgBuilder::Release() {
+    delete ctrl_root_;
+    ctrl_root_ = nullptr;
 }
 
 UIControl* UIDlgBuilder::CreateControl(UIControl* v_ctrl,
                                        UIWindow* v_wnd,
                                        UIControl* v_parent/* = nullptr*/) {
+    if (!v_ctrl || !v_wnd)
+        return nullptr;
     // Set basewnd
     v_ctrl->SetBaseWindow(v_wnd);
     // Attach to parent (parent must have container attribute)
@@ -45,8 +45,11 @@ UIControl* UIDlgBuilder::CreateControl(UIControl* v_ctrl,
     return v_ctrl;
 }
 
-void UIDlgBuilder::FinishCreateControl(UIControl * v_ctrl) {
+bool UIDlgBuilder::FinishCreateControl(UIControl * v_ctrl) {
+    if (!v_ctrl)
+        return false;
     v_ctrl->AfterSetAttribute();
+    return true;
 }
 
 UIDialog* UIDlgBuilder::GetCtrlRoot() {
@@ -76,7 +79,7 @@ UIControl* UIDlgBuilder::Parse(UIWindow* v_wnd, xmlnode v_root,
                     return nullptr;
                 }
                 new_ctrl = new UIDialog;
-                ctrl_root_ = reinterpret_cast<UIDialog*>(new_ctrl);
+                ctrl_root_ = (UIDialog*)new_ctrl;
             }
             if (CmpStr(ctrl_name, CTRLNAME_IMAGE))
                 new_ctrl = new UIImage;

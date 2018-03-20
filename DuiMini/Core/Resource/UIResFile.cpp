@@ -1,11 +1,9 @@
 /**
- * Copyright (c) 2017-2050
+ * Copyright (c) 2018-2050
  * All rights reserved.
  *
  * @Author:MXWXZ
- * @Date:2017/11/02
- *
- * @Description:
+ * @Date:2018/03/20
  */
 #include "stdafx.h"
 #include "UIResFile.h"
@@ -23,8 +21,8 @@ void UIResFile::SetResInfo(LPCTSTR v_info) {
     folderpath_ = v_info;
 }
 
-LPCTSTR UIResFile::GetResInfo() const {
-    return folderpath_.GetData();
+CUStr UIResFile::GetResInfo() const {
+    return folderpath_;
 }
 
 long UIResFile::GetFileSize(LPCTSTR v_path) {

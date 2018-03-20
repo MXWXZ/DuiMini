@@ -38,17 +38,6 @@ UIRect UIUtils::GetWorkAreaSize() {
     return ret;
 }
 
-UIAttr* UIUtils::FindNextCFGItem(UICFGItem &v_item, UINT v_start,
-                                  LPCTSTR v_name, LPCTSTR v_value) {
-    if (v_start >= v_item.size())
-        return nullptr;
-    UICFGItemIt &itend = v_item.end();
-    for (UICFGItemIt it = v_item.begin() + v_start; it != itend; ++it)
-        if (CmpStr((*it)[v_name], v_value))
-            return &(*it);
-    return nullptr;
-}
-
 ////////////////////////////////////////
 
 UIXmlNode::UIXmlNode() {}
@@ -65,6 +54,8 @@ void UIXmlNode::SetNode(const xmlnode v_node) {
 
 CUStr UIXmlNode::GetAttrValue(LPCTSTR v_name,
                               LPCTSTR v_default/* = _T("")*/) const {
+    if (!node_)
+        return CUStr();
     xmlattr attr = node_->first_attribute(v_name);
     if (!attr)
         return CUStr(v_default);
@@ -72,9 +63,9 @@ CUStr UIXmlNode::GetAttrValue(LPCTSTR v_name,
         return CUStr(attr->value());
 }
 
-CUStr DuiMini::UIXmlNode::GetAttrValue(LPCTSTR v_name,
-                                       const int v_default) const {
-    return GetAttrValue(v_name, CUStr(v_default));
+CUStr UIXmlNode::GetAttrValue(LPCTSTR v_name,
+                              const int v_default) const {
+    return GetAttrValue(v_name, UStr(v_default));
 }
 
 bool UIXmlNode::CmpAttrValue(LPCTSTR v_name, LPCTSTR value) const {
@@ -82,14 +73,18 @@ bool UIXmlNode::CmpAttrValue(LPCTSTR v_name, LPCTSTR value) const {
 }
 
 bool UIXmlNode::CmpNodeName(LPCTSTR v_name) const {
+    if (!node_)
+        return false;
     return CmpStr(node_->name(), v_name);
 }
 
 ////////////////////////////////////////
 
+UIPtrArray::UIPtrArray() {}
+
 UIPtrArray::UIPtrArray(UINT v_size) {
     allocated_ = v_size;
-    ptrvoid_ = reinterpret_cast<LPVOID*>(malloc(v_size * sizeof(LPVOID)));
+    ptrvoid_ = (LPVOID*)malloc(v_size * sizeof(LPVOID));
     ZeroMemory(ptrvoid_, v_size * sizeof(LPVOID));
 }
 
@@ -107,7 +102,7 @@ void UIPtrArray::Empty() {
 
 void UIPtrArray::Resize(UINT v_size) {
     Empty();
-    ptrvoid_ = reinterpret_cast<LPVOID*>(malloc(v_size * sizeof(LPVOID)));
+    ptrvoid_ = (LPVOID*)malloc(v_size * sizeof(LPVOID));
     ZeroMemory(ptrvoid_, v_size * sizeof(LPVOID));
     allocated_ = v_size;
     count_ = v_size;
@@ -122,8 +117,7 @@ bool UIPtrArray::Add(LPVOID v_data) {
         allocated_ *= 2;
         if (allocated_ == 0)
             allocated_ = 11;
-        ptrvoid_ = reinterpret_cast<LPVOID*>(realloc(ptrvoid_,
-                                                allocated_ * sizeof(LPVOID)));
+        ptrvoid_ = (LPVOID*)realloc(ptrvoid_, allocated_ * sizeof(LPVOID));
         if (!ptrvoid_)
             return false;
     }
@@ -140,8 +134,7 @@ bool UIPtrArray::InsertAt(UINT v_index, LPVOID v_data) {
         allocated_ *= 2;
         if (allocated_ == 0)
             allocated_ = 11;
-        ptrvoid_ = reinterpret_cast<LPVOID*>(realloc(ptrvoid_,
-                                                allocated_ * sizeof(LPVOID)));
+        ptrvoid_ = (LPVOID*)realloc(ptrvoid_, allocated_ * sizeof(LPVOID));
         if (!ptrvoid_)
             return false;
     }
@@ -198,14 +191,8 @@ LPVOID UIPtrArray::operator[] (UINT v_index) const {
 
 UIString::UIString() {}
 
-UIString::UIString(const TCHAR v_ch) {
-    buffer_ = v_ch;
-}
-
-UIString::UIString(const int v_digit) {
-    TCHAR buf[64];
-    _itot(v_digit, buf, 10);
-    buffer_ = buf;
+UIString::UIString(const LL v_digit) {
+    buffer_ = tostring(v_digit);
 }
 
 UIString::UIString(LPCTSTR v_str, size_t v_len /*= -1*/) {
@@ -250,7 +237,7 @@ LPCTSTR UIString::GetData() const {
 }
 
 LL UIString::Str2LL() const {
-    return _tcstoll(buffer_.c_str(), nullptr, 10);
+    return std::stoll(buffer_.c_str(), nullptr, 10);
 }
 
 UIString UIString::Str2Hex() const {
@@ -260,7 +247,7 @@ UIString UIString::Str2Hex() const {
     for (size_t i = 0; i < len; ++i) {
         if (buffer_[i] >= 256 || buffer_[i] < 0)
             break;
-        _stprintf(buf, _T("%X"), static_cast<unsigned char>(buffer_[i]));
+        _stprintf(buf, _T("%X"), (unsigned char)buffer_[i]);
         ret += buf;
     }
     return ret;
@@ -268,10 +255,8 @@ UIString UIString::Str2Hex() const {
 
 UIString UIString::Int2Hex() const {
     TCHAR buf[64];
-    _itot(Str2LL(), buf, 16);
-    UIString ret = buf;
-    ret.MakeUpper();
-    return ret;
+    _i64tot(Str2LL(), buf, 16);
+    return UIString(buf).ToUpper();
 }
 
 UIString UIString::Hex2Str() const {
@@ -283,7 +268,8 @@ UIString UIString::Hex2Str() const {
     for (size_t i = 0; i < len; i+=2) {
         buf[0] = buffer_[i];
         buf[1] = buffer_[i + 1];
-        ret += UIString(_tcstol(buf, nullptr, 16));
+        buf[2] = '\0';
+        ret += UIString(std::stoll(buf, nullptr, 16));
     }
     return ret;
 }
@@ -350,8 +336,20 @@ void UIString::MakeLower() {
     std::transform(buffer_.begin(), buffer_.end(), buffer_.begin(), ::tolower);
 }
 
+UIString UIString::ToUpper() const {
+    UIString ret = *this;
+    ret.MakeUpper();
+    return ret;
+}
+
+UIString UIString::ToLower() const {
+    UIString ret = *this;
+    ret.MakeLower();
+    return ret;
+}
+
 UIString UIString::Left(size_t v_len) const {
-    return UIString(buffer_.c_str(), v_len);
+    return Mid(0, v_len);
 }
 
 UIString UIString::Mid(size_t v_pos, size_t v_len) const {
@@ -364,21 +362,21 @@ UIString UIString::Right(size_t v_len) const {
         pos = 0;
         v_len = GetLength();
     }
-    return Mid(static_cast<size_t>(pos), v_len);
+    return Mid(pos, v_len);
 }
 
 LL UIString::Find(TCHAR v_ch, size_t v_pos /*= 0*/) const {
     size_t ret = buffer_.find(v_ch, v_pos);
-    return ret == tstring::npos ? -1 : (LL)ret;
+    return (ret == tstring::npos) ? (LL)-1 : ret;
 }
 
 LL UIString::Find(LPCTSTR v_str, size_t v_pos /*= 0*/) const {
     size_t ret = buffer_.find(v_str, v_pos);
-    return ret == tstring::npos ? -1 : (LL)ret;
+    return (ret == tstring::npos) ? (LL)-1 : ret;
 }
 
-LL UIString::Replace(LPCTSTR v_str_from, LPCTSTR v_str_to) {
-    LL cnt = 0;
+size_t UIString::Replace(LPCTSTR v_str_from, LPCTSTR v_str_to) {
+    size_t cnt = 0;
     size_t steplen = _tcslen(v_str_to);
     for (tstring::size_type pos(0); pos != tstring::npos;
          pos += steplen) {
@@ -415,9 +413,8 @@ UIRect::UIRect(long v_left, long v_top, long v_right, long v_bottom) {
     SetRect(v_left, v_top, v_right, v_bottom);
 }
 
-UIRect::UIRect(const RECT &v_rect) {
-    rect_ = v_rect;
-}
+UIRect::UIRect(const RECT &v_rect)
+    :rect_(v_rect) {}
 
 UIRect::UIRect(const UIRect &v_src) {
     rect_ = v_src.rect_;
@@ -469,6 +466,8 @@ long UIRect::height() const {
     return bottom - top;
 }
 
+////////////////////////////////////////
+
 UIEvent::UIEvent() {}
 
 UIEvent::UIEvent(WindowMessage v_msg) :msg_(v_msg) {}
@@ -497,15 +496,15 @@ LPARAM UIEvent::GetLParam() const {
     return lparam_;
 }
 
-void UIEvent::GetMsg(WindowMessage v_msg) {
+void UIEvent::SetMsg(WindowMessage v_msg) {
     msg_ = v_msg;
 }
 
-void UIEvent::GetWParam(WPARAM v_wparam) {
+void UIEvent::SetWParam(WPARAM v_wparam) {
     wparam_ = v_wparam;
 }
 
-void UIEvent::GetLParam(LPARAM v_lparam) {
+void UIEvent::SetLParam(LPARAM v_lparam) {
     lparam_ = v_lparam;
 }
 
@@ -554,6 +553,8 @@ POINT UIEvent::GetPos() const {
     ret.y = GET_Y_LPARAM(lparam_);
     return ret;
 }
+
+////////////////////////////////////////
 
 UIColor::UIColor() {}
 

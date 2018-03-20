@@ -1,12 +1,10 @@
 /**
- * Copyright (c) 2017-2050
- * All rights reserved.
- *
- * @Author:MXWXZ
- * @Date:2017/10/17
- *
- * @Description:Resource manager class
- */
+* Copyright (c) 2018-2050
+* All rights reserved.
+*
+* @Author:MXWXZ
+* @Date:2018/03/20
+*/
 #pragma once
 
 namespace DuiMini {
@@ -66,10 +64,10 @@ struct DUIMINI_API LoadedRes {
     ~LoadedRes() {
         switch (type_) {
         case kFT_XML:
-            delete reinterpret_cast<UIXmlLoader*>(res_);
+            delete (UIXmlLoader*)res_;
             break;
         case kFT_PIC:
-            delete reinterpret_cast<UIRenderImage*>(res_);
+            delete (UIRenderImage*)res_;
             break;
         }
         res_ = nullptr;
@@ -150,7 +148,7 @@ public:
      *     For kRestype_Package is the zip full path
      *     For kRestype_RC is the RC id in resource.h
      */
-    static LPCTSTR GetResInfo();
+    static CUStr GetResInfo();
 
 private:
     static IUIRes  *resclass_;  // resource class

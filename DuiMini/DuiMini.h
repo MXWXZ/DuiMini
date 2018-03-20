@@ -1,11 +1,9 @@
 /**
- * Copyright (c) 2017-2050
+ * Copyright (c) 2018-2050
  * All rights reserved.
  *
  * @Author:MXWXZ
- * @Date:2017/10/17
- *
- * @Description:
+ * @Date:2018/03/20
  */
 #pragma once
 
@@ -51,51 +49,10 @@
 #include "Core/UIDlgBuilder.h"
 #include "Core/UIWindow.h"
 
+// control
 #include "Control/UIControl.h"
 #include "Control/Layout/UIContainer.h"
 #include "Control/UIDialog.h"
 #include "Control/UIText.h"
 #include "Control/UIImage.h"
 #include "Control/UIButton.h"
-
-/*
-#include "Utils/Utils.h"
-#include "Utils/UIDelegate.h"
-#include "Core/UIDefine.h"
-#include "Core/UIBase.h"
-#include "Core/UIControl.h"
-#include "Core/UIContainer.h"
-#include "Core/UIMarkup.h"
-#include "Core/UIRender.h"
-#include "Utils/WinImplBase.h"
-
-
-#include "Layout/UIVerticalLayout.h"
-#include "Layout/UIHorizontalLayout.h"
-#include "Layout/UITileLayout.h"
-#include "Layout/UITabLayout.h"
-#include "Layout/UIChildLayout.h"
-
-#include "Control/UIList.h"
-#include "Control/UICombo.h"
-#include "Control/UIScrollBar.h"
-#include "Control/UITreeView.h"
-
-#include "Control/UILabel.h"
-#include "Control/UIText.h"
-#include "Control/UIEdit.h"
-
-#include "Control/UIButton.h"
-#include "Control/UIOption.h"
-#include "Control/UICheckBox.h"
-
-#include "Control/UIProgress.h"
-#include "Control/UISlider.h"
-
-#include "Control/UIRichEdit.h"
-#include "Control/UIDateTime.h"
-
-#include "Control/UIActiveX.h"
-#include "Control/UIWebBrowser.h"
-#include "Control/UIGifAnim.h"
-*/

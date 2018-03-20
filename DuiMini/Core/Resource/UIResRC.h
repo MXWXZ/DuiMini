@@ -1,32 +1,27 @@
 /**
- * Copyright (c) 2017-2050
- * All rights reserved.
- *
- * @Author:MXWXZ
- * @Date:2017/11/02
- *
- * @Description:for rc res
- */
+* Copyright (c) 2018-2050
+* All rights reserved.
+*
+* @Author:MXWXZ
+* @Date:2018/03/20
+*/
 #pragma once
+#include "Core/Resource/UIResZip.h"
 
 namespace DuiMini {
-class DUIMINI_API UIResRC :public IUIRes {
+class DUIMINI_API UIResRC :public UIResZip {
 public:
     UIResRC();
     explicit UIResRC(LPCTSTR v_info);
-    ~UIResRC();
+    virtual ~UIResRC();
 
     void SetResInfo(LPCTSTR v_info) override;
-    LPCTSTR GetResInfo() const override;
-    long GetFileSize(LPCTSTR v_path) override;
-    bool GetFile(LPCTSTR v_path, BYTE* v_buffer, long v_size) override;
+    CUStr GetResInfo() const override;
 
-private:
-    ZFile OpenZip();
+protected:
+    ZFile OpenZip() override;
 
-private:
+protected:
     UINT resid_;
-    UStr tmpfullpath_;
-    ZFile zipcache_ = nullptr;
 };
 }  // namespace DuiMini

@@ -3,9 +3,7 @@
  * All rights reserved.
  *
  * @Author:MXWXZ
- * @Date:2018/03/18
- *
- * @Description:
+ * @Date:2018/03/20
  */
 #pragma once
 
@@ -41,7 +39,7 @@ public:
     void AfterSetAttribute() override;
 
 protected:
-    bool OnLangChange(const UIEvent& v_event) override;
+    OVERRIDE_MSGFUNC(OnLangChange)
 
 protected:
     UIFont font_;

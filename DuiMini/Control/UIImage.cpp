@@ -3,9 +3,7 @@
  * All rights reserved.
  *
  * @Author:MXWXZ
- * @Date:2018/01/28
- *
- * @Description:
+ * @Date:2018/03/20
  */
 #include "stdafx.h"
 #include "UIImage.h"
@@ -52,6 +50,8 @@ LPVOID UIImage::GetInterface(LPCTSTR v_name) {
 }
 
 void UIImage::Paint(bool v_background/* = false*/) {
+    if (!img_ || !basewnd_)
+        return;
     long src_width = img_->GetWidth();
     long src_height = img_->GetHeight();
     long width = rect_.width();

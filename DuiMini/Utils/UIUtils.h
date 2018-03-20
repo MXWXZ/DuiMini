@@ -1,11 +1,9 @@
 /**
- * Copyright (c) 2017-2050
+ * Copyright (c) 2018-2050
  * All rights reserved.
  *
  * @Author:MXWXZ
- * @Date:2017/10/17
- *
- * @Description:Public utils class
+ * @Date:2018/03/20
  */
 #pragma once
 
@@ -13,8 +11,7 @@ namespace DuiMini {
 class DUIMINI_API UIString {
 public:
     UIString();
-    explicit UIString(const TCHAR v_ch);
-    explicit UIString(const int v_digit);
+    UIString(const LL v_digit);
     UIString(const UIString& v_src);
     UIString(LPCTSTR v_str, size_t v_len = -1);
     ~UIString();
@@ -35,6 +32,9 @@ public:
 
     void SetAt(size_t v_index, TCHAR v_ch);
     operator LPCTSTR() const;
+    // prevent bool auto convert
+    operator bool() = delete;
+    operator bool() const = delete;
 
     TCHAR operator[] (int v_index) const;
     const UIString& operator=(const TCHAR v_ch);
@@ -55,6 +55,8 @@ public:
 
     void MakeUpper();
     void MakeLower();
+    UIString ToUpper() const;
+    UIString ToLower() const;
 
     UIString Left(size_t v_len) const;
     UIString Mid(size_t v_pos, size_t v_len) const;
@@ -62,7 +64,7 @@ public:
 
     LL Find(TCHAR v_ch, size_t v_pos = 0) const;
     LL Find(LPCTSTR v_str, size_t v_pos = 0) const;
-    LL Replace(LPCTSTR v_str_from, LPCTSTR v_str_to);
+    size_t Replace(LPCTSTR v_str_from, LPCTSTR v_str_to);
 
     int __cdecl Format(LPCTSTR v_str, ...);
 
@@ -96,9 +98,9 @@ public:
     WindowMessage GetMsg() const;
     WPARAM GetWParam() const;
     LPARAM GetLParam() const;
-    void GetMsg(WindowMessage v_msg);
-    void GetWParam(WPARAM v_wparam);
-    void GetLParam(LPARAM v_lparam);
+    void SetMsg(WindowMessage v_msg);
+    void SetWParam(WPARAM v_wparam);
+    void SetLParam(LPARAM v_lparam);
 
     bool SetMsgFromWinMsg(UINT v_winmsg);
 
@@ -140,7 +142,7 @@ public:
     long &bottom = rect_.bottom;
 
 private:
-    RECT rect_{ 0,0,0,0 };
+    RECT rect_{ 0, 0, 0, 0 };
 };
 
 ////////////////////////////////////////
@@ -191,7 +193,8 @@ private:
 
 class DUIMINI_API UIPtrArray {
 public:
-    explicit UIPtrArray(UINT v_size = 0);
+    UIPtrArray();
+    UIPtrArray(UINT v_size);
     ~UIPtrArray();
 
 public:
@@ -245,13 +248,6 @@ public:
      * @return   size rect
      */
     static UIRect GetWorkAreaSize();
-
-    /**
-     * Find next CFG item with v_name=v_value
-     * @return   nullptr for not find
-     */
-    static UIAttr* FindNextCFGItem(UICFGItem &v_item, UINT v_start,
-                                   LPCTSTR v_name, LPCTSTR v_value);
 };
 
 }   // namespace DuiMini

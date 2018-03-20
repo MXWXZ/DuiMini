@@ -1,12 +1,10 @@
 /**
-* Copyright (c) 2017-2050
-* All rights reserved.
-*
-* @Author:MXWXZ
-* @Date:2017/11/28
-*
-* @Description:
-*/
+ * Copyright (c) 2018-2050
+ * All rights reserved.
+ *
+ * @Author:MXWXZ
+ * @Date:2018/03/20
+ */
 #include "stdafx.h"
 #include "UIControl.h"
 
@@ -28,7 +26,7 @@ void UIControl::AfterSetAttribute() {
     Event(UIEvent(kWM_SkinChange, 0, UIConfig::GetShownSkinID()));
     INIT_STATE(DisableCtrl);
     INIT_STATE(VisibleCtrl);
-    INIT_STATE(AttachBackground); 
+    INIT_STATE(AttachBackground);
 }
 
 CUStr UIControl::GetAttribute(LPCTSTR v_name) const {
@@ -54,11 +52,13 @@ UIWindow* UIControl::GetBaseWindow() const {
 
 UIControl* UIControl::FindCtrlFromPT(POINT v_pt) {
     if (PtInRect(v_pt) && VisibleCtrl(STAY)) {
-        if (AttachBackground(STAY))
+        if (AttachBackground(STAY)) {
+            if (!basewnd_)
+                return nullptr;
             return basewnd_->GetDialog();
+        }
         return this;
-    } 
-    else {
+    } else {
         return nullptr;
     }
 }
@@ -75,8 +75,11 @@ bool UIControl::Event(const UIEvent& v_event) {
         return true;
     bool ret = true;
     // call notify func
-    if (msgmap_[v_event])
+    if (msgmap_[v_event]) {
+        if (!basewnd_)
+            return false;
         ret = (basewnd_->*msgmap_[v_event])(v_event);
+    }
     if (!ret)
         return false;
     bool flg = true;
@@ -150,47 +153,45 @@ MsgHandleFun UIControl::GetMsgHandler(WindowMessage v_msg) const {
     return msgmap_[v_msg];
 }
 
-int UIControl::ParsePosStr(LPCTSTR v_str, StrLoc v_loc,
-                           UIRect* v_parentrect/* = nullptr*/) const {
+long UIControl::ParsePosStr(LPCTSTR v_str, StrLoc v_loc,
+                            UIRect* v_parentrect/* = nullptr*/) const {
     CUStr str = v_str;
     UIRect parentrc;
     if (v_parentrect) {
         parentrc = *v_parentrect;
     } else {
-        if (!parent_) {     // default parent is screen
+        if (!parent_)     // default parent is screen
             parentrc = UIUtils::GetScreenSize();
-        } else {
+        else
             parentrc = parent_->GetPos();
-        }
     }
     if (str[0] == '$') {
-        return static_cast<int>(str.Right(str.GetLength() - 1).Str2LL());
+        return str.Right(str.GetLength() - 1).Str2LL();
     } else if (str[0] == '|') {
-        LL offset = str.Right(str.GetLength() - 1).Str2LL();
+        long offset = str.Right(str.GetLength() - 1).Str2LL();
         // ONLY 2nd layer control can be relative to parent
-        int center;
+        long center;
         if (v_loc == left || v_loc == right)
             center = (parentrc.left + parentrc.right) / 2;
         else
             center = (parentrc.top + parentrc.bottom) / 2;
         return center + offset;
     } else if (str[0] == '%') {
-        LL percent = str.Right(str.GetLength() - 1).Str2LL();
-        int ret;
+        long percent = str.Right(str.GetLength() - 1).Str2LL();
+        long ret;
         if (v_loc == left || v_loc == right)
-            ret = parentrc.left + (parentrc.right - parentrc.left)*percent / 100;
+            ret = parentrc.left + parentrc.width()*percent / 100;
         else
-            ret = parentrc.top + (parentrc.bottom - parentrc.top)*percent / 100;
+            ret = parentrc.top + parentrc.height()*percent / 100;
         return ret;
     } else {
-        LL offset = str.Str2LL();
+        long offset = str.Str2LL();
         if (v_loc == left || v_loc == right) {
             if (str[0] == '-')
                 return parentrc.right + offset;
             else
                 return parentrc.left + offset;
-        }
-        else {
+        } else {
             if (str[0] == '-')
                 return parentrc.bottom + offset;
             else
@@ -202,15 +203,32 @@ int UIControl::ParsePosStr(LPCTSTR v_str, StrLoc v_loc,
 UIRect UIControl::ParsePosStr(LPCTSTR v_str,
                               UIRect* v_parentrect/* = nullptr*/) const {
     UIRect ret;
-    CUStr tmp = v_str;
-    size_t seppos1 = static_cast<size_t>(tmp.Find(_T(",")));
-    ret.left = ParsePosStr(tmp.Left(seppos1), left, v_parentrect);
-    size_t seppos2 = static_cast<size_t>(tmp.Find(_T(","), seppos1 + 1));
-    ret.top = ParsePosStr(tmp.Mid(seppos1 + 1, seppos2 - seppos1 - 1), top, v_parentrect);
-    size_t seppos3 = static_cast<size_t>(tmp.Find(_T(","), seppos2 + 1));
-    ret.right = ParsePosStr(tmp.Mid(seppos2 + 1, seppos3 - seppos2 - 1), right, v_parentrect);
-    ret.bottom = ParsePosStr(tmp.Right(tmp.GetLength() - seppos3 - 1), bottom, v_parentrect);
+    ret.left   = ParsePosStr(DivideStr(v_str, 1), left,   v_parentrect);
+    ret.top    = ParsePosStr(DivideStr(v_str, 2), top,    v_parentrect);
+    ret.right  = ParsePosStr(DivideStr(v_str, 3), right,  v_parentrect);
+    ret.bottom = ParsePosStr(DivideStr(v_str, 4), bottom, v_parentrect);
     return ret;
+}
+
+CUStr UIControl::DivideStr(LPCTSTR v_str, unsigned short v_cnt) const {
+    UStr str = v_str;
+    LL pos = 0;
+    unsigned short cnt = 0;
+    while (true) {
+        LL tmp = str.Find(',', pos + 1);
+        if (tmp != -1)
+            ++cnt;
+        else if (v_cnt - 1 == cnt)
+            return str.Right(str.GetLength() - pos - 1);
+        else
+            return CUStr();
+        if (v_cnt == cnt) {
+            if (v_cnt == 1)
+                return str.Left(tmp);
+            return str.Mid(pos + 1, tmp - pos - 1);
+        }
+        pos = tmp;
+    }
 }
 
 LPVOID UIControl::GetInterface(LPCTSTR v_name) {
@@ -225,26 +243,24 @@ bool UIControl::PtInRect(POINT v_pt) {
 
 UIRect UIControl::UpdatePos() {
     UStr attr = GetAttribute(_T("pos"));
-    LL septimes = attr.Replace(_T(","), _T(","));
+    size_t septimes = attr.Replace(_T(","), _T(","));
     if (septimes == 1) {    // pos=x,x
-        LL seppos = attr.Find(_T(","));
-        rect_.left = ParsePosStr(attr.Left(seppos), left);
-        rect_.top = ParsePosStr(attr.Right(attr.GetLength() - seppos - 1), top);
+        rect_.left = ParsePosStr(DivideStr(attr, 1), left);
+        rect_.top = ParsePosStr(DivideStr(attr, 2), top);
         if (GetAttribute(_T("width")) == _T("0") &&
             GetAttribute(_T("height")) == _T("0")) {
             UStr size = GetAttribute(_T("size"));
-            LL tmppos = size.Find(_T(","));
-            rect_.right = rect_.left + (long)size.Left(tmppos).Str2LL();
-            rect_.bottom = rect_.top + (long)size.Right(size.GetLength() - tmppos - 1).Str2LL();
+            rect_.right = rect_.left + DivideStr(size, 1).Str2LL();
+            rect_.bottom = rect_.top + DivideStr(size, 2).Str2LL();
         } else {
-            rect_.right = rect_.left + (long)GetAttribute(_T("width")).Str2LL();
-            rect_.bottom = rect_.top + (long)GetAttribute(_T("height")).Str2LL();
+            rect_.right = rect_.left + GetAttribute(_T("width")).Str2LL();
+            rect_.bottom = rect_.top + GetAttribute(_T("height")).Str2LL();
         }
     } else {    // pos=x,x,x,x
         rect_ = ParsePosStr(attr);
     }
-    UStr width(rect_.right - rect_.left);
-    UStr height(rect_.bottom - rect_.top);
+    UStr width(rect_.width());
+    UStr height(rect_.height());
     SetAttribute(_T("width"), width);
     SetAttribute(_T("height"), height);
     SetAttribute(_T("size"), width + _T(",") + height);
@@ -265,11 +281,11 @@ UIRect UIControl::GetPos() const {
 }
 
 long UIControl::GetWidth() const {
-    return rect_.right - rect_.left;
+    return rect_.width();
 }
 
 long UIControl::GetHeight() const {
-    return rect_.bottom - rect_.top;
+    return rect_.height();
 }
 
 bool UIControl::DisableCtrl(BOOL v_disable) {
@@ -287,7 +303,7 @@ bool UIControl::VisibleCtrl(BOOL v_visible) {
             Event(UIEvent(kWM_Visible));
         else
             Event(UIEvent(kWM_Invisible));
-    STATE_FUNC_END
+        STATE_FUNC_END
 }
 
 bool UIControl::AttachBackground(BOOL v_bg) {

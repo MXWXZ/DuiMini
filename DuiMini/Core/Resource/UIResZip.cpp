@@ -1,12 +1,10 @@
 /**
- * Copyright (c) 2017-2050
- * All rights reserved.
- *
- * @Author:MXWXZ
- * @Date:2017/11/02
- *
- * @Description:
- */
+* Copyright (c) 2018-2050
+* All rights reserved.
+*
+* @Author:MXWXZ
+* @Date:2018/03/20
+*/
 #include "stdafx.h"
 #include "UIResZip.h"
 
@@ -28,8 +26,8 @@ void UIResZip::SetResInfo(LPCTSTR v_info) {
         UIUnzip::CloseZip(zipcache_);
 }
 
-LPCTSTR UIResZip::GetResInfo() const {
-    return fullpath_.GetData();
+CUStr UIResZip::GetResInfo() const {
+    return fullpath_;
 }
 
 long UIResZip::GetFileSize(LPCTSTR v_path) {

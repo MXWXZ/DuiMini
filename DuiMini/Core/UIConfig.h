@@ -3,9 +3,7 @@
  * All rights reserved.
  *
  * @Author:MXWXZ
- * @Date:2018/01/24
- *
- * @Description:
+ * @Date:2018/03/20
  */
 #pragma once
 
@@ -116,6 +114,14 @@ public:
     * you must write it like "\[[abc[def]"
     */
     static CUStr TranslateStr(LPCTSTR v_str);
+
+private:
+    /**
+    * Find next CFG item with v_name=v_value
+    * @return   nullptr for not find
+    */
+    static UIAttr* FindNextCFGItem(UICFGItem &v_item, UINT v_start,
+                                   LPCTSTR v_name, LPCTSTR v_value);
 
 private:
     static UICFGItem dlg_;            // dlg config

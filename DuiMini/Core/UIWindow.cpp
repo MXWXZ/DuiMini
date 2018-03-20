@@ -1,17 +1,15 @@
 /**
- * Copyright (c) 2017-2050
- * All rights reserved.
- *
- * @Author:MXWXZ
- * @Date:2017/12/05
- *
- * @Description:
- */
+* Copyright (c) 2018-2050
+* All rights reserved.
+*
+* @Author:MXWXZ
+* @Date:2018/03/20
+*/
 #include "stdafx.h"
 #include "UIWindow.h"
 
 namespace DuiMini {
-int UIWindow::classname_cnt_ = 0;
+UINT UIWindow::classname_cnt_ = 0;
 
 UIWindow::UIWindow() {
     render_ = new UIRender;
@@ -37,27 +35,26 @@ HWND UIWindow::GetHWND() const {
     return hwnd_;
 }
 
-LPCTSTR UIWindow::SetDlgName(LPCTSTR v_dlgname) {
+void UIWindow::SetDlgName(LPCTSTR v_dlgname) {
     dlgname_ = v_dlgname;
+}
+
+CUStr UIWindow::GetDlgName() const {
     return dlgname_;
 }
 
-LPCTSTR UIWindow::GetDlgName() const {
-    return dlgname_;
-}
-
-UIDlgBuilder* UIWindow::SetDlgBuilder(LPCTSTR v_dlgname) {
+bool UIWindow::SetDlgBuilder(LPCTSTR v_dlgname) {
     if (builder_)
-        return nullptr;
+        return false;
     builder_ = new UIDlgBuilder;
     UStr dlg_file = UIConfig::FindDlgFile(v_dlgname);
     if (dlg_file.IsEmpty())
-        return nullptr;
+        return false;
     UIXmlLoader *config = (UIXmlLoader*)UIResource::LoadRes(kFT_XML, dlg_file);
     builder_->Init(config->GetRoot(), this);
     UIResource::ReleaseRes(config);
     UIHandleError();
-    return builder_;
+    return true;
 }
 
 bool UIWindow::OnCloseButton(const UIEvent& v_event) {
@@ -115,11 +112,15 @@ LRESULT UIWindow::SendWindowMessage(UINT v_msg, WPARAM v_wparam,
 
 UIControl* UIWindow::CreateControl(UIControl* v_ctrl,
                                    UIControl* v_parent/* = nullptr*/) {
+    if (!builder_)
+        return nullptr;
     return builder_->CreateControl(v_ctrl, this, v_parent);
 }
 
-void UIWindow::FinishCreateControl(UIControl* v_ctrl) {
-    builder_->FinishCreateControl(v_ctrl);
+bool UIWindow::FinishCreateControl(UIControl* v_ctrl) {
+    if (!builder_)
+        return false;
+    return builder_->FinishCreateControl(v_ctrl);
 }
 
 bool UIWindow::BindMsgHandler(LPCTSTR v_name, WindowMessage v_msg,
@@ -173,7 +174,7 @@ UIControl* UIWindow::FindCtrlFromName(LPCTSTR v_name) {
 
 void UIWindow::UpdateWindow(bool v_updatebg/* = false*/) const {
     GetDialog()->UpdatePos();
-    if (v_updatebg)
+    if (v_updatebg && render_)
         render_->RedrawBackground();
     SendWindowMessage(WM_PAINT, NULL, NULL);
 }
@@ -354,6 +355,10 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
         GetDialog()->SetPos(pos);
         if (v_wparam == SIZE_RESTORED)
             OnRestore();
+        else if (v_wparam == SIZE_MAXIMIZED)
+            OnMaximize();
+        else if (v_wparam == SIZE_MINIMIZED)
+            OnMinimize();
         if (IsWindowVisible(hwnd_))
             UpdateWindow(true);
         break;
@@ -361,7 +366,7 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
     case WM_GETMINMAXINFO:
     {
         UIDialog* dlg = GetDialog();
-        MINMAXINFO* info = reinterpret_cast<MINMAXINFO*>(v_lparam);
+        MINMAXINFO* info = (MINMAXINFO*)v_lparam;
         info->ptMinTrackSize.x = dlg->GetMinWidth();
         info->ptMinTrackSize.y = dlg->GetMinHeight();
         info->ptMaxPosition.x = 0;
@@ -369,15 +374,6 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
         info->ptMaxSize.x = info->ptMaxTrackSize.x = dlg->GetMaxWidth();
         info->ptMaxSize.y = info->ptMaxTrackSize.y = dlg->GetMaxHeight();
         break;
-    }
-    case WM_SYSCOMMAND:
-    {
-        if (v_wparam == SC_MINIMIZE)
-            OnMinimize();
-        else if (v_wparam == SC_MAXIMIZE)
-            OnMaximize();
-        else if (v_wparam == SC_RESTORE)
-            OnRestore();
     }
     }
 
@@ -389,13 +385,12 @@ LRESULT CALLBACK UIWindow::WinProc(HWND v_hwnd, UINT v_msg,
     UIWindow* pthis = nullptr;
     if (v_msg == WM_NCCREATE) {
         // create window save this pointer, because WinProc is a static function
-        LPCREATESTRUCT lpcs = reinterpret_cast<LPCREATESTRUCT>(v_lparam);
-        pthis = reinterpret_cast<UIWindow*>(lpcs->lpCreateParams);
+        LPCREATESTRUCT lpcs = (LPCREATESTRUCT)v_lparam;
+        pthis = (UIWindow*)lpcs->lpCreateParams;
         pthis->hwnd_ = v_hwnd;
-        SetWindowLongPtr(v_hwnd, GWLP_USERDATA, reinterpret_cast<LPARAM>(pthis));
+        SetWindowLongPtr(v_hwnd, GWLP_USERDATA, (LPARAM)pthis);
     } else {
-        pthis = reinterpret_cast<UIWindow*>(GetWindowLongPtr(v_hwnd,
-                                                             GWLP_USERDATA));
+        pthis = (UIWindow*)GetWindowLongPtr(v_hwnd, GWLP_USERDATA);
         if (v_msg == WM_NCDESTROY && pthis != NULL) {
             // destroy window
             SetWindowLongPtr(pthis->hwnd_, GWLP_USERDATA, 0L);

@@ -1,12 +1,10 @@
 /**
- * Copyright (c) 2017-2050
- * All rights reserved.
- *
- * @Author:MXWXZ
- * @Date:2017/11/02
- *
- * @Description:for file res
- */
+* Copyright (c) 2018-2050
+* All rights reserved.
+*
+* @Author:MXWXZ
+* @Date:2018/03/20
+*/
 #pragma once
 
 namespace DuiMini {
@@ -14,14 +12,14 @@ class DUIMINI_API UIResFile :public IUIRes {
 public:
     UIResFile();
     explicit UIResFile(LPCTSTR v_info);
-    ~UIResFile();
+    virtual ~UIResFile();
 
     void SetResInfo(LPCTSTR v_info) override;
-    LPCTSTR GetResInfo() const override;
+    CUStr GetResInfo() const override;
     long GetFileSize(LPCTSTR v_path) override;
     bool GetFile(LPCTSTR v_path, BYTE* v_buffer, long v_size) override;
 
-private:
+protected:
     UStr folderpath_;
 };
 }  // namespace DuiMini

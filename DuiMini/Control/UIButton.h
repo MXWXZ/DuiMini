@@ -3,9 +3,7 @@
  * All rights reserved.
  *
  * @Author:MXWXZ
- * @Date:2018/02/28
- *
- * @Description:
+ * @Date:2018/03/20
  */
 #pragma once
 
@@ -16,6 +14,7 @@ enum ButtonState {
     kBS_Click,
     kBS_Disable
 };
+
 class DUIMINI_API UIButton :public UIImage {
 public:
     UIButton();
@@ -34,13 +33,13 @@ public:
     void Paint(bool v_background = false) override;
 
 protected:
-    bool OnMouseEnter(const UIEvent& v_event) override;
-    bool OnMouseLeave(const UIEvent& v_event) override;
-    bool OnLButtonDown(const UIEvent& v_event) override;
-    bool OnLButtonUp(const UIEvent& v_event) override;
-    bool OnDisable(const UIEvent& v_event) override;
-    bool OnActive(const UIEvent& v_event) override;
-    bool OnInvisible(const UIEvent& v_event) override;
+    OVERRIDE_MSGFUNC(OnMouseEnter)
+    OVERRIDE_MSGFUNC(OnMouseLeave)
+    OVERRIDE_MSGFUNC(OnLButtonDown)
+    OVERRIDE_MSGFUNC(OnLButtonUp)
+    OVERRIDE_MSGFUNC(OnDisable)
+    OVERRIDE_MSGFUNC(OnActive)
+    OVERRIDE_MSGFUNC(OnInvisible)
 
 protected:
     ButtonState state_ = kBS_Normal;

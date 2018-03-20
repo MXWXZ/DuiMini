@@ -1,12 +1,10 @@
 /**
- * Copyright (c) 2017-2050
- * All rights reserved.
- *
- * @Author:MXWXZ
- * @Date:2017/12/19
- *
- * @Description:
- */
+* Copyright (c) 2018-2050
+* All rights reserved.
+*
+* @Author:MXWXZ
+* @Date:2018/03/20
+*/
 #include "stdafx.h"
 #include "UIRenderGDIP.h"
 
@@ -139,6 +137,8 @@ bool UIRenderGDIP::DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
 
 bool UIRenderGDIP::DrawString(LPCTSTR v_text, const UIFont &v_font,
                               const UIRect &v_rect) {
+    if (!graph_)
+        return false;
     Gdiplus::FontFamily fontfamily(v_font.font_);
     Gdiplus::Font font(&fontfamily, v_font.size_, Gdiplus::FontStyleRegular,
                        Gdiplus::UnitPixel);
@@ -169,7 +169,7 @@ UIRenderImageGDIP::~UIRenderImageGDIP() {
 bool UIRenderImageGDIP::Load(LPCTSTR v_path) {
     long buflen= UIResource::GetFileSize(v_path);
     HGLOBAL mem = GlobalAlloc(GHND, buflen);
-    BYTE* buffer = reinterpret_cast<BYTE*>(GlobalLock(mem));
+    BYTE* buffer = (BYTE*)GlobalLock(mem);
     UIResource::GetFile(v_path, buffer, buflen);
     GlobalUnlock(mem);
     IStream *stream = nullptr;
@@ -190,17 +190,17 @@ bool UIRenderImageGDIP::Release() {
     return true;
 }
 
-void* UIRenderImageGDIP::GetInterface() const {
-    return reinterpret_cast<void*>(img_);
+LPVOID UIRenderImageGDIP::GetInterface() const {
+    return (LPVOID)img_;
 }
 
-UINT UIRenderImageGDIP::GetWidth() const {
+long UIRenderImageGDIP::GetWidth() const {
     if (!img_)
         return 0;
     return img_->GetWidth();
 }
 
-UINT UIRenderImageGDIP::GetHeight() const {
+long UIRenderImageGDIP::GetHeight() const {
     if (!img_)
         return 0;
     return img_->GetHeight();

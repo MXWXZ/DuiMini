@@ -1,12 +1,10 @@
 /**
- * Copyright (c) 2017-2050
- * All rights reserved.
- *
- * @Author:MXWXZ
- * @Date:2017/12/19
- *
- * @Description:
- */
+* Copyright (c) 2018-2050
+* All rights reserved.
+*
+* @Author:MXWXZ
+* @Date:2018/03/20
+*/
 #include "stdafx.h"
 #include "UIRender.h"
 #include "UIRenderGDIP.h"
@@ -50,13 +48,13 @@ void* UIRenderImage::GetInterface() const {
     return renderimg_->GetInterface();
 }
 
-UINT UIRenderImage::GetWidth() const {
+long UIRenderImage::GetWidth() const {
     if (!renderimg_)
         return 0;
     return renderimg_->GetWidth();
 }
 
-UINT UIRenderImage::GetHeight() const {
+long UIRenderImage::GetHeight() const {
     if (!renderimg_)
         return 0;
     return renderimg_->GetHeight();

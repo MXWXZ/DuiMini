@@ -3,9 +3,7 @@
  * All rights reserved.
  *
  * @Author:MXWXZ
- * @Date:2018/03/18
- *
- * @Description:
+ * @Date:2018/03/20
  */
 #include "stdafx.h"
 #include "UIText.h"
@@ -40,6 +38,8 @@ LPVOID UIText::GetInterface(LPCTSTR v_name) {
 }
 
 void UIText::Paint(bool v_background/* = false*/) {
+    if (!basewnd_)
+        return;
     basewnd_->GetRender()->DrawString(GetText(), font_, rect_);
 }
 
@@ -52,7 +52,7 @@ void UIText::SetAttribute(LPCTSTR v_name, LPCTSTR v_value) {
 void UIText::AfterSetAttribute() {
     UIControl::AfterSetAttribute();
     font_.font_= GetAttribute(_T("fontname"));
-    font_.size_ = static_cast<USHORT>(GetAttribute(_T("fontsize")).Str2LL());
+    font_.size_ = (USHORT)GetAttribute(_T("fontsize")).Str2LL();
     font_.bold_ = GetAttribute(_T("fontbold")).Str2LL();
     font_.italic_ = GetAttribute(_T("fontitalic")).Str2LL();
     font_.underline_ = GetAttribute(_T("fontunderline")).Str2LL();

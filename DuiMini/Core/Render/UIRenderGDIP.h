@@ -1,11 +1,9 @@
 /**
- * Copyright (c) 2017-2050
+ * Copyright (c) 2018-2050
  * All rights reserved.
  *
  * @Author:MXWXZ
- * @Date:2017/12/15
- *
- * @Description:
+ * @Date:2018/03/20
  */
 #pragma once
 #include "gdiplus.h"
@@ -43,9 +41,9 @@ public:
 
     bool Load(LPCTSTR v_path) override;
     bool Release() override;
-    void* GetInterface() const override;
-    UINT GetWidth() const override;
-    UINT GetHeight() const override;
+    LPVOID GetInterface() const override;
+    long GetWidth() const override;
+    long GetHeight() const override;
 
 private:
     Gdiplus::Image* img_ = nullptr;

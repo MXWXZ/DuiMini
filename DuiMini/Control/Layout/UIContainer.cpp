@@ -1,12 +1,10 @@
 /**
-* Copyright (c) 2017-2050
-* All rights reserved.
-*
-* @Author:MXWXZ
-* @Date:2017/11/28
-*
-* @Description:
-*/
+ * Copyright (c) 2018-2050
+ * All rights reserved.
+ *
+ * @Author:MXWXZ
+ * @Date:2018/03/20
+ */
 #include "stdafx.h"
 #include "UIContainer.h"
 
@@ -20,7 +18,7 @@ UIContainer::~UIContainer() {
 UIControl* UIContainer::GetItem(UINT v_index) const {
     if (v_index >= item_.GetSize())
         return nullptr;
-    return reinterpret_cast<UIControl*>(item_[v_index]);
+    return (UIControl*)item_[v_index];
 }
 
 UINT UIContainer::GetCount() const {
@@ -33,7 +31,7 @@ bool UIContainer::Add(UIControl* v_ctrl) {
 
 bool UIContainer::Remove(UIControl* v_ctrl) {
     for (UINT it = 0; it < item_.GetSize(); ++it) {
-        if (reinterpret_cast<UIControl*>(item_[it]) == v_ctrl) {
+        if ((UIControl*)item_[it] == v_ctrl) {
             // if parent exist, "delete" will call UIContainer::Remove
             v_ctrl->SetParent(nullptr);     // Prevent dead recursive
             delete v_ctrl;
@@ -45,7 +43,7 @@ bool UIContainer::Remove(UIControl* v_ctrl) {
 
 void UIContainer::RemoveAll() {
     for (UINT it = 0; it < item_.GetSize(); ++it) {
-        UIControl* ctrl = reinterpret_cast<UIControl*>(item_[it]);
+        UIControl* ctrl = (UIControl*)item_[it];
         // if parent exist, "delete" will call UIContainer::Remove
         ctrl->SetParent(nullptr);     // Prevent dead recursive
         delete ctrl;
@@ -55,7 +53,7 @@ void UIContainer::RemoveAll() {
 
 void UIContainer::Paint(bool v_background/* = false*/) {
     for (UINT it = 0; it < item_.GetSize(); ++it) {
-        UIControl* ctrl = reinterpret_cast<UIControl*>(item_[it]);
+        UIControl* ctrl = (UIControl*)item_[it];
         if (ctrl->AttachBackground(STAY) == v_background
             && ctrl->VisibleCtrl(STAY))
             ctrl->Paint(v_background);
@@ -77,7 +75,7 @@ UIControl* UIContainer::FindCtrlFromPT(POINT v_pt) {
 
 void UIContainer::SetBaseWindow(UIWindow* v_basewnd) {
     for (UINT it = 0; it < item_.GetSize(); ++it)
-        reinterpret_cast<UIControl*>(item_[it])->SetBaseWindow(v_basewnd);
+        ((UIControl*)item_[it])->SetBaseWindow(v_basewnd);
     // set all his children nodes' base window first
     // then set his own's
     UIControl::SetBaseWindow(v_basewnd);
@@ -100,7 +98,7 @@ UIControl* UIContainer::FindCtrlFromName(LPCTSTR v_name) {
 
 UIRect UIContainer::UpdatePos() {
     for (UINT it = 0; it < item_.GetSize(); ++it) {
-        UIControl* ctrl = reinterpret_cast<UIControl*>(item_[it]);
+        UIControl* ctrl = (UIControl*)item_[it];
         ctrl->UpdatePos();
     }
     return UIControl::UpdatePos();

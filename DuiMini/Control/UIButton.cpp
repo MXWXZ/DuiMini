@@ -3,9 +3,7 @@
  * All rights reserved.
  *
  * @Author:MXWXZ
- * @Date:2018/02/28
- *
- * @Description:
+ * @Date:2018/03/20
  */
 #include "stdafx.h"
 #include "UIButton.h"
@@ -30,6 +28,8 @@ LPVOID UIButton::GetInterface(LPCTSTR v_name) {
 }
 
 void UIButton::Paint(bool v_background/* = false*/) {
+    if (!img_ || !basewnd_)
+        return;
     UIRect srcrect;
     srcrect.bottom = img_->GetHeight();
     srcrect.left = img_->GetWidth() / 4 * state_;
@@ -38,24 +38,32 @@ void UIButton::Paint(bool v_background/* = false*/) {
 }
 
 bool UIButton::OnMouseEnter(const UIEvent& v_event) {
+    if (!basewnd_)
+        return false;
     SetState(kBS_Hover);
     basewnd_->UpdateWindow();
     return true;
 }
 
 bool UIButton::OnMouseLeave(const UIEvent& v_event) {
+    if (!basewnd_)
+        return false;
     SetState(kBS_Normal);
     basewnd_->UpdateWindow();
     return true;
 }
 
 bool UIButton::OnLButtonDown(const UIEvent& v_event) {
+    if (!basewnd_)
+        return false;
     SetState(kBS_Click);
     basewnd_->UpdateWindow();
     return true;
 }
 
 bool UIButton::OnLButtonUp(const UIEvent& v_event) {
+    if (!basewnd_)
+        return false;
     SetState(kBS_Hover);
     basewnd_->UpdateWindow();
     return true;

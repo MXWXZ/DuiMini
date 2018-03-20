@@ -1,12 +1,10 @@
 /**
- * Copyright (c) 2017-2050
- * All rights reserved.
- *
- * @Author:MXWXZ
- * @Date:2017/10/17
- *
- * @Description:
- */
+* Copyright (c) 2018-2050
+* All rights reserved.
+*
+* @Author:MXWXZ
+* @Date:2018/03/20
+*/
 #include "stdafx.h"
 #include "Core/Resource/UIResFile.h"
 #include "Core/Resource/UIResZip.h"
@@ -44,13 +42,13 @@ LPVOID UIResource::LoadRes(FileType v_type, LPCTSTR v_path, bool* v_result/* = n
     tmp->using_ = 1;
     switch (v_type) {
     case kFT_XML:
-        tmp->res_ = reinterpret_cast<LPVOID>(new UIXmlLoader(v_path));
+        tmp->res_ = (LPVOID)(new UIXmlLoader(v_path));
         res = true;
         break;
     case kFT_PIC:
         UIRenderImage* obj = new UIRenderImage;
         res = obj->Load(v_path);
-        tmp->res_ = reinterpret_cast<LPVOID>(obj);
+        tmp->res_ = (LPVOID)obj;
         break;
     }
     if (v_result)
@@ -154,9 +152,9 @@ void UIResource::SetResInfo(LPCTSTR v_info) {
     resclass_->SetResInfo(v_info);
 }
 
-LPCTSTR UIResource::GetResInfo() {
+CUStr UIResource::GetResInfo() {
     if (!resclass_)
-        return _T("");
+        return CUStr();
     return resclass_->GetResInfo();
 }
 
@@ -186,7 +184,7 @@ void UIXmlLoader::Loadxml(LPCTSTR v_path) {
     LPWSTR wtmp = new wchar_t[len];
     Str2WStr((LPCSTR)tmp, wtmp, len);
     delete[]tmp;
-    buffer_ = reinterpret_cast<TBYTE*>(wtmp);
+    buffer_ = (TBYTE*)wtmp;
 #else
     buffer_ = tmp;
 #endif  // _UNICODE

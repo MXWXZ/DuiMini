@@ -3,9 +3,7 @@
  * All rights reserved.
  *
  * @Author:MXWXZ
- * @Date:2018/01/24
- *
- * @Description:
+ * @Date:2018/03/20
  */
 #include "stdafx.h"
 #include "UIConfig.h"
@@ -49,10 +47,10 @@ void UIConfig::LoadConfig(LPCTSTR v_relativepath/* = DEFAULT_RESFILE*/) {
                     CFG_AddAttrStatic(_T("default"), _T("0"));
                 CFG_EndAttr(skin_);
                 if (CFG_CmpAttr(_T("system"), _T("1")))
-                    AddSystemSkin(static_cast<SKINID>(skin_.size()));
+                    AddSystemSkin((SKINID)skin_.size());
                 if (CFG_CmpAttr(_T("system"), _T("0")) &&
                     CFG_CmpAttr(_T("default"), _T("1")))
-                    SetShownSkin(static_cast<SKINID>(skin_.size()));
+                    SetShownSkin((SKINID)skin_.size());
             }
 
             // font config
@@ -70,7 +68,7 @@ void UIConfig::LoadConfig(LPCTSTR v_relativepath/* = DEFAULT_RESFILE*/) {
                 CFG_EndAttr(font_);
                 if (CFG_CmpAttr(_T("default"), _T("1")) &&
                     CFG_CmpAttr(_T("lang"), lang_[shownlang_ - 1][_T("lang")]))
-                    SetShownFont(static_cast<FONTID>(font_.size()));
+                    SetShownFont((FONTID)font_.size());
             }
         }
 
@@ -91,7 +89,7 @@ void UIConfig::LoadConfig(LPCTSTR v_relativepath/* = DEFAULT_RESFILE*/) {
                 CFG_AddAttrDef(_T("default"), 0);
                 CFG_EndAttr(lang_);
                 if (CFG_CmpAttr(_T("default"), _T("1")))
-                    SetShownLang(static_cast<LANGID>(lang_.size()));
+                    SetShownLang((LANGID)lang_.size());
             }
         }
     }
@@ -157,7 +155,7 @@ void UIConfig::SetShownFont(FONTID v_id) {
     font_style_.name_ = nowfont[_T("name")];
     font_style_.lang_ = nowfont[_T("lang")];
     font_style_.font_ = nowfont[_T("font")];
-    font_style_.size_ = static_cast<USHORT>(nowfont[_T("size")].Str2LL());
+    font_style_.size_ = (USHORT)nowfont[_T("size")].Str2LL();
     font_style_.bold_ = nowfont[_T("bold")].Str2LL();
     font_style_.italic_ = nowfont[_T("italic")].Str2LL();
     font_style_.underline_ = nowfont[_T("underline")].Str2LL();
@@ -208,7 +206,7 @@ void UIConfig::AddSystemSkin(SKINID v_id) {
 }
 
 UIAttr* UIConfig::FindDlg(LPCTSTR v_name) {
-    UIAttr* ret = UIUtils::FindNextCFGItem(dlg_, 0, _T("name"), v_name);
+    UIAttr* ret = FindNextCFGItem(dlg_, 0, _T("name"), v_name);
     if (ret)
         return ret;
     UIHandleError(kLL_Warning, kEC_IDInvalid,
@@ -222,10 +220,10 @@ CUStr UIConfig::FindDlgFile(LPCTSTR v_name) {
 }
 
 UIAttr* UIConfig::FindResid(LPCTSTR v_name) {
-    UIAttr* ret = UIUtils::FindNextCFGItem(res_id_, 0, _T("name"), v_name);
+    UIAttr* ret = FindNextCFGItem(res_id_, 0, _T("name"), v_name);
     if (ret)
         return ret;
-    ret = UIUtils::FindNextCFGItem(sys_res_id_, 0, _T("name"), v_name);
+    ret = FindNextCFGItem(sys_res_id_, 0, _T("name"), v_name);
     if (ret)
         return ret;
     UIHandleError(kLL_Warning, kEC_IDInvalid,
@@ -240,7 +238,7 @@ CUStr UIConfig::FindResidFile(LPCTSTR v_name) {
 
 CUStr UIConfig::GetStrPath(LPCTSTR v_str) {
     CUStr str = v_str;
-    int len = str.GetLength();
+    size_t len = str.GetLength();
     if (len == 0)
         return CUStr();
     if (str[0] == '[' && str[len - 1] == ']')
@@ -250,7 +248,7 @@ CUStr UIConfig::GetStrPath(LPCTSTR v_str) {
 }
 
 UIAttr* UIConfig::FindLangMap(LPCTSTR v_name) {
-    UIAttr* ret = UIUtils::FindNextCFGItem(lang_str_, 0, _T("name"), v_name);
+    UIAttr* ret = FindNextCFGItem(lang_str_, 0, _T("name"), v_name);
     if (ret)
         return ret;
     UIHandleError(kLL_Warning, kEC_IDInvalid,
@@ -268,7 +266,7 @@ UIFont UIConfig::GetFontStyle() {
 }
 
 UIAttr* UIConfig::FindFont(LPCTSTR v_name) {
-    UIAttr* ret = UIUtils::FindNextCFGItem(font_, 0, _T("name"), v_name);
+    UIAttr* ret = FindNextCFGItem(font_, 0, _T("name"), v_name);
     if (ret)
         return ret;
     UIHandleError(kLL_Warning, kEC_IDInvalid,
@@ -285,7 +283,7 @@ UIFont UIConfig::FindFontValue(LPCTSTR v_name) {
     ret.name_ = retfont[_T("name")];
     ret.lang_ = retfont[_T("lang")];
     ret.font_ = retfont[_T("font")];
-    ret.size_ = static_cast<USHORT>(retfont[_T("size")].Str2LL());
+    ret.size_ = (USHORT)retfont[_T("size")].Str2LL();
     ret.bold_ = retfont[_T("bold")].Str2LL();
     ret.italic_ = retfont[_T("italic")].Str2LL();
     ret.underline_ = retfont[_T("underline")].Str2LL();
@@ -295,14 +293,25 @@ UIFont UIConfig::FindFontValue(LPCTSTR v_name) {
 
 CUStr UIConfig::TranslateStr(LPCTSTR v_str) {
     UStr str = v_str;
-    int len = str.GetLength();
+    size_t len = str.GetLength();
     if (len == 0)
         return CUStr();
     if (str[0] == '[' && str[len - 1] == ']')
         return FindLangMapValue(str.Mid(1, len - 2));
-    else if(str[0]=='\\' && str[1]=='[' && str[len - 1] == ']')
+    else if (str[0] == '\\' && str[1] == '[' && str[len - 1] == ']')
         return str.Mid(1, len - 1);
     else
         return str;
+}
+
+UIAttr* UIConfig::FindNextCFGItem(UICFGItem &v_item, UINT v_start,
+                                  LPCTSTR v_name, LPCTSTR v_value) {
+    if (v_start >= v_item.size())
+        return nullptr;
+    UICFGItemIt &itend = v_item.end();
+    for (UICFGItemIt it = v_item.begin() + v_start; it != itend; ++it)
+        if (CmpStr((*it)[v_name], v_value))
+            return &(*it);
+    return nullptr;
 }
 }   // namespace DuiMini

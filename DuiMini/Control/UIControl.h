@@ -1,30 +1,31 @@
 /**
-* Copyright (c) 2017-2050
-* All rights reserved.
-*
-* @Author:MXWXZ
-* @Date:2017/11/28
-*
-* @Description:
-*/
+ * Copyright (c) 2018-2050
+ * All rights reserved.
+ *
+ * @Author:MXWXZ
+ * @Date:2018/03/20
+ */
 #pragma once
 
 namespace DuiMini {
-#define ATTR_MAP_BEGIN virtual void BeforeSetAttribute() {
-#define DEFAULT_ATTR(attr, def) SetAttribute(attr, def);
-#define PARENT_ATTR(parentclass) parentclass::BeforeSetAttribute();
-#define ATTR_MAP_END }
+#define ATTR_MAP_BEGIN           virtual void BeforeSetAttribute() {
+#define DEFAULT_ATTR(attr, def)     SetAttribute(attr, def);
+#define PARENT_ATTR(parentclass)    parentclass::BeforeSetAttribute();
+#define ATTR_MAP_END             }
 
 #define STATE_FUNC_START(attr, param)            \
     LPCTSTR _attrstr = attr;                     \
     BOOL &_myparam = param;                      \
-    bool ret = GetAttribute(_attrstr).Str2LL(); \
+    bool ret = GetAttribute(_attrstr).Str2LL();  \
     if (_myparam >= 0) {
 #define STATE_FUNC_END                           \
         SetAttribute(_attrstr, UStr(_myparam));  \
     }                                            \
     return ret;
 #define INIT_STATE(x) x(x(STAY))
+
+#define DEFAULT_MSGFUNC(func) virtual bool func(const UIEvent& v_event) { return true; }
+#define OVERRIDE_MSGFUNC(func) bool func(const UIEvent& v_event) override;
 
 class DUIMINI_API UIControl {
 public:
@@ -59,7 +60,7 @@ public:
         DEFAULT_ATTR(_T("disable"), _T("0"))
         DEFAULT_ATTR(_T("visible"), _T("1"))
         ATTR_MAP_END
-        virtual void SetAttribute(LPCTSTR v_name, LPCTSTR v_value);
+    virtual void SetAttribute(LPCTSTR v_name, LPCTSTR v_value);
     virtual void AfterSetAttribute();   // Init others which based on attribute
     virtual CUStr GetAttribute(LPCTSTR v_name) const;
 
@@ -104,27 +105,26 @@ public:
 
 protected:
     // TODO: Add new Msg
-
     // Skin change
-    virtual bool OnSkinChange(const UIEvent& v_event) { return true; }
+    DEFAULT_MSGFUNC(OnSkinChange)
     // language change
-    virtual bool OnLangChange(const UIEvent& v_event) { return true; }
+    DEFAULT_MSGFUNC(OnLangChange)
 
-    virtual bool OnMouseEnter(const UIEvent& v_event) { return true; }
-    virtual bool OnMouseLeave(const UIEvent& v_event) { return true; }
-    virtual bool OnMouseMove(const UIEvent& v_event) { return true; }
-    virtual bool OnLButtonDown(const UIEvent& v_event) { return true; }
-    virtual bool OnLButtonUp(const UIEvent& v_event) { return true; }
-    virtual bool OnLButtonClick(const UIEvent& v_event) { return true; }
-    virtual bool OnLButtonDBClick(const UIEvent& v_event) { return true; }
-    virtual bool OnRButtonDown(const UIEvent& v_event) { return true; }
-    virtual bool OnRButtonUp(const UIEvent& v_event) { return true; }
-    virtual bool OnRButtonClick(const UIEvent& v_event) { return true; }
-    virtual bool OnRButtonDBClick(const UIEvent& v_event) { return true; }
-    virtual bool OnDisable(const UIEvent& v_event) { return true; }
-    virtual bool OnActive(const UIEvent& v_event) { return true; }
-    virtual bool OnVisible(const UIEvent& v_event) { return true; }
-    virtual bool OnInvisible(const UIEvent& v_event) { return true; }
+    DEFAULT_MSGFUNC(OnMouseEnter)
+    DEFAULT_MSGFUNC(OnMouseLeave)
+    DEFAULT_MSGFUNC(OnMouseMove)
+    DEFAULT_MSGFUNC(OnLButtonDown)
+    DEFAULT_MSGFUNC(OnLButtonUp)
+    DEFAULT_MSGFUNC(OnLButtonClick)
+    DEFAULT_MSGFUNC(OnLButtonDBClick)
+    DEFAULT_MSGFUNC(OnRButtonDown)
+    DEFAULT_MSGFUNC(OnRButtonUp)
+    DEFAULT_MSGFUNC(OnRButtonClick)
+    DEFAULT_MSGFUNC(OnRButtonDBClick)
+    DEFAULT_MSGFUNC(OnDisable)
+    DEFAULT_MSGFUNC(OnActive)
+    DEFAULT_MSGFUNC(OnVisible)
+    DEFAULT_MSGFUNC(OnInvisible)
 
     enum StrLoc {
         left, top, right, bottom
@@ -136,12 +136,15 @@ protected:
      * @param    UIRect* v_parentrect:parent rect, nullptr for auto
      * @return   real pos value
      */
-    int ParsePosStr(LPCTSTR v_str, StrLoc v_loc,
-                    UIRect* v_parentrect = nullptr) const;
+    long ParsePosStr(LPCTSTR v_str, StrLoc v_loc,
+                     UIRect* v_parentrect = nullptr) const;
 
     // Parse entire str
     UIRect ParsePosStr(LPCTSTR v_str,
                        UIRect* v_parentrect = nullptr) const;
+
+    // return 'v_cnt'th item of v_str divided by ','
+    CUStr DivideStr(LPCTSTR v_str, unsigned short v_cnt) const;
 
 protected:
     UIControl* parent_ = nullptr;        // control parent

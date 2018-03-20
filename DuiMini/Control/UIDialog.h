@@ -1,11 +1,9 @@
 /**
- * Copyright (c) 2017-2050
+ * Copyright (c) 2018-2050
  * All rights reserved.
  *
  * @Author:MXWXZ
- * @Date:2017/11/28
- *
- * @Description:
+ * @Date:2018/03/20
  */
 #pragma once
 #include "Control/UIControl.h"
@@ -47,7 +45,7 @@ public:
     long GetMinHeight() const;
     void SetMaxHeight(long v_height);
     long GetMaxHeight() const;
-    
+
 public:
     ATTR_MAP_BEGIN
         DEFAULT_ATTR(_T("title"), _T(""))
@@ -65,13 +63,11 @@ public:
         ATTR_MAP_END
 
     LPVOID GetInterface(LPCTSTR v_name) override;
-
     void AfterSetAttribute() override;
-
     bool Event(const UIEvent& v_event) override;
 
 protected:
-    bool OnLangChange(const UIEvent& v_event) override;
+    OVERRIDE_MSGFUNC(OnLangChange)
 
 protected:
     UIRect   caption_rect_;
