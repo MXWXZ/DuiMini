@@ -149,7 +149,7 @@ bool UIRender::DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
 }
 
 bool UIRender::DrawString(LPCTSTR v_text, const UIFont &v_font,
-                          const UIFontFormat &v_format, UIRect &v_rect) {
+                          const UIStringFormat &v_format, UIRect &v_rect) {
     if (!render_)
         return false;
     bool ret = render_->DrawString(v_text, v_font, v_format, v_rect);

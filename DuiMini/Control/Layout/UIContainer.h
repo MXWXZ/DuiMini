@@ -28,6 +28,8 @@ public:
     UIControl* FindCtrlFromName(LPCTSTR v_name) override;
     UIRect UpdatePos() override;
 
+    bool Event(const UIEvent& v_event) override;
+
 protected:
     UIPtrArray item_;
 };

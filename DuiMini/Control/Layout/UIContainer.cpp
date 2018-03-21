@@ -103,4 +103,21 @@ UIRect UIContainer::UpdatePos() {
     }
     return UIControl::UpdatePos();
 }
+
+bool UIContainer::Event(const UIEvent &v_event) {
+    switch (v_event) {
+    case kWM_Disable:
+    case kWM_Active:
+    case kWM_Visible:
+    case kWM_Invisible:
+    case kWM_SkinChange:
+    case kWM_LangChange:
+    {
+        for (UINT it = 0; it < item_.GetSize(); ++it) {
+            ((UIControl*)item_[it])->Event(v_event);
+        }
+    }
+    }
+    return UIControl::Event(v_event);
+}
 }   // namespace DuiMini

@@ -22,8 +22,6 @@ void UIControl::SetAttribute(LPCTSTR v_name, LPCTSTR v_value) {
 
 void UIControl::AfterSetAttribute() {
     UpdatePos();
-    Event(UIEvent(kWM_LangChange, 0, UIConfig::GetShownLangID()));
-    Event(UIEvent(kWM_SkinChange, 0, UIConfig::GetShownSkinID()));
     INIT_STATE(DisableCtrl);
     INIT_STATE(VisibleCtrl);
     INIT_STATE(AttachBackground);

@@ -96,6 +96,36 @@ void UIConfig::LoadConfig(LPCTSTR v_relativepath/* = DEFAULT_RESFILE*/) {
     UIResource::ReleaseRes(config);
 }
 
+LANGID UIConfig::FindLangID(LPCTSTR v_name) {
+    UICFGItemIt &itend = lang_.end();
+    for (UICFGItemIt it = lang_.begin(); it != itend; ++it)
+        if (CmpStr((*it)[_T("name")], v_name))
+            return it - lang_.begin() + 1;
+    UIHandleError(kLL_Warning, kEC_IDInvalid,
+                  _T("Config lang name %s invalid!"), v_name);
+    return 0;
+}
+
+FONTID UIConfig::FindFontID(LPCTSTR v_name) {
+    UICFGItemIt &itend = font_.end();
+    for (UICFGItemIt it = font_.begin(); it != itend; ++it)
+        if (CmpStr((*it)[_T("name")], v_name))
+            return it - font_.begin() + 1;
+    UIHandleError(kLL_Warning, kEC_IDInvalid,
+                  _T("Config font name %s invalid!"), v_name);
+    return 0;
+}
+
+SKINID UIConfig::FindSkinID(LPCTSTR v_name) {
+    UICFGItemIt &itend = skin_.end();
+    for (UICFGItemIt it = skin_.begin(); it != itend; ++it)
+        if (CmpStr((*it)[_T("name")], v_name))
+            return it - skin_.begin() + 1;
+    UIHandleError(kLL_Warning, kEC_IDInvalid,
+                  _T("Config skin name %s invalid!"), v_name);
+    return 0;
+}
+
 LANGID UIConfig::GetShownLangID() {
     return shownlang_;
 }
@@ -120,10 +150,10 @@ UIAttr* UIConfig::GetShownSkin() {
     return &skin_[GetShownSkinID() - 1];
 }
 
-void UIConfig::SetShownLang(LANGID v_id) {
+bool UIConfig::SetShownLang(LANGID v_id) {
     if (v_id > lang_.size()) {
         UIHandleError(kLL_Warning, kEC_IDInvalid, _T("Lang id \"%hu\" invalid!"), v_id);
-        return;
+        return false;
     }
 
     lang_str_.clear();
@@ -139,12 +169,13 @@ void UIConfig::SetShownLang(LANGID v_id) {
     }
     shownlang_ = v_id;
     UIResource::ReleaseRes(file);
+    return true;
 }
 
-void UIConfig::SetShownFont(FONTID v_id) {
+bool UIConfig::SetShownFont(FONTID v_id) {
     if (v_id > font_.size()) {
         UIHandleError(kLL_Warning, kEC_IDInvalid, _T("Font id \"%hu\" invalid!"), v_id);
-        return;
+        return false;
     }
 
     UIAttr &nowfont = font_[v_id - 1];
@@ -161,12 +192,13 @@ void UIConfig::SetShownFont(FONTID v_id) {
     font_style_.underline_ = nowfont[_T("underline")].Str2LL();
     font_style_.strikeout_ = nowfont[_T("strikeout")].Str2LL();
     shownfont_ = v_id;
+    return true;
 }
 
-void UIConfig::SetShownSkin(SKINID v_id) {
+bool UIConfig::SetShownSkin(SKINID v_id) {
     if (v_id > skin_.size()) {
         UIHandleError(kLL_Warning, kEC_IDInvalid, _T("Skin id \"%hu\" invalid!"), v_id);
-        return;
+        return false;
     }
 
     res_id_.clear();
@@ -183,12 +215,13 @@ void UIConfig::SetShownSkin(SKINID v_id) {
     }
     shownskin_ = v_id;
     UIResource::ReleaseRes(file);
+    return true;
 }
 
-void UIConfig::AddSystemSkin(SKINID v_id) {
+bool UIConfig::AddSystemSkin(SKINID v_id) {
     if (v_id > skin_.size()) {
         UIHandleError(kLL_Warning, kEC_IDInvalid, _T("Skin id \"%hu\" invalid!"), v_id);
-        return;
+        return false;
     }
 
     UIXmlLoader *file = (UIXmlLoader*)UIResource::LoadRes(kFT_XML, skin_[v_id - 1][_T("value")] + _T("\\resid.xml"));
@@ -203,6 +236,7 @@ void UIConfig::AddSystemSkin(SKINID v_id) {
         CFG_EndAttr(sys_res_id_);
     }
     UIResource::ReleaseRes(file);
+    return true;
 }
 
 UIAttr* UIConfig::FindDlg(LPCTSTR v_name) {
@@ -247,7 +281,7 @@ CUStr UIConfig::GetStrPath(LPCTSTR v_str) {
         return str;
 }
 
-UIAttr* UIConfig::FindLangMap(LPCTSTR v_name) {
+UIAttr* UIConfig::FindLang(LPCTSTR v_name) {
     UIAttr* ret = FindNextCFGItem(lang_str_, 0, _T("name"), v_name);
     if (ret)
         return ret;
@@ -256,8 +290,8 @@ UIAttr* UIConfig::FindLangMap(LPCTSTR v_name) {
     return nullptr;
 }
 
-CUStr UIConfig::FindLangMapValue(LPCTSTR v_name) {
-    UIAttr* langstr = FindLangMap(v_name);
+CUStr UIConfig::FindLangValue(LPCTSTR v_name) {
+    UIAttr* langstr = FindLang(v_name);
     return langstr ? (*langstr)[_T("value")] : CUStr();
 }
 
@@ -297,7 +331,7 @@ CUStr UIConfig::TranslateStr(LPCTSTR v_str) {
     if (len == 0)
         return CUStr();
     if (str[0] == '[' && str[len - 1] == ']')
-        return FindLangMapValue(str.Mid(1, len - 2));
+        return FindLangValue(str.Mid(1, len - 2));
     else if (str[0] == '\\' && str[1] == '[' && str[len - 1] == ']')
         return str.Mid(1, len - 1);
     else

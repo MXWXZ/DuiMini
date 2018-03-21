@@ -22,6 +22,9 @@ public:
     void SetTrimming(LPCTSTR v_trimming);
     StringTrimming GetTrimming() const;
     bool AutoWrap(BOOL v_autowrap = TRUE);
+    bool Vertical(BOOL v_vertical = TRUE);
+    void SetAlign(LPCTSTR v_align);
+    StringAlign GetAlign() const;
 
 public:
     ATTR_MAP_BEGIN
@@ -37,6 +40,8 @@ public:
         DEFAULT_ATTR(_T("color"), _T("#FF000000"))
         DEFAULT_ATTR(_T("trimming"), _T("none"))
         DEFAULT_ATTR(_T("autowrap"), _T("0"))
+        DEFAULT_ATTR(_T("vertical"), _T("0"))
+        DEFAULT_ATTR(_T("align"), _T("lt"))
         PARENT_ATTR(UIControl)
         DEFAULT_ATTR(_T("background"), _T("1"))
         ATTR_MAP_END

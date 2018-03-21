@@ -100,6 +100,14 @@ public:
     void Restore() const;
     void Minimize() const;
 
+    /**
+    * change language/skin
+    * @param    v_id:config id
+    * Only this window will receive event and global config will NOT be change!
+    */
+    void ChangeSkin(SKINID v_id);
+    void ChangeLang(LANGID v_id);
+
 public:
     UIRender* GetRender() const;
     UIDlgBuilder* GetDlgBuilder() const;

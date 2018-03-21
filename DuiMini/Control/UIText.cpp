@@ -57,11 +57,44 @@ StringTrimming UIText::GetTrimming() const {
         return kST_DotWord;
     if (trimming == _T("dotmid"))
         return kST_DotMid;
+    return kST_None;
 }
 
 bool UIText::AutoWrap(BOOL v_autowrap/* = TRUE*/) {
     STATE_FUNC_START(_T("autowrap"), v_autowrap)
         STATE_FUNC_END
+}
+
+bool UIText::Vertical(BOOL v_vertical) {
+    STATE_FUNC_START(_T("vertical"), v_vertical)
+        STATE_FUNC_END
+}
+
+void UIText::SetAlign(LPCTSTR v_align) {
+    SetAttribute(_T("align"), v_align);
+}
+
+StringAlign UIText::GetAlign() const {
+    UStr trimming = GetAttribute(_T("align"));
+    if (trimming == _T("lt"))
+        return kSA_LT;
+    if (trimming == _T("mt"))
+        return kSA_MT;
+    if (trimming == _T("rt"))
+        return kSA_RT;
+    if (trimming == _T("lm"))
+        return kSA_LM;
+    if (trimming == _T("mm"))
+        return kSA_MM;
+    if (trimming == _T("rm"))
+        return kSA_RM;
+    if (trimming == _T("lb"))
+        return kSA_LB;
+    if (trimming == _T("mb"))
+        return kSA_MB;
+    if (trimming == _T("rb"))
+        return kSA_RB;
+    return kSA_LT;
 }
 
 LPVOID UIText::GetInterface(LPCTSTR v_name) {
@@ -73,10 +106,12 @@ LPVOID UIText::GetInterface(LPCTSTR v_name) {
 void UIText::Paint(bool v_background/* = false*/) {
     if (!basewnd_)
         return;
-    UIFontFormat format;
+    UIStringFormat format;
     format.color_ = GetColor();
     format.trimming_ = GetTrimming();
     format.autowrap_ = AutoWrap(STAY);
+    format.vertical_ = Vertical(STAY);
+    format.align_ = GetAlign();
     basewnd_->GetRender()->DrawString(GetText(), font_, format, rect_);
 }
 

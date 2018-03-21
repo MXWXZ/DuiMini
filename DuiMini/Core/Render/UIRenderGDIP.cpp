@@ -136,10 +136,11 @@ bool UIRenderGDIP::DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
 }
 
 bool UIRenderGDIP::DrawString(LPCTSTR v_text, const UIFont &v_font,
-                              const UIFontFormat &v_format, UIRect &v_rect) {
+                              const UIStringFormat &v_format, UIRect &v_rect) {
     if (!graph_)
         return false;
     Gdiplus::FontFamily fontfamily(v_font.font_);
+    // font style
     Gdiplus::FontStyle fontstyle = Gdiplus::FontStyleRegular;
     if (v_font.bold_ && !v_font.italic_)
         fontstyle = Gdiplus::FontStyleBold;
@@ -152,10 +153,31 @@ bool UIRenderGDIP::DrawString(LPCTSTR v_text, const UIFont &v_font,
     if (v_font.strikeout_)
         fontstyle = (Gdiplus::FontStyle)(fontstyle | Gdiplus::FontStyleStrikeout);
     Gdiplus::Font font(&fontfamily, v_font.size_, fontstyle, Gdiplus::UnitPixel);
+    
+    // string format
     Gdiplus::StringFormat format;
+    int formatflag = 0;
     format.SetTrimming((Gdiplus::StringTrimming)v_format.trimming_);
     if (!v_format.autowrap_)
-        format.SetFormatFlags(Gdiplus::StringFormatFlagsNoWrap);
+        formatflag |= Gdiplus::StringFormatFlagsNoWrap;
+    if (v_format.vertical_)
+        formatflag |= Gdiplus::StringFormatFlagsDirectionVertical;
+    if (formatflag)
+        format.SetFormatFlags(formatflag);
+
+    if (v_format.align_ % 3 == 0)         // horizontal left
+        format.SetAlignment(Gdiplus::StringAlignmentNear);
+    else if (v_format.align_ % 3 == 1)    // horizontal mid
+        format.SetAlignment(Gdiplus::StringAlignmentCenter);
+    else                                  // horizontal right
+        format.SetAlignment(Gdiplus::StringAlignmentFar);
+    if (v_format.align_ < 3)              // vertical top
+        format.SetLineAlignment(Gdiplus::StringAlignmentNear);
+    else if (v_format.align_ < 6)         // vertical mid
+        format.SetLineAlignment(Gdiplus::StringAlignmentCenter);
+    else                                  // vertical bottom
+        format.SetLineAlignment(Gdiplus::StringAlignmentFar);
+
     Gdiplus::RectF rect(v_rect.left, v_rect.top, v_rect.width(), v_rect.height());
     Gdiplus::SolidBrush color(Gdiplus::Color(v_format.color_.a, v_format.color_.r, v_format.color_.g, v_format.color_.b));
     

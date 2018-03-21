@@ -89,8 +89,7 @@ UIPtrArray::UIPtrArray(UINT v_size) {
 }
 
 UIPtrArray::~UIPtrArray() {
-    if (ptrvoid_ != nullptr)
-        free(ptrvoid_);
+    Empty();
 }
 
 void UIPtrArray::Empty() {

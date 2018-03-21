@@ -23,7 +23,7 @@ public:
     bool DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
                    const UIRect& v_srcrect) override;
     bool DrawString(LPCTSTR v_text, const UIFont &v_font,
-                    const UIFontFormat &v_format, UIRect &v_rect) override;
+                    const UIStringFormat &v_format, UIRect &v_rect) override;
 
 private:
     HDC background_ = NULL;         // background DC

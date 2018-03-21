@@ -25,6 +25,7 @@ UIWindow::~UIWindow() {
     builder_ = nullptr;
     delete render_;
     render_ = nullptr;
+    UISystem::RemoveWindow(this);
 }
 
 UIDialog* UIWindow::GetDialog() const {
@@ -162,6 +163,14 @@ void UIWindow::Minimize() const {
     SendWindowMessage(WM_SYSCOMMAND, SC_MINIMIZE, NULL);
 }
 
+void UIWindow::ChangeSkin(SKINID v_id) {
+    GetDialog()->Event(UIEvent(kWM_SkinChange, 0, v_id));
+}
+
+void UIWindow::ChangeLang(LANGID v_id) {
+    GetDialog()->Event(UIEvent(kWM_LangChange, 0, v_id));
+}
+
 UIRender* UIWindow::GetRender() const {
     return render_;
 }
@@ -213,6 +222,8 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
     {
         if (!SetDlgBuilder(dlgname_))
             break;
+        ChangeLang(UIConfig::GetShownLangID());
+        ChangeSkin(UIConfig::GetShownSkinID());
         _CtrlBindMsgHandler();
         _CtrlBindVar();
         OnInit();
@@ -519,14 +530,17 @@ HWND UIWindow::Create(LPCTSTR v_classname) {
         return nullptr;
     }
 
+    UISystem::AddWindow(this);
     hwnd_ = CreateWindowEx(WS_EX_LAYERED, classname, _T(""),
                            WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
                            CW_USEDEFAULT, CW_USEDEFAULT,
                            CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL,
                            UISystem::GetInstance(), this);
 
-    if (hwnd_ == nullptr || !IsWindow(hwnd_))
+    if (hwnd_ == nullptr || !IsWindow(hwnd_)) {
+        UISystem::RemoveWindow(this);
         return nullptr;
+    }
 
     return hwnd_;
 }

@@ -8,6 +8,18 @@
 #pragma once
 
 namespace DuiMini {
+enum StringAlign {
+    kSA_LT,
+    kSA_MT,
+    kSA_RT,
+    kSA_LM,
+    kSA_MM,
+    kSA_RM,
+    kSA_LB,
+    kSA_MB,
+    kSA_RB,
+};
+
 struct DUIMINI_API UIFont {
     UStr name_;
     UStr lang_;
@@ -19,10 +31,12 @@ struct DUIMINI_API UIFont {
     bool strikeout_ = false;
 };
 
-struct DUIMINI_API UIFontFormat {
+struct DUIMINI_API UIStringFormat {
     UIColor color_;
     StringTrimming trimming_ = kST_None;
+    StringAlign align_ = kSA_LT;
     bool autowrap_ = false;
+    bool vertical_ = false;
 };
 
 ////////////////////////////////////////
@@ -39,6 +53,11 @@ public:
     */
     static void LoadConfig(LPCTSTR v_relativepath = DEFAULT_RESFILE);
 
+    // find id
+    static LANGID FindLangID(LPCTSTR v_name);
+    static FONTID FindFontID(LPCTSTR v_name);
+    static SKINID FindSkinID(LPCTSTR v_name);
+
     // Get shown config id
     static LANGID GetShownLangID();
     static FONTID GetShownFontID();
@@ -53,10 +72,10 @@ public:
     * Set Shown Config
     * @param    v_id:config id
     */
-    static void SetShownLang(LANGID v_id);
-    static void SetShownFont(FONTID v_id);
-    static void SetShownSkin(SKINID v_id);
-    static void AddSystemSkin(SKINID v_id);
+    static bool SetShownLang(LANGID v_id);
+    static bool SetShownFont(FONTID v_id);
+    static bool SetShownSkin(SKINID v_id);
+    static bool AddSystemSkin(SKINID v_id);
 
     /**
     * Find dlg config
@@ -89,8 +108,8 @@ public:
      * @param    LPCTSTR v_name:str name
      * @return   langstr attr structure, nullptr for not find
      */
-    static UIAttr* FindLangMap(LPCTSTR v_name);
-    static CUStr FindLangMapValue(LPCTSTR v_name);    // return value directly
+    static UIAttr* FindLang(LPCTSTR v_name);
+    static CUStr FindLangValue(LPCTSTR v_name);    // return value directly
 
     /**
      * Get current font style

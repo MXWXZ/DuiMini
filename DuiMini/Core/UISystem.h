@@ -43,8 +43,26 @@ public:
     static void SetInstance(HINSTANCE v_instance);
     static HINSTANCE GetInstance();
 
+    /**
+     * change language/skin
+     * @param    v_id:config id
+     * @return   true for success
+     * ALL windows will receive event and global config will be change!
+     */
+    static bool ChangeSkin(SKINID v_id);
+    static bool ChangeLang(LANGID v_id);
+
+    /**
+     * Window operation
+     */
+    static bool AddWindow(UIWindow* v_window);
+    static UIWindow* GetWindow(LPCTSTR v_classname);
+    static bool RemoveWindow(UIWindow* v_window);
+    static void RemoveAllWindow();
+
 private:
     static HINSTANCE instance_;     // program instance
+    static UIPtrArray window_;      // created window
 };
 
 }   // namespace DuiMini
