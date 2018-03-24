@@ -37,7 +37,7 @@ public:
         DEFAULT_ATTR(_T("fontitalic"), UStr(nowfont.italic_))
         DEFAULT_ATTR(_T("fontunderline"), UStr(nowfont.underline_))
         DEFAULT_ATTR(_T("fontstrikeout"), UStr(nowfont.strikeout_))
-        DEFAULT_ATTR(_T("color"), _T("#FF000000"))
+        DEFAULT_ATTR(_T("color"), _T("black"))
         DEFAULT_ATTR(_T("trimming"), _T("none"))
         DEFAULT_ATTR(_T("autowrap"), _T("0"))
         DEFAULT_ATTR(_T("vertical"), _T("0"))

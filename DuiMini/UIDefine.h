@@ -52,6 +52,7 @@ typedef unsigned short SKINID;
 typedef unsigned short LANGID;
 typedef unsigned short FONTID;
 typedef unsigned char COLOR;
+typedef unsigned short BORDER_SIZE;
 #define STAY -1
 
 // make function beautiful

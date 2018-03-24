@@ -52,83 +52,96 @@ LPVOID UIImage::GetInterface(LPCTSTR v_name) {
 void UIImage::Paint(bool v_background/* = false*/) {
     if (!img_ || !basewnd_)
         return;
-    long src_width = img_->GetWidth();
-    long src_height = img_->GetHeight();
-    long width = rect_.width();
-    long height = rect_.height();
-    UIRect tmprect(0, 0, src_width, src_height);
-    UIRect extrude_rect = ParsePosStr(GetMargin(), &tmprect);
-    long width_left = extrude_rect.left;
-    long width_right = src_width - extrude_rect.right;
-    long height_top = extrude_rect.top;
-    long height_bottom = src_height - extrude_rect.bottom;
+    UIRect tmprect(0, 0, img_->GetWidth(), img_->GetHeight());
+    PaintMarginImg(tmprect);
+    UIControl::Paint(v_background);
+}
+
+void UIImage::PaintMarginImg(UIRect &srcrect) {
+    UIRect extrude_rect = ParsePosStr(GetMargin(), &srcrect);
+    long margin_left = extrude_rect.left - srcrect.left;
+    long margin_right = srcrect.right - extrude_rect.right;
+    long margin_top = extrude_rect.top - srcrect.top;
+    long margin_bottom = srcrect.bottom - extrude_rect.bottom;
+    ALPHA alpha = GetAlpha();
 
     // LT
     basewnd_->GetRender()->DrawImage(img_, UIRect(rect_.left, rect_.top,
-                                                  rect_.left + width_left,
-                                                  rect_.top + height_top),
-                                     UIRect(0, 0, width_left, height_top));
+                                                  rect_.left + margin_left,
+                                                  rect_.top + margin_top),
+                                     UIRect(srcrect.left, srcrect.top,
+                                            extrude_rect.left, extrude_rect.top),
+                                     alpha);
     // RT
-    basewnd_->GetRender()->DrawImage(img_, UIRect(rect_.right - width_right,
-                                                  rect_.top,
-                                                  rect_.right,
-                                                  rect_.top + height_top),
-                                     UIRect(src_width - width_right,
-                                            0, src_width, height_top));
+    basewnd_->GetRender()->DrawImage(img_, UIRect(rect_.right - margin_right,
+                                                  rect_.top, rect_.right,
+                                                  rect_.top + margin_top),
+                                     UIRect(extrude_rect.right,
+                                            srcrect.top, srcrect.right,
+                                            extrude_rect.top),
+                                     alpha);
     // LB
     basewnd_->GetRender()->DrawImage(img_, UIRect(rect_.left,
-                                                  rect_.bottom - height_bottom,
-                                                  rect_.left + width_left,
+                                                  rect_.bottom - margin_bottom,
+                                                  rect_.left + margin_left,
                                                   rect_.bottom),
-                                     UIRect(0, src_height - height_bottom,
-                                            width_left, src_height));
+                                     UIRect(srcrect.left, extrude_rect.bottom,
+                                            extrude_rect.left, srcrect.bottom),
+                                     alpha);
     // RB
-    basewnd_->GetRender()->DrawImage(img_, UIRect(rect_.right - width_right,
-                                                  rect_.bottom - height_bottom,
+    basewnd_->GetRender()->DrawImage(img_, UIRect(rect_.right - margin_right,
+                                                  rect_.bottom - margin_bottom,
                                                   rect_.right, rect_.bottom),
-                                     UIRect(src_width - width_right,
-                                            src_height - height_bottom,
-                                            src_width, src_height));
+                                     UIRect(extrude_rect.right,
+                                            extrude_rect.bottom,
+                                            srcrect.right, srcrect.bottom),
+                                     alpha);
     // Left
     basewnd_->GetRender()->DrawImage(img_, UIRect(rect_.left,
-                                                  rect_.top + height_top,
-                                                  width_left,
-                                                  rect_.bottom - height_bottom),
-                                     UIRect(0, height_top, width_left,
-                                            src_height - height_bottom));
+                                                  rect_.top + margin_top,
+                                                  rect_.left + margin_left,
+                                                  rect_.bottom - margin_bottom),
+                                     UIRect(srcrect.left, extrude_rect.top,
+                                            extrude_rect.left,
+                                            extrude_rect.bottom),
+                                     alpha);
     // Top
-    basewnd_->GetRender()->DrawImage(img_, UIRect(rect_.left + width_left,
+    basewnd_->GetRender()->DrawImage(img_, UIRect(rect_.left + margin_left,
                                                   rect_.top,
-                                                  rect_.right - width_right,
-                                                  rect_.top + height_top),
-                                     UIRect(width_left, 0,
-                                            src_width - width_right,
-                                            height_top));
+                                                  rect_.right - margin_right,
+                                                  rect_.top + margin_top),
+                                     UIRect(extrude_rect.left, srcrect.top,
+                                            extrude_rect.right,
+                                            extrude_rect.top),
+                                     alpha);
     // Right
-    basewnd_->GetRender()->DrawImage(img_, UIRect(rect_.right - width_right,
-                                                  rect_.top + height_top,
+    basewnd_->GetRender()->DrawImage(img_, UIRect(rect_.right - margin_right,
+                                                  rect_.top + margin_top,
                                                   rect_.right,
-                                                  rect_.bottom - height_bottom),
-                                     UIRect(src_width - width_right,
-                                            height_top, src_width,
-                                            src_height - height_bottom));
+                                                  rect_.bottom - margin_bottom),
+                                     UIRect(extrude_rect.right,
+                                            extrude_rect.top, srcrect.right,
+                                            extrude_rect.bottom),
+                                     alpha);
     // Bottom
-    basewnd_->GetRender()->DrawImage(img_, UIRect(rect_.left + width_left,
-                                                  rect_.bottom - height_bottom,
-                                                  rect_.right - width_right,
+    basewnd_->GetRender()->DrawImage(img_, UIRect(rect_.left + margin_left,
+                                                  rect_.bottom - margin_bottom,
+                                                  rect_.right - margin_right,
                                                   rect_.bottom),
-                                     UIRect(width_left,
-                                            src_height - height_bottom,
-                                            src_width - width_right,
-                                            src_height));
+                                     UIRect(extrude_rect.left,
+                                            extrude_rect.bottom,
+                                            extrude_rect.right,
+                                            srcrect.bottom),
+                                     alpha);
     // Center
-    basewnd_->GetRender()->DrawImage(img_, UIRect(rect_.left + width_left,
-                                                  rect_.top + height_top,
-                                                  rect_.right - width_right,
-                                                  rect_.bottom - height_bottom),
-                                     UIRect(width_left, height_top,
-                                            src_width - width_right,
-                                            src_height - height_bottom));
+    basewnd_->GetRender()->DrawImage(img_, UIRect(rect_.left + margin_left,
+                                                  rect_.top + margin_top,
+                                                  rect_.right - margin_right,
+                                                  rect_.bottom - margin_bottom),
+                                     UIRect(extrude_rect.left, extrude_rect.top,
+                                            extrude_rect.right,
+                                            extrude_rect.bottom),
+                                     alpha);
 }
 
 bool UIImage::OnSkinChange(const UIEvent& v_event) {

@@ -48,6 +48,13 @@ public:
     */
     bool AttachBackground(BOOL v_bg);
 
+    void SetAlpha(ALPHA v_alpha);
+    ALPHA GetAlpha() const;
+    void SetBorderSize(BORDER_SIZE v_border);
+    BORDER_SIZE GetBorderSize() const;
+    void SetBorderColor(LPCTSTR v_color);
+    UIColor GetBorderColor() const;
+
 public:
     // Attribute
     ATTR_MAP_BEGIN
@@ -59,12 +66,15 @@ public:
         DEFAULT_ATTR(_T("background"), _T("0"))
         DEFAULT_ATTR(_T("disable"), _T("0"))
         DEFAULT_ATTR(_T("visible"), _T("1"))
+        DEFAULT_ATTR(_T("alpha"), _T("255"))
+        DEFAULT_ATTR(_T("bordercolor"), _T("black"))
+        DEFAULT_ATTR(_T("bordersize"), _T("0"))
         ATTR_MAP_END
     virtual void SetAttribute(LPCTSTR v_name, LPCTSTR v_value);
     virtual void AfterSetAttribute();   // Init others which based on attribute
     virtual CUStr GetAttribute(LPCTSTR v_name) const;
 
-    virtual void Paint(bool v_background = false) = 0;
+    virtual void Paint(bool v_background = false);
 
     // Parent&Base
     virtual void SetParent(UIControl* v_parent);

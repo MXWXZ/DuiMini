@@ -325,6 +325,8 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
     }
     case WM_NCHITTEST:
     {
+        if (IsZoomed(hwnd_))
+            return HTCLIENT;
         if (GetDialog()->GetAttribute(_T("resizable")).Str2LL()) {
             POINT pt;
             pt.x = GET_X_LPARAM(v_lparam);

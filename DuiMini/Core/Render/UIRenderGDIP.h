@@ -21,9 +21,12 @@ public:
     bool Paint(UIWindow* v_wnd) override;
     bool RedrawBackground() override;
     bool DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
-                   const UIRect& v_srcrect) override;
+                   const UIRect& v_srcrect, ALPHA v_alpha = 255) override;
     bool DrawString(LPCTSTR v_text, const UIFont &v_font,
-                    const UIStringFormat &v_format, UIRect &v_rect) override;
+                    const UIStringFormat &v_format, const UIRect &v_rect) override;
+    bool DrawRect(const UIRect &v_rect, const UIColor &v_color,
+                  BORDER_SIZE v_border) override;
+    bool DrawFillRect(const UIRect &v_rect, const UIColor &v_color) override;
 
 private:
     HDC background_ = NULL;         // background DC

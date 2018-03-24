@@ -30,6 +30,9 @@ public:
     void Paint(bool v_background = false) override;
 
 protected:
+    // called in Paint
+    void PaintMarginImg(UIRect &srcrect);
+
     OVERRIDE_MSGFUNC(OnSkinChange)
 
 protected:

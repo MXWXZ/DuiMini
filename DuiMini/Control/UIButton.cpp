@@ -34,7 +34,8 @@ void UIButton::Paint(bool v_background/* = false*/) {
     srcrect.bottom = img_->GetHeight();
     srcrect.left = img_->GetWidth() / 4 * state_;
     srcrect.right = img_->GetWidth() / 4 * (state_ + 1);
-    basewnd_->GetRender()->DrawImage(img_, rect_, srcrect);
+    PaintMarginImg(srcrect);
+    UIControl::Paint(v_background);
 }
 
 bool UIButton::OnMouseEnter(const UIEvent& v_event) {

@@ -36,10 +36,10 @@ UIControl* UIDlgBuilder::CreateControl(UIControl* v_ctrl,
     if (v_parent) {
         // must use dynamic_cast!
         IUIContainer* container = dynamic_cast<IUIContainer*>((UIControl*)v_parent->GetInterface(CTRLNAME_CONTAINER));
-        if (!container)
-            return nullptr;
-        container->Add(v_ctrl);
-        v_ctrl->SetParent(v_parent);
+        if (container) {
+            container->Add(v_ctrl);
+            v_ctrl->SetParent(v_parent);
+        }
     }
     v_ctrl->BeforeSetAttribute();
     return v_ctrl;

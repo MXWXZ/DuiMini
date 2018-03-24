@@ -112,7 +112,9 @@ void UIText::Paint(bool v_background/* = false*/) {
     format.autowrap_ = AutoWrap(STAY);
     format.vertical_ = Vertical(STAY);
     format.align_ = GetAlign();
+    format.color_.a *= (double)GetAlpha() / 255;
     basewnd_->GetRender()->DrawString(GetText(), font_, format, rect_);
+    UIControl::Paint(v_background);
 }
 
 void UIText::SetAttribute(LPCTSTR v_name, LPCTSTR v_value) {

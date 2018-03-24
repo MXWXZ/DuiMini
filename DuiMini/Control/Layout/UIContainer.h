@@ -14,6 +14,10 @@ public:
     virtual ~UIContainer();
 
 public:
+    void SetBGColor(LPCTSTR v_color);
+    UIColor GetBGColor() const;
+
+public:
     UIControl* GetItem(UINT v_index) const override;
     UINT GetCount() const override;
     bool Add(UIControl* v_ctrl) override;
@@ -21,6 +25,12 @@ public:
     void RemoveAll() override;
 
 public:
+    ATTR_MAP_BEGIN
+        DEFAULT_ATTR(_T("bgcolor"), _T("transparent"))
+        PARENT_ATTR(UIControl)
+        DEFAULT_ATTR(_T("background"), _T("1"))
+        ATTR_MAP_END
+
     void Paint(bool v_background = false) override;
     void SetBaseWindow(UIWindow* v_basewnd) override;
     LPVOID GetInterface(LPCTSTR v_name) override;

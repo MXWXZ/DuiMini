@@ -88,14 +88,6 @@ bool UIDialog::ShowTaskBar(BOOL v_show/* = TRUE*/) {
     STATE_FUNC_END
 }
 
-void UIDialog::SetAlpha(ALPHA v_alpha) {
-    SetAttribute(_T("alpha"), UStr(v_alpha));
-}
-
-ALPHA UIDialog::GetAlpha() const {
-    return (ALPHA)GetAttribute(_T("alpha")).Str2LL();
-}
-
 void UIDialog::SetMinWidth(long v_width) {
     SetAttribute(_T("minwidth"), UStr(v_width));
 }

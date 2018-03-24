@@ -33,9 +33,6 @@ public:
     // caption
     void SetCaptionRect(LPCTSTR v_pos);
     UIRect GetCaptionRect() const;
-    // alpha
-    void SetAlpha(ALPHA v_alpha);
-    ALPHA GetAlpha() const;
     // min/max size
     void SetMinWidth(long v_width);
     long GetMinWidth() const;
@@ -54,7 +51,6 @@ public:
         DEFAULT_ATTR(_T("movable"), _T("1"))
         DEFAULT_ATTR(_T("sizebox"), _T("0,0,0,0"))
         DEFAULT_ATTR(_T("resizable"), _T("0"))
-        DEFAULT_ATTR(_T("alpha"), _T("255"))
         DEFAULT_ATTR(_T("minwidth"), _T("0"))
         DEFAULT_ATTR(_T("maxwidth"), UStr(UIUtils::GetWorkAreaSize().width()))
         DEFAULT_ATTR(_T("minheight"), _T("0"))

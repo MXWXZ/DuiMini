@@ -77,9 +77,11 @@ public:
     virtual bool RedrawBackground() = 0;
 
     virtual bool DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
-                           const UIRect& v_srcrect) = 0;
+                           const UIRect& v_srcrect, ALPHA v_alpha = 255) = 0;
     virtual bool DrawString(LPCTSTR v_text, const UIFont &v_font,
-                            const UIStringFormat &v_format, UIRect &v_rect) = 0;
+                            const UIStringFormat &v_format, const UIRect &v_rect) = 0;
+    virtual bool DrawRect(const UIRect &v_rect, const UIColor &v_color, BORDER_SIZE v_border) = 0;
+    virtual bool DrawFillRect(const UIRect &v_rect, const UIColor &v_color) = 0;
 };
 
 class DUIMINI_API IUIRenderImage {

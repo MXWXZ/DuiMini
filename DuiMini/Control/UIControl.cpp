@@ -12,8 +12,9 @@ namespace DuiMini {
 UIControl::UIControl() {}
 
 UIControl::~UIControl() {
-    if (parent_)
-        dynamic_cast<IUIContainer*>(parent_)->Remove(this);
+    IUIContainer* tmp = dynamic_cast<IUIContainer*>(parent_);
+    if (tmp)
+        tmp->Remove(this);
 }
 
 void UIControl::SetAttribute(LPCTSTR v_name, LPCTSTR v_value) {
@@ -30,6 +31,12 @@ void UIControl::AfterSetAttribute() {
 CUStr UIControl::GetAttribute(LPCTSTR v_name) const {
     CUIAttrIt it = attr_.find(v_name);
     return it != attr_.end() ? it->second : CUStr();
+}
+
+void UIControl::Paint(bool v_background) {
+    BORDER_SIZE size = GetBorderSize();
+    if (size != 0)
+        basewnd_->GetRender()->DrawRect(rect_, GetBorderColor(), size);
 }
 
 void UIControl::SetParent(UIControl* v_parent) {
@@ -307,6 +314,30 @@ bool UIControl::VisibleCtrl(BOOL v_visible) {
 bool UIControl::AttachBackground(BOOL v_bg) {
     STATE_FUNC_START(_T("background"), v_bg)
         STATE_FUNC_END
+}
+
+void UIControl::SetAlpha(ALPHA v_alpha) {
+    SetAttribute(_T("alpha"), UStr(v_alpha));
+}
+
+ALPHA UIControl::GetAlpha() const {
+    return (ALPHA)GetAttribute(_T("alpha")).Str2LL();
+}
+
+void UIControl::SetBorderSize(BORDER_SIZE v_border) {
+    SetAttribute(_T("bordersize"), UStr(v_border));
+}
+
+BORDER_SIZE UIControl::GetBorderSize() const {
+    return (BORDER_SIZE)GetAttribute(_T("bordersize")).Str2LL();
+}
+
+void UIControl::SetBorderColor(LPCTSTR v_color) {
+    SetAttribute(_T("bordercolor"), v_color);
+}
+
+UIColor UIControl::GetBorderColor() const {
+    return UIColor(GetAttribute(_T("bordercolor")));
 }
 
 }   // namespace DuiMini

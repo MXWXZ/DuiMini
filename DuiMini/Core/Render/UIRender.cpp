@@ -110,52 +110,54 @@ RenderMode UIRender::GetRenderMode() {
 }
 
 bool UIRender::Paint(UIWindow* v_wnd) {
-    if (!render_)
-        return false;
-    bool ret = render_->Paint(v_wnd);
-    if (!ret)
-        UIHandleError();
-    return ret;
+    RENDER_CALL_START
+        render_->Paint(v_wnd);
+    RENDER_CALL_END
 }
 
 bool UIRender::RedrawBackground() {
-    if (!render_)
-        return false;
-    bool ret = render_->RedrawBackground();
-    if (!ret)
-        UIHandleError();
-    return ret;
-}
-
-bool UIRender::DrawImage(UIRenderImage* v_img, const UIRect& v_destrect) {
-    if (!render_ || !v_img)
-        return false;
-    bool ret = render_->DrawImage(v_img, v_destrect,
-                                  UIRect(0, 0, v_img->GetWidth(),
-                                         v_img->GetHeight()));
-    if (!ret)
-        UIHandleError();
-    return ret;
+    RENDER_CALL_START
+        render_->RedrawBackground();
+    RENDER_CALL_END
 }
 
 bool UIRender::DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
-                         const UIRect& v_srcrect) {
-    if (!render_)
+                         ALPHA v_alpha/* = 255*/) {
+    if (!v_img)
         return false;
-    bool ret = render_->DrawImage(v_img, v_destrect, v_srcrect);
-    if (!ret)
-        UIHandleError();
-    return ret;
+    RENDER_CALL_START
+        render_->DrawImage(v_img, v_destrect,
+                           UIRect(0, 0, v_img->GetWidth(),
+                                  v_img->GetHeight()), v_alpha);
+    RENDER_CALL_END
+}
+
+bool UIRender::DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
+                         const UIRect& v_srcrect, ALPHA v_alpha/* = 255*/) {
+    RENDER_CALL_START
+        render_->DrawImage(v_img, v_destrect, v_srcrect, v_alpha);
+    RENDER_CALL_END
 }
 
 bool UIRender::DrawString(LPCTSTR v_text, const UIFont &v_font,
-                          const UIStringFormat &v_format, UIRect &v_rect) {
-    if (!render_)
-        return false;
-    bool ret = render_->DrawString(v_text, v_font, v_format, v_rect);
-    if (!ret)
-        UIHandleError();
-    return ret;
+                          const UIStringFormat &v_format,
+                          const UIRect &v_rect) {
+    RENDER_CALL_START
+        render_->DrawString(v_text, v_font, v_format, v_rect);
+    RENDER_CALL_END
+}
+
+bool UIRender::DrawRect(const UIRect &v_rect, const UIColor &v_color,
+                        BORDER_SIZE v_border) {
+    RENDER_CALL_START
+        render_->DrawRect(v_rect, v_color, v_border);
+    RENDER_CALL_END
+}
+
+bool UIRender::DrawFillRect(const UIRect &v_rect, const UIColor &v_color) {
+    RENDER_CALL_START
+        render_->DrawFillRect(v_rect, v_color);
+    RENDER_CALL_END
 }
 
 IUIRender* UIRender::SelectRender(IUIRender** v_pointer) {

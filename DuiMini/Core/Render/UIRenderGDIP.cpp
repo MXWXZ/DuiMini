@@ -92,6 +92,7 @@ bool UIRenderGDIP::Paint(UIWindow* v_wnd) {
     graph_ = nullptr;
 
     POINT wndpos = { rcwindow.left, rcwindow.top };
+    // dlg alpha will apply to all controls
     blendfunc.SourceConstantAlpha = v_wnd->GetDialog()->GetAlpha();
     
     if (!UpdateLayeredWindow(hwnd, hdc, &wndpos, &sizewindow, hdctmp,
@@ -118,16 +119,25 @@ bool UIRenderGDIP::RedrawBackground() {
 }
 
 bool UIRenderGDIP::DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
-                             const UIRect& v_srcrect) {
+                             const UIRect& v_srcrect, ALPHA v_alpha/* = 255*/) {
     if (!graph_ || !v_img)
         return false;
-    if (graph_->DrawImage((Gdiplus::Image*)v_img->GetInterface(),
+    Gdiplus::Image* img = (Gdiplus::Image*)v_img->GetInterface();
+    Gdiplus::ColorMatrix matrix = {
+        1,0,0,0,0,
+        0,1,0,0,0,
+        0,0,1,0,0,
+        0,0,0,(Gdiplus::REAL)v_alpha / 255,0,
+        0,0,0,0,1 };
+    Gdiplus::ImageAttributes imgattr;
+    imgattr.SetColorMatrix(&matrix);
+    if (graph_->DrawImage(img,
                           Gdiplus::Rect(v_destrect.left, v_destrect.top,
                                         v_destrect.width(),
                                         v_destrect.height()),
                           v_srcrect.left, v_srcrect.top,
                           v_srcrect.width(), v_srcrect.height(),
-                          Gdiplus::UnitPixel) != Gdiplus::Ok) {
+                          Gdiplus::UnitPixel, &imgattr) != Gdiplus::Ok) {
         UISetError(kLL_Warning, kEC_ThirdPartFail,
                    _T("GDI+ DrawImage fail!"));
         return false;
@@ -136,7 +146,7 @@ bool UIRenderGDIP::DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
 }
 
 bool UIRenderGDIP::DrawString(LPCTSTR v_text, const UIFont &v_font,
-                              const UIStringFormat &v_format, UIRect &v_rect) {
+                              const UIStringFormat &v_format, const UIRect &v_rect) {
     if (!graph_)
         return false;
     Gdiplus::FontFamily fontfamily(v_font.font_);
@@ -185,6 +195,33 @@ bool UIRenderGDIP::DrawString(LPCTSTR v_text, const UIFont &v_font,
                            &color) != Gdiplus::Ok) {
         UISetError(kLL_Warning, kEC_ThirdPartFail,
                    _T("GDI+ DrawString fail!"));
+        return false;
+    }
+    return true;
+}
+
+bool UIRenderGDIP::DrawRect(const UIRect &v_rect, const UIColor &v_color,
+                            BORDER_SIZE v_border) {
+    // make sure draw exactly in the rect so we need offset
+    BORDER_SIZE offset = v_border / 2;
+    Gdiplus::Pen pen(Gdiplus::Color(v_color.a, v_color.r, v_color.g, v_color.b),
+                     v_border);
+    if (graph_->DrawRectangle(&pen, v_rect.left + offset, v_rect.top + offset,
+                              v_rect.width() - 2 * offset, v_rect.height() - 2 * offset)
+        != Gdiplus::Ok) {
+        UISetError(kLL_Warning, kEC_ThirdPartFail,
+                   _T("GDI+ DrawRectangle fail!"));
+        return false;
+    }
+    return true;
+}
+
+bool UIRenderGDIP::DrawFillRect(const UIRect & v_rect, const UIColor &v_color) {
+    Gdiplus::SolidBrush brush(Gdiplus::Color(v_color.a, v_color.r, v_color.g, v_color.b));
+    if (graph_->FillRectangle(&brush, v_rect.left, v_rect.top, v_rect.width(),
+                              v_rect.height()) != Gdiplus::Ok) {
+        UISetError(kLL_Warning, kEC_ThirdPartFail,
+                   _T("GDI+ FillRectangle fail!"));
         return false;
     }
     return true;

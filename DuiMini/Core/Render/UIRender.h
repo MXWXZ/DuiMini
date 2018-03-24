@@ -28,6 +28,13 @@ private:
     IUIRenderImage* renderimg_ = nullptr;
 };
 
+#define RENDER_CALL_START   if (!render_)           \
+                                return false;       \
+                            bool ret = 
+#define RENDER_CALL_END     if (!ret)               \
+                                UIHandleError();    \
+                            return ret;
+
 class DUIMINI_API UIRender {
 public:
     UIRender();
@@ -47,11 +54,15 @@ public:
 
     bool Paint(UIWindow* v_wnd);
     bool RedrawBackground();
-    bool DrawImage(UIRenderImage* v_img, const UIRect& v_destrect);
     bool DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
-                   const UIRect& v_srcrect);
+                   ALPHA v_alpha = 255);
+    bool DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
+                   const UIRect& v_srcrect, ALPHA v_alpha = 255);
     bool DrawString(LPCTSTR v_text, const UIFont &v_font,
-                    const UIStringFormat &v_format, UIRect &v_rect);
+                    const UIStringFormat &v_format, const UIRect &v_rect);
+    bool DrawRect(const UIRect &v_rect, const UIColor &v_color,
+                  BORDER_SIZE v_border);
+    bool DrawFillRect(const UIRect &v_rect, const UIColor &v_color);
 
 private:
     static IUIRender* SelectRender(IUIRender** v_pointer);

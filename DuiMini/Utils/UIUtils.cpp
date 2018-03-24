@@ -581,6 +581,8 @@ UIColor::UIColor(LPCTSTR v_colorstr) {
         str = _T("#FF00FF");
     else if (str == _T("gray"))
         str = _T("#C0C0C0");
+    else if (str == _T("transparent"))
+        str = _T("#00000000");
     if (str.GetLength() == 9)
         SetColor((ALPHA)str.Mid(1, 2).Hex2Str().Str2LL(),
                  (COLOR)str.Mid(3, 2).Hex2Str().Str2LL(),

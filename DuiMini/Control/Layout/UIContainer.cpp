@@ -15,6 +15,14 @@ UIContainer::~UIContainer() {
     RemoveAll();
 }
 
+void UIContainer::SetBGColor(LPCTSTR v_color) {
+    SetAttribute(_T("bgcolor"), v_color);
+}
+
+UIColor UIContainer::GetBGColor() const {
+    return UIColor(GetAttribute(_T("bgcolor")));
+}
+
 UIControl* UIContainer::GetItem(UINT v_index) const {
     if (v_index >= item_.GetSize())
         return nullptr;
@@ -52,12 +60,14 @@ void UIContainer::RemoveAll() {
 }
 
 void UIContainer::Paint(bool v_background/* = false*/) {
+    basewnd_->GetRender()->DrawFillRect(rect_, GetBGColor());
     for (UINT it = 0; it < item_.GetSize(); ++it) {
         UIControl* ctrl = (UIControl*)item_[it];
         if (ctrl->AttachBackground(STAY) == v_background
             && ctrl->VisibleCtrl(STAY))
             ctrl->Paint(v_background);
     }
+    UIControl::Paint(v_background);
 }
 UIControl* UIContainer::FindCtrlFromPT(POINT v_pt) {
     if (!PtInRect(v_pt))
