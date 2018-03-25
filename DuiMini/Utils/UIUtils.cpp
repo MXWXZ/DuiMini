@@ -56,11 +56,11 @@ CUStr UIXmlNode::GetAttrValue(LPCTSTR v_name,
                               LPCTSTR v_default/* = _T("")*/) const {
     if (!node_)
         return CUStr();
-    xmlattr attr = node_->first_attribute(v_name);
+    xmlattr attr = node_.attribute(v_name);
     if (!attr)
         return CUStr(v_default);
     else
-        return CUStr(attr->value());
+        return CUStr(attr.value());
 }
 
 CUStr UIXmlNode::GetAttrValue(LPCTSTR v_name,
@@ -75,7 +75,7 @@ bool UIXmlNode::CmpAttrValue(LPCTSTR v_name, LPCTSTR value) const {
 bool UIXmlNode::CmpNodeName(LPCTSTR v_name) const {
     if (!node_)
         return false;
-    return CmpStr(node_->name(), v_name);
+    return CmpStr(node_.name(), v_name);
 }
 
 ////////////////////////////////////////

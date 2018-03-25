@@ -31,9 +31,6 @@
     <Filter Include="源文件\Utils">
       <UniqueIdentifier>{c01ba908-cf74-4f00-8fb5-47a7fe1cc639}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件\thirdpart\rapidxml">
-      <UniqueIdentifier>{81ecd23f-3591-42cb-971d-42f991084727}</UniqueIdentifier>
-    </Filter>
     <Filter Include="头文件\thirdpart\zlib">
       <UniqueIdentifier>{8a532910-b7e1-4d81-8df5-da9e3994c03f}</UniqueIdentifier>
     </Filter>
@@ -63,6 +60,9 @@
     </Filter>
     <Filter Include="源文件\Core\Render">
       <UniqueIdentifier>{34cfba69-3721-42cc-aa6c-56680d361e29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\thirdpart\pugixml">
+      <UniqueIdentifier>{c46391ee-ebb2-4450-b3ea-f8f3ec6f9e64}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -95,15 +95,6 @@
     </ClInclude>
     <ClInclude Include="thirdpart\zlib\unzip.h">
       <Filter>头文件\thirdpart\zlib</Filter>
-    </ClInclude>
-    <ClInclude Include="thirdpart\rapidxml\rapidxml_print.hpp">
-      <Filter>源文件\thirdpart\rapidxml</Filter>
-    </ClInclude>
-    <ClInclude Include="thirdpart\rapidxml\rapidxml_utils.hpp">
-      <Filter>源文件\thirdpart\rapidxml</Filter>
-    </ClInclude>
-    <ClInclude Include="thirdpart\rapidxml\rapidxml.hpp">
-      <Filter>源文件\thirdpart\rapidxml</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>头文件</Filter>
@@ -164,6 +155,12 @@
     </ClInclude>
     <ClInclude Include="Control\UIText.h">
       <Filter>头文件\Control</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdpart\pugixml\pugiconfig.hpp">
+      <Filter>源文件\thirdpart\pugixml</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdpart\pugixml\pugixml.hpp">
+      <Filter>源文件\thirdpart\pugixml</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -241,6 +238,9 @@
     </ClCompile>
     <ClCompile Include="Control\UIText.cpp">
       <Filter>源文件\Control</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdpart\pugixml\pugixml.cpp">
+      <Filter>源文件\thirdpart\pugixml</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -55,9 +55,10 @@ public:
     bool Paint(UIWindow* v_wnd);
     bool RedrawBackground();
     bool DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
-                   ALPHA v_alpha = 255);
+                   ALPHA v_alpha = 255, ImageMode v_mode = kIM_Extrude);
     bool DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
-                   const UIRect& v_srcrect, ALPHA v_alpha = 255);
+                   const UIRect& v_srcrect, ALPHA v_alpha = 255,
+                   ImageMode v_mode = kIM_Extrude);
     bool DrawString(LPCTSTR v_text, const UIFont &v_font,
                     const UIStringFormat &v_format, const UIRect &v_rect);
     bool DrawRect(const UIRect &v_rect, const UIColor &v_color,

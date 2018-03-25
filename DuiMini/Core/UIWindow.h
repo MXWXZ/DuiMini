@@ -152,6 +152,9 @@ protected:
     UIRender*        render_ = nullptr;           // render
     UIRect           rect_;                       // window rect
     static UINT      classname_cnt_;              // auto classname counter
+    HWND             tooltip_hwnd_ = nullptr;     // tooltip
+    TOOLINFO         tooltip_info_;               // tooltip info
+    bool             tooltip_active_ = false;     // is active tooltip
 
     // Event system
     bool             mouse_tracking_ = false;     // mouse tracking state

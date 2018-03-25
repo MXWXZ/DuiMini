@@ -122,20 +122,21 @@ bool UIRender::RedrawBackground() {
 }
 
 bool UIRender::DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
-                         ALPHA v_alpha/* = 255*/) {
+                         ALPHA v_alpha/* = 255*/, ImageMode v_mode/* = kIM_Extrude*/) {
     if (!v_img)
         return false;
     RENDER_CALL_START
         render_->DrawImage(v_img, v_destrect,
                            UIRect(0, 0, v_img->GetWidth(),
-                                  v_img->GetHeight()), v_alpha);
+                                  v_img->GetHeight()), v_alpha, v_mode);
     RENDER_CALL_END
 }
 
 bool UIRender::DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
-                         const UIRect& v_srcrect, ALPHA v_alpha/* = 255*/) {
+                         const UIRect& v_srcrect, ALPHA v_alpha/* = 255*/,
+                         ImageMode v_mode/* = kIM_Extrude*/) {
     RENDER_CALL_START
-        render_->DrawImage(v_img, v_destrect, v_srcrect, v_alpha);
+        render_->DrawImage(v_img, v_destrect, v_srcrect, v_alpha, v_mode);
     RENDER_CALL_END
 }
 

@@ -164,35 +164,23 @@ CUStr UIResource::GetResInfo() {
 UIXmlLoader::UIXmlLoader() {}
 
 UIXmlLoader::UIXmlLoader(LPCTSTR v_path) {
-    buffer_ = nullptr;
     Loadxml(v_path);
 }
 
-UIXmlLoader::~UIXmlLoader() {
-    delete[]buffer_;
-    buffer_ = nullptr;
-}
+UIXmlLoader::~UIXmlLoader() {}
 
 void UIXmlLoader::Loadxml(LPCTSTR v_path) {
-    delete[]buffer_;
     long buflen = UIResource::GetFileSize(v_path);
-    BYTE *tmp = new BYTE[buflen + 1];
-    UIResource::GetFile(v_path, tmp, buflen);
-    tmp[buflen] = '\0';
-#ifdef _UNICODE
-    int len = GetStr2WStrLen((LPCSTR)tmp);
-    LPWSTR wtmp = new wchar_t[len];
-    Str2WStr((LPCSTR)tmp, wtmp, len);
-    delete[]tmp;
-    buffer_ = (TBYTE*)wtmp;
-#else
-    buffer_ = tmp;
-#endif  // _UNICODE
-    doc_.parse<0>((LPTSTR)buffer_);
+    BYTE* buffer = new BYTE[buflen + 1];
+    UIResource::GetFile(v_path, buffer, buflen);
+    buffer[buflen] = '\0';
+    doc_.load_buffer(buffer, buflen);
+    delete[]buffer;
+    buffer = nullptr;
 }
 
 xmlnode UIXmlLoader::GetRoot() const {
-    return doc_.first_node();
+    return doc_.first_child();
 }
 
 }   // namespace DuiMini

@@ -30,9 +30,9 @@ UIFont    UIConfig::font_style_;
 
 void UIConfig::LoadConfig(LPCTSTR v_relativepath/* = DEFAULT_RESFILE*/) {
     UIXmlLoader *config = (UIXmlLoader*)UIResource::LoadRes(kFT_XML, v_relativepath);
-    for (xmlnode node = config->GetRoot()->first_node();
+    for (xmlnode node = config->GetRoot().first_child();
          node != nullptr;
-         node = node->next_sibling()) {
+         node = node.next_sibling()) {
         UIXmlNode tmp(node);
         // style config
         if (tmp.CmpNodeName(_T("style"))) {
@@ -158,9 +158,9 @@ bool UIConfig::SetShownLang(LANGID v_id) {
 
     lang_str_.clear();
     UIXmlLoader *file = (UIXmlLoader*)UIResource::LoadRes(kFT_XML, lang_[v_id - 1][_T("file")]);
-    for (xmlnode node = file->GetRoot()->first_node();
+    for (xmlnode node = file->GetRoot().first_child();
          node != nullptr;
-         node = node->next_sibling()) {
+         node = node.next_sibling()) {
         UIXmlNode tmp(node);
         CFG_BeginAttr;
         CFG_AddAttr(_T("name"));
@@ -203,9 +203,9 @@ bool UIConfig::SetShownSkin(SKINID v_id) {
 
     res_id_.clear();
     UIXmlLoader *file = (UIXmlLoader*)UIResource::LoadRes(kFT_XML, skin_[v_id - 1][_T("value")] + _T("\\resid.xml"));
-    for (xmlnode node = file->GetRoot()->first_node();
+    for (xmlnode node = file->GetRoot().first_child();
          node != nullptr;
-         node = node->next_sibling()) {
+         node = node.next_sibling()) {
         UIXmlNode tmp(node);
         CFG_BeginAttr;
         CFG_AddAttr(_T("type"));
@@ -225,9 +225,9 @@ bool UIConfig::AddSystemSkin(SKINID v_id) {
     }
 
     UIXmlLoader *file = (UIXmlLoader*)UIResource::LoadRes(kFT_XML, skin_[v_id - 1][_T("value")] + _T("\\resid.xml"));
-    for (xmlnode node = file->GetRoot()->first_node();
+    for (xmlnode node = file->GetRoot().first_child();
          node != nullptr;
-         node = node->next_sibling()) {
+         node = node.next_sibling()) {
         UIXmlNode tmp(node);
         CFG_BeginAttr;
         CFG_AddAttr(_T("type"));

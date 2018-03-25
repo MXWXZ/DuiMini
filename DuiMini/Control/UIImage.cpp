@@ -43,6 +43,18 @@ CUStr UIImage::GetMargin() const {
     return GetAttribute(_T("margin"));
 }
 
+void UIImage::SetMode(LPCTSTR v_mode) {
+    SetAttribute(_T("mode"), v_mode);
+}
+
+ImageMode UIImage::GetMode() const {
+    UStr mode = GetAttribute(_T("mode"));
+    if (mode == _T("extrude"))
+        return kIM_Extrude;
+    else
+        return kIM_Tile;
+}
+
 LPVOID UIImage::GetInterface(LPCTSTR v_name) {
     if (CmpStr(v_name, CTRLNAME_IMAGE))
         return this;
@@ -53,7 +65,10 @@ void UIImage::Paint(bool v_background/* = false*/) {
     if (!img_ || !basewnd_)
         return;
     UIRect tmprect(0, 0, img_->GetWidth(), img_->GetHeight());
-    PaintMarginImg(tmprect);
+    if (GetMode() == kIM_Extrude)
+        PaintMarginImg(tmprect);
+    else
+        basewnd_->GetRender()->DrawImage(img_, rect_, GetAlpha(), kIM_Tile);
     UIControl::Paint(v_background);
 }
 

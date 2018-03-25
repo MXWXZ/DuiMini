@@ -43,12 +43,9 @@ public:
     xmlnode GetRoot() const;
 
 private:
-    TBYTE* buffer_ = nullptr;
     xmldoc doc_;
-
     UStr relativepath_;
 };
-
 
 /**
 * File type

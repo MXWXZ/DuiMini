@@ -54,6 +54,10 @@ public:
     BORDER_SIZE GetBorderSize() const;
     void SetBorderColor(LPCTSTR v_color);
     UIColor GetBorderColor() const;
+    void SetToolTip(LPCTSTR v_str);
+    CUStr GetToolTip() const;
+    void SetToolTipWidth(long v_width);
+    long GetToolTipWidth() const;
 
 public:
     // Attribute
@@ -69,6 +73,8 @@ public:
         DEFAULT_ATTR(_T("alpha"), _T("255"))
         DEFAULT_ATTR(_T("bordercolor"), _T("black"))
         DEFAULT_ATTR(_T("bordersize"), _T("0"))
+        DEFAULT_ATTR(_T("tooltip"), _T(""))
+        DEFAULT_ATTR(_T("tooltipwidth"), _T("300"))
         ATTR_MAP_END
     virtual void SetAttribute(LPCTSTR v_name, LPCTSTR v_value);
     virtual void AfterSetAttribute();   // Init others which based on attribute
@@ -118,7 +124,7 @@ protected:
     // Skin change
     DEFAULT_MSGFUNC(OnSkinChange)
     // language change
-    DEFAULT_MSGFUNC(OnLangChange)
+    virtual bool OnLangChange(const UIEvent &v_event);
 
     DEFAULT_MSGFUNC(OnMouseEnter)
     DEFAULT_MSGFUNC(OnMouseLeave)

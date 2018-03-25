@@ -18,11 +18,14 @@ public:
     CUStr GetFile() const;
     void SetMargin(LPCTSTR v_pos);
     CUStr GetMargin() const;
+    void SetMode(LPCTSTR v_mode);
+    ImageMode GetMode() const;
 
 public:
     ATTR_MAP_BEGIN
         DEFAULT_ATTR(_T("file"), _T(""))
         DEFAULT_ATTR(_T("margin"), _T("0,0,-0,-0"))
+        DEFAULT_ATTR(_T("mode"), _T("extrude"))
         PARENT_ATTR(UIControl)
         ATTR_MAP_END
 

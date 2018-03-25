@@ -77,7 +77,8 @@ public:
     virtual bool RedrawBackground() = 0;
 
     virtual bool DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
-                           const UIRect& v_srcrect, ALPHA v_alpha = 255) = 0;
+                           const UIRect& v_srcrect, ALPHA v_alpha = 255,
+                           ImageMode v_mode = kIM_Extrude) = 0;
     virtual bool DrawString(LPCTSTR v_text, const UIFont &v_font,
                             const UIStringFormat &v_format, const UIRect &v_rect) = 0;
     virtual bool DrawRect(const UIRect &v_rect, const UIColor &v_color, BORDER_SIZE v_border) = 0;

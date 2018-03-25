@@ -25,6 +25,10 @@ UIWindow::~UIWindow() {
     builder_ = nullptr;
     delete render_;
     render_ = nullptr;
+    if (tooltip_hwnd_) {
+        DestroyWindow(tooltip_hwnd_);
+        tooltip_hwnd_ = NULL;
+    }
     UISystem::RemoveWindow(this);
 }
 
@@ -244,6 +248,10 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
             ctrl_lclick_->Event(tmp);
         if (ctrl_rclick_)
             ctrl_rclick_->Event(tmp);
+        if (tooltip_hwnd_) {
+            DestroyWindow(tooltip_hwnd_);
+            tooltip_hwnd_ = NULL;
+        }
         OnClose();
         break;
     }
@@ -274,11 +282,13 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
             break;
         }
         ctrl_click->Event(event);
-        if (v_msg == WM_LBUTTONUP)
-            ctrl_click->Event(UIEvent(kWM_LButtonClick, v_wparam, v_lparam));
-        else
-            ctrl_click->Event(UIEvent(kWM_RButtonClick, v_wparam, v_lparam));
+        // prevent close btn send WM_LBUTTONUP twice
+        UIControl* tmp = ctrl_click;
         ctrl_click = nullptr;
+        if (v_msg == WM_LBUTTONUP)
+            tmp->Event(UIEvent(kWM_LButtonClick, v_wparam, v_lparam));
+        else
+            tmp->Event(UIEvent(kWM_RButtonClick, v_wparam, v_lparam));
         break;
     }
     case WM_LBUTTONDBLCLK:
@@ -297,14 +307,20 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
             tmp.dwFlags = TME_LEAVE | TME_HOVER;
             tmp.hwndTrack = hwnd_;
             tmp.dwHoverTime = 1000;     // 1000 delay time
-            ::TrackMouseEvent(&tmp);
+            TrackMouseEvent(&tmp);
             mouse_tracking_ = true;
         }
 
         // enter new ctrl
         if (mousepos_ctrl != ctrl_hover_) {
-            if (ctrl_hover_)     // former ctrl leave
+            if (ctrl_hover_) {     // former ctrl leave
                 ctrl_hover_->Event(UIEvent(kWM_MouseLeave, v_wparam, v_lparam));
+                if (tooltip_hwnd_) {
+                    SendMessage(tooltip_hwnd_, TTM_TRACKACTIVATE, FALSE, (LPARAM)&tooltip_info_);
+                    tooltip_active_ = false;
+                }
+                ctrl_hover_ = nullptr;
+            }
             if (mousepos_ctrl) {
                 mousepos_ctrl->Event(UIEvent(kWM_MouseEnter, v_wparam, v_lparam));
                 ctrl_hover_ = mousepos_ctrl;
@@ -314,12 +330,48 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
             mousepos_ctrl->Event(event);
         break;
     }
+    case WM_MOUSEHOVER:
+    {
+        if (!ctrl_hover_)
+            break;
+        mouse_tracking_ = false;
+        UStr str = ctrl_hover_->GetToolTip();
+        if (str.IsEmpty())
+            break;
+        ZeroMemory(&tooltip_info_, sizeof(TOOLINFO));
+        tooltip_info_.cbSize = sizeof(TOOLINFO);
+        tooltip_info_.uFlags = TTF_IDISHWND;    // do not add TTF_SUBCLASS
+        tooltip_info_.hwnd = hwnd_;
+        tooltip_info_.uId = (UINT_PTR)hwnd_;
+        tooltip_info_.hinst = UISystem::GetInstance();
+        tooltip_info_.lpszText = (LPTSTR)str.GetData();
+        if (!tooltip_hwnd_) {
+            tooltip_hwnd_ = CreateWindowEx(0, TOOLTIPS_CLASS, NULL,
+                                           WS_POPUP | TTS_NOPREFIX | TTS_ALWAYSTIP,
+                                           CW_USEDEFAULT, CW_USEDEFAULT,
+                                           CW_USEDEFAULT, CW_USEDEFAULT,
+                                           hwnd_, NULL, UISystem::GetInstance(),
+                                           NULL);
+            SendMessage(tooltip_hwnd_, TTM_ADDTOOL, 0, (LPARAM)&tooltip_info_);
+        }
+        SendMessage(tooltip_hwnd_, TTM_SETMAXTIPWIDTH, 0, ctrl_hover_->GetToolTipWidth());
+        SendMessage(tooltip_hwnd_, TTM_SETTOOLINFO, 0, (LPARAM)&tooltip_info_);
+        if (!tooltip_active_) {
+            tooltip_active_ = true;
+            SendMessage(tooltip_hwnd_, TTM_TRACKACTIVATE, TRUE, (LPARAM)&tooltip_info_);
+        }
+        break;
+    }
     case WM_MOUSELEAVE:
     {
         mouse_tracking_ = false;
         if (ctrl_hover_) {      // clear hover control
             ctrl_hover_->Event(event);
             ctrl_hover_ = nullptr;
+        }
+        if (tooltip_hwnd_) {
+            SendMessage(tooltip_hwnd_, TTM_TRACKACTIVATE, FALSE, (LPARAM)&tooltip_info_);
+            tooltip_active_ = false;
         }
         break;
     }

@@ -40,18 +40,18 @@
 #define CTRLNAME_TEXT           _T("txt")
 
 // third-part
-// rapidxml
-typedef rapidxml::xml_document<TCHAR> xmldoc;
-typedef rapidxml::xml_node<TCHAR>* xmlnode;
-typedef rapidxml::xml_attribute<TCHAR>* xmlattr;
+// pugixml
+typedef pugi::xml_document xmldoc;
+typedef pugi::xml_node xmlnode;
+typedef pugi::xml_attribute xmlattr;
 
 // make type beautiful
 typedef long long LL;
-typedef unsigned char ALPHA;
+typedef unsigned short ALPHA;
 typedef unsigned short SKINID;
 typedef unsigned short LANGID;
 typedef unsigned short FONTID;
-typedef unsigned char COLOR;
+typedef unsigned short COLOR;
 typedef unsigned short BORDER_SIZE;
 #define STAY -1
 
@@ -71,6 +71,11 @@ enum StringTrimming {
     kST_DotCh = 3,
     kST_DotWord = 4,
     kST_DotMid = 5
+};
+// image mode
+enum ImageMode {
+    kIM_Extrude,
+    kIM_Tile
 };
 // TODO: Add new Msg
 enum WindowMessage {

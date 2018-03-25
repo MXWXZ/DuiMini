@@ -119,7 +119,8 @@ bool UIRenderGDIP::RedrawBackground() {
 }
 
 bool UIRenderGDIP::DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
-                             const UIRect& v_srcrect, ALPHA v_alpha/* = 255*/) {
+                             const UIRect& v_srcrect, ALPHA v_alpha/* = 255*/,
+                             ImageMode v_mode/* = kIM_Extrude*/) {
     if (!graph_ || !v_img)
         return false;
     Gdiplus::Image* img = (Gdiplus::Image*)v_img->GetInterface();
@@ -131,16 +132,32 @@ bool UIRenderGDIP::DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
         0,0,0,0,1 };
     Gdiplus::ImageAttributes imgattr;
     imgattr.SetColorMatrix(&matrix);
-    if (graph_->DrawImage(img,
-                          Gdiplus::Rect(v_destrect.left, v_destrect.top,
-                                        v_destrect.width(),
-                                        v_destrect.height()),
-                          v_srcrect.left, v_srcrect.top,
-                          v_srcrect.width(), v_srcrect.height(),
-                          Gdiplus::UnitPixel, &imgattr) != Gdiplus::Ok) {
-        UISetError(kLL_Warning, kEC_ThirdPartFail,
-                   _T("GDI+ DrawImage fail!"));
-        return false;
+    if (v_mode == kIM_Extrude) {
+        if (graph_->DrawImage(img,
+                              Gdiplus::Rect(v_destrect.left, v_destrect.top,
+                                            v_destrect.width(),
+                                            v_destrect.height()),
+                              v_srcrect.left, v_srcrect.top,
+                              v_srcrect.width(), v_srcrect.height(),
+                              Gdiplus::UnitPixel, &imgattr) != Gdiplus::Ok) {
+            UISetError(kLL_Warning, kEC_ThirdPartFail,
+                       _T("GDI+ DrawImage fail!"));
+            return false;
+        }
+    } else {
+        Gdiplus::TextureBrush brush(img, Gdiplus::Rect(v_srcrect.left,
+                                                       v_srcrect.top,
+                                                       v_srcrect.width(),
+                                                       v_srcrect.height()),
+                                    &imgattr);
+        brush.SetWrapMode(Gdiplus::WrapModeTile);
+        if (graph_->FillRectangle(&brush, v_destrect.left, v_destrect.top,
+                                  v_destrect.width(), v_destrect.height())
+            != Gdiplus::Ok) {
+            UISetError(kLL_Warning, kEC_ThirdPartFail,
+                       _T("GDI+ FillRectangle fail!"));
+            return false;
+        }
     }
     return true;
 }

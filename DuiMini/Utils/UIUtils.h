@@ -188,7 +188,7 @@ public:
     bool CmpNodeName(LPCTSTR v_name) const;
 
 private:
-    xmlnode node_ = nullptr;
+    xmlnode node_;
 };
 
 ////////////////////////////////////////

@@ -21,7 +21,8 @@ public:
     bool Paint(UIWindow* v_wnd) override;
     bool RedrawBackground() override;
     bool DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
-                   const UIRect& v_srcrect, ALPHA v_alpha = 255) override;
+                   const UIRect& v_srcrect, ALPHA v_alpha = 255,
+                   ImageMode v_mode = kIM_Extrude) override;
     bool DrawString(LPCTSTR v_text, const UIFont &v_font,
                     const UIStringFormat &v_format, const UIRect &v_rect) override;
     bool DrawRect(const UIRect &v_rect, const UIColor &v_color,

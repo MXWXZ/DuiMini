@@ -2,8 +2,8 @@
      sizebox="5,5,5,5" minwidth="450" minheight="275" >
     <img name="img_bg" pos="0,0,-0,-0" file="[IMG_MAIN_BG]" background="1" margin="10,10,-10,-10" />
     <txt name="txt_title" pos="10,5" size="50,25" text="[STR_MAIN_TITLE]" color="white" />
-    <btn name="btn_close" pos="-35,0" size="35,25" file="[IMG_SYS_CLOSE]" />
-    <btn name="btn_max" pos="-70,0" size="35,25" file="[IMG_SYS_MAX]" />
-    <btn name="btn_restore" pos="-70,0" size="35,25" file="[IMG_SYS_RESTORE]" visible="0" />
-    <btn name="btn_min" pos="-105,0" size="35,25" file="[IMG_SYS_MIN]" />
+    <btn name="btn_close" pos="-35,0" size="35,25" file="[IMG_SYS_CLOSE]" tooltip="[STR_SYS_CLOSE]" />
+    <btn name="btn_max" pos="-70,0" size="35,25" file="[IMG_SYS_MAX]" tooltip="[STR_SYS_MAXIMIZE]" />
+    <btn name="btn_restore" pos="-70,0" size="35,25" file="[IMG_SYS_RESTORE]" visible="0" tooltip="[STR_SYS_RESTORE]" />
+    <btn name="btn_min" pos="-105,0" size="35,25" file="[IMG_SYS_MIN]" tooltip="[STR_SYS_MINIMIZE]" />
 </dlg>

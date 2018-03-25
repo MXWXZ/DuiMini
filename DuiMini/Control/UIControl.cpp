@@ -158,6 +158,11 @@ MsgHandleFun UIControl::GetMsgHandler(WindowMessage v_msg) const {
     return msgmap_[v_msg];
 }
 
+bool UIControl::OnLangChange(const UIEvent & v_event) {
+    SetToolTip(GetToolTip());
+    return true;
+}
+
 long UIControl::ParsePosStr(LPCTSTR v_str, StrLoc v_loc,
                             UIRect* v_parentrect/* = nullptr*/) const {
     CUStr str = v_str;
@@ -338,6 +343,22 @@ void UIControl::SetBorderColor(LPCTSTR v_color) {
 
 UIColor UIControl::GetBorderColor() const {
     return UIColor(GetAttribute(_T("bordercolor")));
+}
+
+void UIControl::SetToolTip(LPCTSTR v_str) {
+    SetAttribute(_T("tooltip"), UITranslateStr(v_str));
+}
+
+CUStr UIControl::GetToolTip() const {
+    return GetAttribute(_T("tooltip"));
+}
+
+void UIControl::SetToolTipWidth(long v_width) {
+    SetAttribute(_T("tooltipwidth"), UStr(v_width));
+}
+
+long UIControl::GetToolTipWidth() const {
+    return (long)GetAttribute(_T("tooltipwidth")).Str2LL();
 }
 
 }   // namespace DuiMini

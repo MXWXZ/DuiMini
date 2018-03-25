@@ -59,13 +59,13 @@ UIDialog* UIDlgBuilder::GetCtrlRoot() {
 UIControl* UIDlgBuilder::Parse(UIWindow* v_wnd, xmlnode v_root,
                                 UIControl* v_parent/* = nullptr*/) {
     for (xmlnode node = v_root; node != nullptr;
-         node = node->next_sibling()) {
-        if (!v_parent && !CmpStr(node->name(), CTRLNAME_DIALOG)) {
+         node = node.next_sibling()) {
+        if (!v_parent && !CmpStr(node.name(), CTRLNAME_DIALOG)) {
             UISetError(kLL_Warning, kEC_CtrlFormatInvalid,
                        _T("Dialog control must be the root."));
             return nullptr;
         }
-        LPCTSTR ctrl_name = node->name();
+        LPCTSTR ctrl_name = node.name();
         size_t ctrl_namelen = _tcslen(ctrl_name);
         UIControl* new_ctrl = nullptr;
         // TODO: Add new Ctrl
@@ -106,15 +106,15 @@ UIControl* UIDlgBuilder::Parse(UIWindow* v_wnd, xmlnode v_root,
 
         CreateControl(new_ctrl, v_wnd, v_parent);
         // Process attributes
-        for (xmlattr attr = node->first_attribute();
+        for (xmlattr attr = node.first_attribute();
              attr != nullptr;
-             attr = attr->next_attribute())
-            new_ctrl->SetAttribute(attr->name(), attr->value());
+             attr = attr.next_attribute())
+            new_ctrl->SetAttribute(attr.name(), attr.value());
         FinishCreateControl(new_ctrl);
 
         // Add children
-        if (node->first_node())
-            Parse(v_wnd, node->first_node(), new_ctrl);
+        if (node.first_child())
+            Parse(v_wnd, node.first_child(), new_ctrl);
     }
     return ctrl_root_;
 }
