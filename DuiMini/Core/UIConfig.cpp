@@ -30,9 +30,9 @@ UIFont    UIConfig::font_style_;
 
 void UIConfig::LoadConfig(LPCTSTR v_relativepath/* = DEFAULT_RESFILE*/) {
     UIXmlLoader *config = (UIXmlLoader*)UIResource::LoadRes(kFT_XML, v_relativepath);
-    for (xmlnode node = config->GetRoot().first_child();
-         node != nullptr;
-         node = node.next_sibling()) {
+    for (UIXmlNode node = config->GetRoot().FirstChild();
+         node;
+         node = node.NextSibling()) {
         UIXmlNode tmp(node);
         // style config
         if (tmp.CmpNodeName(_T("style"))) {
@@ -101,8 +101,7 @@ LANGID UIConfig::FindLangID(LPCTSTR v_name) {
     for (UICFGItemIt it = lang_.begin(); it != itend; ++it)
         if (CmpStr((*it)[_T("name")], v_name))
             return it - lang_.begin() + 1;
-    UIHandleError(kLL_Warning, kEC_IDInvalid,
-                  _T("Config lang name %s invalid!"), v_name);
+    UISetError(kEL_Warning, kEC_IDInvalid, ErrorMsg_IDInvalid(v_name));
     return 0;
 }
 
@@ -111,8 +110,7 @@ FONTID UIConfig::FindFontID(LPCTSTR v_name) {
     for (UICFGItemIt it = font_.begin(); it != itend; ++it)
         if (CmpStr((*it)[_T("name")], v_name))
             return it - font_.begin() + 1;
-    UIHandleError(kLL_Warning, kEC_IDInvalid,
-                  _T("Config font name %s invalid!"), v_name);
+    UISetError(kEL_Warning, kEC_IDInvalid, ErrorMsg_IDInvalid(v_name));
     return 0;
 }
 
@@ -121,8 +119,7 @@ SKINID UIConfig::FindSkinID(LPCTSTR v_name) {
     for (UICFGItemIt it = skin_.begin(); it != itend; ++it)
         if (CmpStr((*it)[_T("name")], v_name))
             return it - skin_.begin() + 1;
-    UIHandleError(kLL_Warning, kEC_IDInvalid,
-                  _T("Config skin name %s invalid!"), v_name);
+    UISetError(kEL_Warning, kEC_IDInvalid, ErrorMsg_IDInvalid(v_name));
     return 0;
 }
 
@@ -152,15 +149,15 @@ UIAttr* UIConfig::GetShownSkin() {
 
 bool UIConfig::SetShownLang(LANGID v_id) {
     if (v_id > lang_.size()) {
-        UIHandleError(kLL_Warning, kEC_IDInvalid, _T("Lang id \"%hu\" invalid!"), v_id);
+        UISetError(kEL_Warning, kEC_IDInvalid, ErrorMsg_IDInvalid(v_id));
         return false;
     }
 
     lang_str_.clear();
     UIXmlLoader *file = (UIXmlLoader*)UIResource::LoadRes(kFT_XML, lang_[v_id - 1][_T("file")]);
-    for (xmlnode node = file->GetRoot().first_child();
-         node != nullptr;
-         node = node.next_sibling()) {
+    for (UIXmlNode node = file->GetRoot().FirstChild();
+         node;
+         node = node.NextSibling()) {
         UIXmlNode tmp(node);
         CFG_BeginAttr;
         CFG_AddAttr(_T("name"));
@@ -174,14 +171,14 @@ bool UIConfig::SetShownLang(LANGID v_id) {
 
 bool UIConfig::SetShownFont(FONTID v_id) {
     if (v_id > font_.size()) {
-        UIHandleError(kLL_Warning, kEC_IDInvalid, _T("Font id \"%hu\" invalid!"), v_id);
+        UISetError(kEL_Warning, kEC_IDInvalid, ErrorMsg_IDInvalid(v_id));
         return false;
     }
 
     UIAttr &nowfont = font_[v_id - 1];
     if (nowfont[_T("lang")] != lang_[shownlang_ - 1][_T("lang")])
-        UIHandleError(kLL_Warning, kEC_FontLangMismatch, _T("Font \"%s\" mismatch language \"%s\""),
-                      nowfont[_T("font")].GetData(), lang_[shownlang_ - 1][_T("lang")]);
+        UISetError(kEL_Warning, kEC_FormatInvalid, _T("Font \"%s\" mismatch language \"%s\""),
+                   nowfont[_T("font")].GetData(), lang_[shownlang_ - 1][_T("lang")]);
 
     font_style_.name_ = nowfont[_T("name")];
     font_style_.lang_ = nowfont[_T("lang")];
@@ -197,15 +194,15 @@ bool UIConfig::SetShownFont(FONTID v_id) {
 
 bool UIConfig::SetShownSkin(SKINID v_id) {
     if (v_id > skin_.size()) {
-        UIHandleError(kLL_Warning, kEC_IDInvalid, _T("Skin id \"%hu\" invalid!"), v_id);
+        UISetError(kEL_Warning, kEC_IDInvalid, ErrorMsg_IDInvalid(v_id));
         return false;
     }
 
     res_id_.clear();
     UIXmlLoader *file = (UIXmlLoader*)UIResource::LoadRes(kFT_XML, skin_[v_id - 1][_T("value")] + _T("\\resid.xml"));
-    for (xmlnode node = file->GetRoot().first_child();
-         node != nullptr;
-         node = node.next_sibling()) {
+    for (UIXmlNode node = file->GetRoot().FirstChild();
+         node;
+         node = node.NextSibling()) {
         UIXmlNode tmp(node);
         CFG_BeginAttr;
         CFG_AddAttr(_T("type"));
@@ -220,14 +217,14 @@ bool UIConfig::SetShownSkin(SKINID v_id) {
 
 bool UIConfig::AddSystemSkin(SKINID v_id) {
     if (v_id > skin_.size()) {
-        UIHandleError(kLL_Warning, kEC_IDInvalid, _T("Skin id \"%hu\" invalid!"), v_id);
+        UISetError(kEL_Warning, kEC_IDInvalid, ErrorMsg_IDInvalid(v_id));
         return false;
     }
 
     UIXmlLoader *file = (UIXmlLoader*)UIResource::LoadRes(kFT_XML, skin_[v_id - 1][_T("value")] + _T("\\resid.xml"));
-    for (xmlnode node = file->GetRoot().first_child();
-         node != nullptr;
-         node = node.next_sibling()) {
+    for (UIXmlNode node = file->GetRoot().FirstChild();
+         node;
+         node = node.NextSibling()) {
         UIXmlNode tmp(node);
         CFG_BeginAttr;
         CFG_AddAttr(_T("type"));
@@ -243,8 +240,7 @@ UIAttr* UIConfig::FindDlg(LPCTSTR v_name) {
     UIAttr* ret = FindNextCFGItem(dlg_, 0, _T("name"), v_name);
     if (ret)
         return ret;
-    UIHandleError(kLL_Warning, kEC_IDInvalid,
-                  _T("Config dlg name %s invalid!"), v_name);
+    UISetError(kEL_Warning, kEC_IDInvalid, ErrorMsg_IDInvalid(v_name));
     return nullptr;
 }
 
@@ -260,8 +256,7 @@ UIAttr* UIConfig::FindResid(LPCTSTR v_name) {
     ret = FindNextCFGItem(sys_res_id_, 0, _T("name"), v_name);
     if (ret)
         return ret;
-    UIHandleError(kLL_Warning, kEC_IDInvalid,
-                  _T("Config resid name %s invalid!"), v_name);
+    UISetError(kEL_Warning, kEC_IDInvalid, ErrorMsg_IDInvalid(v_name));
     return nullptr;
 }
 
@@ -285,8 +280,7 @@ UIAttr* UIConfig::FindLang(LPCTSTR v_name) {
     UIAttr* ret = FindNextCFGItem(lang_str_, 0, _T("name"), v_name);
     if (ret)
         return ret;
-    UIHandleError(kLL_Warning, kEC_IDInvalid,
-                  _T("Config langstr name %s invalid!"), v_name);
+    UISetError(kEL_Warning, kEC_IDInvalid, ErrorMsg_IDInvalid(v_name));
     return nullptr;
 }
 
@@ -303,8 +297,7 @@ UIAttr* UIConfig::FindFont(LPCTSTR v_name) {
     UIAttr* ret = FindNextCFGItem(font_, 0, _T("name"), v_name);
     if (ret)
         return ret;
-    UIHandleError(kLL_Warning, kEC_IDInvalid,
-                  _T("Config font name %s invalid!"), v_name);
+    UISetError(kEL_Warning, kEC_IDInvalid, ErrorMsg_IDInvalid(v_name));
     return nullptr;
 }
 

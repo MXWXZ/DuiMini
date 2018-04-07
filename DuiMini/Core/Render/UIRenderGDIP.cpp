@@ -24,8 +24,8 @@ bool UIRenderGDIP::GlobalInit() {
     Gdiplus::GdiplusStartupInput gdiplusStartupInput;
     if (Gdiplus::GdiplusStartup(&gdiplus_token,
                                 &gdiplusStartupInput, NULL) != Gdiplus::Ok) {
-        UISetError(kLL_Warning, kEC_ThirdPartFail,
-                   _T("GDI+ GdiplusStartup fail!"));
+        UISetError(kEL_Warning, kEC_ThirdPartFail,
+                   ErrorMsg_ThirdPartFail(GdiplusStartup));
         return false;
     }
     return true;
@@ -96,8 +96,11 @@ bool UIRenderGDIP::Paint(UIWindow* v_wnd) {
     blendfunc.SourceConstantAlpha = v_wnd->GetDialog()->GetAlpha();
     
     if (!UpdateLayeredWindow(hwnd, hdc, &wndpos, &sizewindow, hdctmp,
-                             &ptsrc, 0, &blendfunc, ULW_ALPHA))
+                             &ptsrc, 0, &blendfunc, ULW_ALPHA)) {
+        UISetError(kEL_Error, kEC_WindowsFail,
+                   _T("UpdateLayeredWindow fail!"));
         return false;
+    }
 
     SelectObject(hdctmp, bmpobj);
     DeleteDC(hdctmp);
@@ -140,8 +143,8 @@ bool UIRenderGDIP::DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
                               v_srcrect.left, v_srcrect.top,
                               v_srcrect.width(), v_srcrect.height(),
                               Gdiplus::UnitPixel, &imgattr) != Gdiplus::Ok) {
-            UISetError(kLL_Warning, kEC_ThirdPartFail,
-                       _T("GDI+ DrawImage fail!"));
+            UISetError(kEL_Error, kEC_ThirdPartFail,
+                       ErrorMsg_ThirdPartFail(DrawImage));
             return false;
         }
     } else {
@@ -154,8 +157,8 @@ bool UIRenderGDIP::DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
         if (graph_->FillRectangle(&brush, v_destrect.left, v_destrect.top,
                                   v_destrect.width(), v_destrect.height())
             != Gdiplus::Ok) {
-            UISetError(kLL_Warning, kEC_ThirdPartFail,
-                       _T("GDI+ FillRectangle fail!"));
+            UISetError(kEL_Error, kEC_ThirdPartFail,
+                       ErrorMsg_ThirdPartFail(FillRectangle));
             return false;
         }
     }
@@ -210,24 +213,24 @@ bool UIRenderGDIP::DrawString(LPCTSTR v_text, const UIFont &v_font,
     
     if (graph_->DrawString(v_text, -1, &font, rect, &format,
                            &color) != Gdiplus::Ok) {
-        UISetError(kLL_Warning, kEC_ThirdPartFail,
-                   _T("GDI+ DrawString fail!"));
+        UISetError(kEL_Error, kEC_ThirdPartFail,
+                   ErrorMsg_ThirdPartFail(DrawString));
         return false;
     }
     return true;
 }
 
 bool UIRenderGDIP::DrawRect(const UIRect &v_rect, const UIColor &v_color,
-                            BORDER_SIZE v_border) {
+                            long v_border) {
     // make sure draw exactly in the rect so we need offset
-    BORDER_SIZE offset = v_border / 2;
+    long offset = v_border / 2;
     Gdiplus::Pen pen(Gdiplus::Color(v_color.a, v_color.r, v_color.g, v_color.b),
                      v_border);
     if (graph_->DrawRectangle(&pen, v_rect.left + offset, v_rect.top + offset,
                               v_rect.width() - 2 * offset, v_rect.height() - 2 * offset)
         != Gdiplus::Ok) {
-        UISetError(kLL_Warning, kEC_ThirdPartFail,
-                   _T("GDI+ DrawRectangle fail!"));
+        UISetError(kEL_Error, kEC_ThirdPartFail,
+                   ErrorMsg_ThirdPartFail(DrawRectangle));
         return false;
     }
     return true;
@@ -237,8 +240,8 @@ bool UIRenderGDIP::DrawFillRect(const UIRect & v_rect, const UIColor &v_color) {
     Gdiplus::SolidBrush brush(Gdiplus::Color(v_color.a, v_color.r, v_color.g, v_color.b));
     if (graph_->FillRectangle(&brush, v_rect.left, v_rect.top, v_rect.width(),
                               v_rect.height()) != Gdiplus::Ok) {
-        UISetError(kLL_Warning, kEC_ThirdPartFail,
-                   _T("GDI+ FillRectangle fail!"));
+        UISetError(kEL_Error, kEC_ThirdPartFail,
+                   ErrorMsg_ThirdPartFail(FillRectangle));
         return false;
     }
     return true;
@@ -252,9 +255,7 @@ UIRenderImageGDIP::UIRenderImageGDIP(LPCTSTR v_path) {
     Load(v_path);
 }
 
-UIRenderImageGDIP::~UIRenderImageGDIP() {
-    Release();
-}
+UIRenderImageGDIP::~UIRenderImageGDIP() {}
 
 bool UIRenderImageGDIP::Load(LPCTSTR v_path) {
     long buflen= UIResource::GetFileSize(v_path);
@@ -264,35 +265,29 @@ bool UIRenderImageGDIP::Load(LPCTSTR v_path) {
     GlobalUnlock(mem);
     IStream *stream = nullptr;
     if (CreateStreamOnHGlobal(buffer, TRUE, &stream) != S_OK) {
-        UISetError(kLL_Warning, kEC_ThirdPartFail,
-                   _T("GDI+ CreateStreamOnHGlobal fail!"));
+        UISetError(kEL_Error, kEC_ThirdPartFail,
+                   ErrorMsg_ThirdPartFail(CreateStreamOnHGlobal));
         return false;
     }
-    img_ = Gdiplus::Image::FromStream(stream);
+    img_.reset(Gdiplus::Image::FromStream(stream));
     stream->Release();
     // no need to call GlobalFree here
     return true;
 }
 
-bool UIRenderImageGDIP::Release() {
-    delete img_;
-    img_ = nullptr;
-    return true;
-}
-
 LPVOID UIRenderImageGDIP::GetInterface() const {
-    return (LPVOID)img_;
+    return (LPVOID)img_.get();
 }
 
 long UIRenderImageGDIP::GetWidth() const {
     if (!img_)
-        return 0;
+        return -1;
     return img_->GetWidth();
 }
 
 long UIRenderImageGDIP::GetHeight() const {
     if (!img_)
-        return 0;
+        return -1;
     return img_->GetHeight();
 }
 }    // namespace DuiMini

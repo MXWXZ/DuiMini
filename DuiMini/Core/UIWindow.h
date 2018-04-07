@@ -20,7 +20,7 @@ namespace DuiMini {
 #define ON_CONTROL_VAR(name, var)       tmp = (UIControl**)&var;       \
                                         *tmp = FindCtrlFromName(name); \
                                         if (!var)                      \
-                                            UIHandleError(kLL_Warning, kEC_IDInvalid, _T("Ctrl name \"%s\" invalid!"), name);
+                                            UIHandleError(kEL_Warning, kEC_IDInvalid, _T("Ctrl name \"%s\" invalid!"), name);
 #define ON_PARENT_VAR(parentclass)      parentclass::_CtrlBindVar();
 #define VAR_MAP_END                 }
 
@@ -69,7 +69,7 @@ public:
                       int v_width, int v_height, UINT v_flags);
     bool CenterWindow();
 
-    UIControl* FindCtrlFromName(LPCTSTR v_name);
+    UIControl* FindCtrlFromName(LPCTSTR v_name) const;
 
     /**
      * Update Window
@@ -148,8 +148,8 @@ protected:
     // window info
     UStr             dlgname_;                    // dlg name
     HWND             hwnd_ = nullptr;             // main window hwnd
-    UIDlgBuilder*    builder_ = nullptr;          // dlg builder
-    UIRender*        render_ = nullptr;           // render
+    shared_ptr<UIDlgBuilder> builder_ = nullptr;  // dlg builder
+    shared_ptr<UIRender> render_ = nullptr;       // render
     UIRect           rect_;                       // window rect
     static UINT      classname_cnt_;              // auto classname counter
     HWND             tooltip_hwnd_ = nullptr;     // tooltip

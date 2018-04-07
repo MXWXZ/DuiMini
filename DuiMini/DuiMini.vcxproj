@@ -80,9 +80,9 @@
     <ClInclude Include="thirdpart\zlib\zlib.h" />
     <ClInclude Include="UIDefine.h" />
     <ClInclude Include="Utils\UIException.h" />
-    <ClInclude Include="Utils\UIRecLog.h" />
     <ClInclude Include="Utils\UIUnzip.h" />
     <ClInclude Include="Utils\UIUtils.h" />
+    <ClInclude Include="Utils\UIXmlLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Control\Layout\UIContainer.cpp" />
@@ -138,9 +138,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release-Static|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Utils\UIException.cpp" />
-    <ClCompile Include="Utils\UIRecLog.cpp" />
     <ClCompile Include="Utils\UIUnzip.cpp" />
     <ClCompile Include="Utils\UIUtils.cpp" />
+    <ClCompile Include="Utils\UIXmlLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DuiMini.rc" />

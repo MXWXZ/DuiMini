@@ -78,9 +78,6 @@
     <ClInclude Include="Utils\UIUtils.h">
       <Filter>头文件\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Utils\UIRecLog.h">
-      <Filter>头文件\Utils</Filter>
-    </ClInclude>
     <ClInclude Include="thirdpart\zlib\zconf.h">
       <Filter>头文件\thirdpart\zlib</Filter>
     </ClInclude>
@@ -162,6 +159,9 @@
     <ClInclude Include="thirdpart\pugixml\pugixml.hpp">
       <Filter>源文件\thirdpart\pugixml</Filter>
     </ClInclude>
+    <ClInclude Include="Utils\UIXmlLoader.h">
+      <Filter>头文件\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StdAfx.cpp">
@@ -172,9 +172,6 @@
     </ClCompile>
     <ClCompile Include="Core\UISystem.cpp">
       <Filter>源文件\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils\UIRecLog.cpp">
-      <Filter>源文件\Utils</Filter>
     </ClCompile>
     <ClCompile Include="Utils\UIUtils.cpp">
       <Filter>源文件\Utils</Filter>
@@ -241,6 +238,9 @@
     </ClCompile>
     <ClCompile Include="thirdpart\pugixml\pugixml.cpp">
       <Filter>源文件\thirdpart\pugixml</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\UIXmlLoader.cpp">
+      <Filter>源文件\Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

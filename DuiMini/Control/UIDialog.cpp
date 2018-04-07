@@ -22,7 +22,7 @@ bool UIDialog::AllowWindowMove(BOOL v_movable/* = TRUE*/) {
 bool UIDialog::AllowWindowResize(BOOL v_resizable/* = TRUE*/) {
     STATE_FUNC_START(_T("resizable"), v_resizable) {
         if (!basewnd_)
-            return false;
+            return ret;
         LONG style = GetWindowLong(basewnd_->GetHWND(), GWL_STYLE);
         if (v_resizable == TRUE)
             style |= WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_THICKFRAME;

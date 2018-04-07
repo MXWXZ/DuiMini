@@ -17,10 +17,9 @@ UIImage::~UIImage() {
 }
 
 bool UIImage::SetFile(LPCTSTR v_path) {
-    bool res = false;
     UStr path = UIGetStrPath(v_path);
-    UIRenderImage* tmp = (UIRenderImage*)UIResource::LoadRes(kFT_PIC, path, &res);
-    if (res) {
+    UIRenderImage* tmp = (UIRenderImage*)UIResource::LoadRes(kFT_PIC, path);
+    if (tmp) {
         UIResource::ReleaseRes(img_);
         img_ = tmp;
         SetAttribute(_T("file"), path);

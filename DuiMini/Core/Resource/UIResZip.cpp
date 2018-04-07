@@ -34,11 +34,10 @@ long UIResZip::GetFileSize(LPCTSTR v_path) {
     if (!zipcache_)
         if (!OpenZip())
             return -1;
-    long ret = UIUnzip::LocateZipItem(zipcache_, v_path);
+    FILESIZE ret = UIUnzip::LocateZipItem(zipcache_, v_path);
     if (ret == -1)
-        UISetError(kLL_Error, kEC_FileFail,
-                   _T("File \"%s\" in \"%s\" can't access!"),
-                   v_path, fullpath_.GetData());
+        UISetError(kEL_Fatal, kEC_FileFail,
+                   ErrorMsg_FileFail(v_path));
     return ret;
 }
 
@@ -46,21 +45,17 @@ bool UIResZip::GetFile(LPCTSTR v_path, BYTE* v_buffer, long v_size) {
     if (!zipcache_)
         if (!OpenZip())
             return false;
-    if (!UIUnzip::UnZipData(zipcache_, v_buffer)) {
-        UISetError(kLL_Error, kEC_FileFail,
-                   _T("File \"%s\" in \"%s\" can't access!"),
-                   v_path, fullpath_.GetData());
-        return false;
-    }
+    if (!UIUnzip::UnZipData(zipcache_, v_buffer))
+        UISetError(kEL_Fatal, kEC_FileFail,
+                   ErrorMsg_FileFail(v_path));
     return true;
 }
 
 ZFile UIResZip::OpenZip() {
     zipcache_ = UIUnzip::OpenZip(fullpath_);
     if (!zipcache_)
-        UISetError(kLL_Error, kEC_FileFail,
-                   _T("File \"%s\" can't access!"),
-                   fullpath_.GetData());
+        UISetError(kEL_Fatal, kEC_FileFail,
+                   ErrorMsg_FileFail(fullpath_.GetData()));
     return zipcache_;
 }
 

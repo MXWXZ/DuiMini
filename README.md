@@ -3,7 +3,9 @@
 ### 这是一个基于MIT开源协议的轻量级DirectUI库。
 ### 抛弃繁杂的功能，只追求轻量与实用~
 <br><br>
-开发手册：<https://mxwxz.gitbooks.io/duimini-wiki/> （doc目录PDF版每个版本更新一次，网络版本与最新提交版本同步）
+开发手册：<https://github.com/MXWXZ/DuiMini-wiki> （doc目录PDF版每个版本更新一次，网络版本与最新提交版本同步）
+
+开发手册在线查看：<https://mxwxz.gitbooks.io/duimini-wiki/content/>
 
 稳定版本：<https://github.com/MXWXZ/DuiMini/releases>
 <br><br>

@@ -8,10 +8,6 @@
 #pragma once
 
 namespace DuiMini {
-/**
- * system class
- * manage all about the ui system
- */
 class DUIMINI_API UISystem {
 public:
     /**

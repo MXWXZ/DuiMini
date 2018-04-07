@@ -37,7 +37,7 @@ bool UIUnzip::CloseZip(ZFile v_fp) {
     return true;
 }
 
-long UIUnzip::LocateZipItem(ZFile v_fp, LPCTSTR v_relativepath) {
+FILESIZE UIUnzip::LocateZipItem(ZFile v_fp, LPCTSTR v_relativepath) {
     UStr formatpath = v_relativepath;
     formatpath.Replace(_T("\\"), _T("/"));
     LPCTSTR tmppath = formatpath.GetData();
@@ -48,7 +48,7 @@ long UIUnzip::LocateZipItem(ZFile v_fp, LPCTSTR v_relativepath) {
 #else
     LPCSTR str = tmppath;
 #endif
-    long ret = -1;
+    FILESIZE ret = -1;
     if (unzLocateFile(v_fp, str, 0) == UNZ_OK) {
         unz_file_info64 zFileInfo;
         const int buf = 256;

@@ -40,46 +40,6 @@ UIRect UIUtils::GetWorkAreaSize() {
 
 ////////////////////////////////////////
 
-UIXmlNode::UIXmlNode() {}
-
-UIXmlNode::UIXmlNode(const xmlnode v_node) {
-    SetNode(v_node);
-}
-
-UIXmlNode::~UIXmlNode() {}
-
-void UIXmlNode::SetNode(const xmlnode v_node) {
-    node_ = v_node;
-}
-
-CUStr UIXmlNode::GetAttrValue(LPCTSTR v_name,
-                              LPCTSTR v_default/* = _T("")*/) const {
-    if (!node_)
-        return CUStr();
-    xmlattr attr = node_.attribute(v_name);
-    if (!attr)
-        return CUStr(v_default);
-    else
-        return CUStr(attr.value());
-}
-
-CUStr UIXmlNode::GetAttrValue(LPCTSTR v_name,
-                              const int v_default) const {
-    return GetAttrValue(v_name, UStr(v_default));
-}
-
-bool UIXmlNode::CmpAttrValue(LPCTSTR v_name, LPCTSTR value) const {
-    return GetAttrValue(v_name) == value;
-}
-
-bool UIXmlNode::CmpNodeName(LPCTSTR v_name) const {
-    if (!node_)
-        return false;
-    return CmpStr(node_.name(), v_name);
-}
-
-////////////////////////////////////////
-
 UIPtrArray::UIPtrArray() {}
 
 UIPtrArray::UIPtrArray(UINT v_size) {

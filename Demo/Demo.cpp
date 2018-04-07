@@ -20,8 +20,6 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
     UIResource::SetResType(...);
     UIResource::SetResInfo(...);
     */
-    UIRecLog::SetLogLevel(kRL_Release);     // [option]Set log level
-    // UIRecLog::SetLogFilePath(...);       // [option]Set logfile path
     UIRender::GlobalInit();         // Init render
     UIConfig::LoadConfig();         // Load main config
 

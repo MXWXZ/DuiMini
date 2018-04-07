@@ -6,14 +6,18 @@
  * @Date:2018/03/20
  */
 #pragma once
+#include "thirdpart/zlib/unzip.h"        // zlib 1.2.11
+#include "thirdpart/zlib/iowin32.h"
+#ifdef _WIN64
+#pragma comment(lib, "thirdpart/zlib/zlib_x64.lib")
+#else
+#pragma comment(lib, "thirdpart/zlib/zlib_x86.lib")
+#endif
 
 namespace DuiMini {
 
 typedef unzFile ZFile;
 
-/**
- * unzip interface class
- */
 class DUIMINI_API UIUnzip {
 public:
     /**
@@ -38,7 +42,7 @@ public:
      * WARNING: Please better to use '/' to divide in relative path,
      * this function will AUTOMATICALLY turn '\\' to '/' (zlib ONLY allows '/')
      */
-    static long LocateZipItem(ZFile v_fp, LPCTSTR v_relativepath);
+    static FILESIZE LocateZipItem(ZFile v_fp, LPCTSTR v_relativepath);
 
     /**
      * Unzip file

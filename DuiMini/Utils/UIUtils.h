@@ -174,25 +174,6 @@ private:
 
 ////////////////////////////////////////
 
-class DUIMINI_API UIXmlNode {
-public:
-    UIXmlNode();
-    explicit UIXmlNode(const xmlnode v_node);
-    ~UIXmlNode();
-
-public:
-    void SetNode(const xmlnode v_node);
-    CUStr GetAttrValue(LPCTSTR v_name, LPCTSTR v_default = _T("")) const;
-    CUStr GetAttrValue(LPCTSTR v_name, const int v_default) const;
-    bool CmpAttrValue(LPCTSTR v_name, LPCTSTR v_value) const;
-    bool CmpNodeName(LPCTSTR v_name) const;
-
-private:
-    xmlnode node_;
-};
-
-////////////////////////////////////////
-
 class DUIMINI_API UIPtrArray {
 public:
     UIPtrArray();

@@ -39,44 +39,7 @@
 #define CTRLNAME_BUTTON         _T("btn")
 #define CTRLNAME_TEXT           _T("txt")
 
-// third-part
-// pugixml
-typedef pugi::xml_document xmldoc;
-typedef pugi::xml_node xmlnode;
-typedef pugi::xml_attribute xmlattr;
-
-// make type beautiful
-typedef long long LL;
-typedef unsigned short ALPHA;
-typedef unsigned short SKINID;
-typedef unsigned short LANGID;
-typedef unsigned short FONTID;
-typedef unsigned short COLOR;
-typedef unsigned short BORDER_SIZE;
-#define STAY -1
-
-// make function beautiful
-#define CmpStr(x, y) _tcscmp(x, y) == 0
-#define GetStr2WStrLen(str) MultiByteToWideChar(CP_UTF8, 0, str, -1, NULL, 0)
-#define Str2WStr(str, wstr, len) MultiByteToWideChar(CP_UTF8, 0, str, -1, wstr, len)
-#define GetWStr2Strlen(wstr) WideCharToMultiByte(CP_ACP, 0, wstr, -1, NULL, 0, NULL, NULL)
-#define WStr2Str(wstr,str,len) WideCharToMultiByte(CP_ACP, 0, wstr, -1, str, len, NULL, NULL)
-
-// enum define
-// font string trimming
-enum StringTrimming {
-    kST_None = 0,
-    kST_Ch = 1,
-    kST_Word = 2,
-    kST_DotCh = 3,
-    kST_DotWord = 4,
-    kST_DotMid = 5
-};
-// image mode
-enum ImageMode {
-    kIM_Extrude,
-    kIM_Tile
-};
+// message
 // TODO: Add new Msg
 enum WindowMessage {
     //      Msg                 WPARAM              LPARAM
@@ -106,6 +69,23 @@ enum WindowMessage {
     kWM_End_           // USELESS
 };
 
+// make type beautiful
+typedef long long LL;
+typedef unsigned short ALPHA;
+typedef unsigned short SKINID;
+typedef unsigned short LANGID;
+typedef unsigned short FONTID;
+typedef unsigned short COLOR;
+typedef long FILESIZE;
+#define STAY -1
+
+// make function beautiful
+#define CmpStr(x, y) _tcscmp(x, y) == 0
+#define GetStr2WStrLen(str) MultiByteToWideChar(CP_UTF8, 0, str, -1, NULL, 0)
+#define Str2WStr(str, wstr, len) MultiByteToWideChar(CP_UTF8, 0, str, -1, wstr, len)
+#define GetWStr2Strlen(wstr) WideCharToMultiByte(CP_ACP, 0, wstr, -1, NULL, 0, NULL, NULL)
+#define WStr2Str(wstr,str,len) WideCharToMultiByte(CP_ACP, 0, wstr, -1, str, len, NULL, NULL)
+
 // string/wstring
 #ifdef _UNICODE
 typedef std::wstring tstring;
@@ -114,6 +94,9 @@ typedef std::wstring tstring;
 typedef std::string tstring;
 #define tostring std::to_string
 #endif  // _UNICODE
+
+#define shared_ptr std::shared_ptr
+#define make_shared std::make_shared
 
 #pragma warning(disable: 4244)            // warnings when converting
 #pragma warning(disable: 4251)            // warnings when exporting string

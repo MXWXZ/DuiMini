@@ -25,36 +25,30 @@ CUStr UIResFile::GetResInfo() const {
     return folderpath_;
 }
 
-long UIResFile::GetFileSize(LPCTSTR v_path) {
+FILESIZE UIResFile::GetFileSize(LPCTSTR v_path) {
     UStr fullpath;
     fullpath.Format(_T("%s\\%s"), folderpath_.GetData(), v_path);
 
     FILE* fp;
-    fp = _tfopen(fullpath, _T("rb"));
-    if (!fp) {
-        UISetError(kLL_Error, kEC_FileFail,
-                   _T("File \"%s\" can't access!"),
-                   fullpath.GetData());
-        return -1;
-    }
+    _tfopen_s(&fp, fullpath, _T("rb"));
+    if (!fp)
+        UISetError(kEL_Fatal, kEC_FileFail,
+                   ErrorMsg_FileFail(fullpath.GetData()));
     fseek(fp, 0, SEEK_END);
-    long size = ftell(fp);
+    FILESIZE size = ftell(fp);
     fclose(fp);
     return size;
 }
 
-bool UIResFile::GetFile(LPCTSTR v_path, BYTE* v_buffer, long v_size) {
+bool UIResFile::GetFile(LPCTSTR v_path, BYTE* v_buffer, FILESIZE v_size) {
     UStr fullpath;
     fullpath.Format(_T("%s\\%s"), folderpath_.GetData(), v_path);
 
     FILE* fp;
-    fp = _tfopen(fullpath, _T("rb"));
-    if (!fp) {
-        UISetError(kLL_Error, kEC_FileFail,
-                   _T("File \"%s\" can't access!"),
-                   fullpath.GetData());
-        return false;
-    }
+    _tfopen_s(&fp, fullpath, _T("rb"));
+    if (!fp)
+        UISetError(kEL_Fatal, kEC_FileFail,
+                   ErrorMsg_FileFail(fullpath.GetData()));
     fread(v_buffer, 1, v_size, fp);
     fclose(fp);
     return true;

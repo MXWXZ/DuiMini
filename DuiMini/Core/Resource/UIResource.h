@@ -21,33 +21,6 @@ enum ResType {
 };
 
 /**
-* Load xml file
-* automatic free space
-*/
-class DUIMINI_API UIXmlLoader {
-public:
-    UIXmlLoader();
-    explicit UIXmlLoader(LPCTSTR v_path);
-    ~UIXmlLoader();
-
-    /**
-    * Load xml file
-    * @param    LPCTSTR path:xml path(relative to resource)
-    */
-    void Loadxml(LPCTSTR v_path);
-
-    /**
-    * Get root node
-    * @return   xmlroot object for rootnode
-    */
-    xmlnode GetRoot() const;
-
-private:
-    xmldoc doc_;
-    UStr relativepath_;
-};
-
-/**
 * File type
 * kFT_XML:.xml file
 * kFT_PIC:picture file
@@ -75,9 +48,9 @@ struct DUIMINI_API LoadedRes {
     UINT using_ = 0;
 };
 
-typedef std::vector<LoadedRes*> UIResItem;
-typedef std::vector<LoadedRes*>::iterator UIResItemIt;
-typedef std::vector<LoadedRes*>::const_iterator CUIResItemIt;
+typedef std::vector<shared_ptr<LoadedRes>> UIResItem;
+typedef UIResItem::iterator UIResItemIt;
+typedef UIResItem::const_iterator CUIResItemIt;
 
 /**
  * resource interface
@@ -85,14 +58,10 @@ typedef std::vector<LoadedRes*>::const_iterator CUIResItemIt;
  */
 class DUIMINI_API UIResource {
 public:
-    ~UIResource();
-
-public:
     /**
      * Load resource only ONCE
      * @param    FileType v_type: res type
      * @param    LPCTSTR v_path: res path
-     * @param    bool* v_result: whether load success
      * @return   loaded buffer
      * @ Res will be load if there is no other copy exist,otherwise will return
      * existed copy.
@@ -100,7 +69,7 @@ public:
      * space if you want.DO NOT use delete by yourself(may affect other copies)
      * @ Be careful what you do to buffer will affect other copies!
      */
-    static LPVOID LoadRes(FileType v_type, LPCTSTR v_path, bool* v_result = nullptr);
+    static LPVOID LoadRes(FileType v_type, LPCTSTR v_path);
 
     // Release
     static void ReleaseResByName(LPCTSTR v_path);
@@ -113,9 +82,9 @@ public:
     /**
      * Get resource file size
      * @param    LPCTSTR v_path: relative path
-     * @return   the file size
+     * @return   the file size,-1 for failed
      */
-    static long GetFileSize(LPCTSTR v_path);
+    static FILESIZE GetFileSize(LPCTSTR v_path);
 
     /**
      * Get resource file
@@ -123,11 +92,11 @@ public:
      * @param    BYTE* v_buffer: buffer(please call 'GetFileSize' to get the
      *           size and apply for memory space.)
      * @param    long v_size: buffer size
-     * @return   buf itself
+     * @return   true for success
      * WARNING: this function WILL NOT check if there is enough space
      * in the buffer.
      */
-    static BYTE* GetFile(LPCTSTR v_path, BYTE* v_buffer, long v_size);
+    static bool GetFile(LPCTSTR v_path, BYTE* v_buffer, long v_size);
 
     /**
      * Set resource info
@@ -148,9 +117,9 @@ public:
     static CUStr GetResInfo();
 
 private:
-    static IUIRes  *resclass_;  // resource class
-    static ResType restype_;    // resource type
-    static UIResItem res_item_; // loaded res
+    static shared_ptr<IUIRes> resclass_;   // resource class
+    static ResType restype_;                // resource type
+    static UIResItem res_item_;             // loaded res
 };
 
 }   // namespace DuiMini

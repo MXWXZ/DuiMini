@@ -10,12 +10,8 @@
 #pragma once
 
 namespace DuiMini {
-/**
- * Resource kind interface
- */
 class DUIMINI_API IUIRes {
 public:
-
     /**
     * Set resource information
     * Called when setting the resource path or id or sth.
@@ -34,16 +30,16 @@ public:
     * @param    LPCTSTR v_path: relative path
     * @return   -1 when file can't access,otherwise is the file size
     */
-    virtual long GetFileSize(LPCTSTR v_path) = 0;
+    virtual FILESIZE GetFileSize(LPCTSTR v_path) = 0;
 
     /**
     * Get resource file
     * @param    LPCTSTR v_path: relative path
     * @param    BYTE* v_buf: buffer
-    * @param    long v_size: buffer size
+    * @param    FILESIZE v_size: buffer size
     * @return   true if succeed
     */
-    virtual bool GetFile(LPCTSTR v_path, BYTE* v_buf, long v_size) = 0;
+    virtual bool GetFile(LPCTSTR v_path, BYTE* v_buf, FILESIZE v_size) = 0;
 };
 
 /**
@@ -67,6 +63,20 @@ class DUIMINI_API UIRenderImage;
 struct DUIMINI_API UIFont;
 struct DUIMINI_API UIStringFormat;
 class DUIMINI_API UIRect;
+// font string trimming
+enum StringTrimming {
+    kST_None = 0,
+    kST_Ch = 1,
+    kST_Word = 2,
+    kST_DotCh = 3,
+    kST_DotWord = 4,
+    kST_DotMid = 5
+};
+// image mode
+enum ImageMode {
+    kIM_Extrude,
+    kIM_Tile
+};
 class DUIMINI_API IUIRender {
 public:
     virtual bool GlobalInit() = 0;
@@ -81,14 +91,14 @@ public:
                            ImageMode v_mode = kIM_Extrude) = 0;
     virtual bool DrawString(LPCTSTR v_text, const UIFont &v_font,
                             const UIStringFormat &v_format, const UIRect &v_rect) = 0;
-    virtual bool DrawRect(const UIRect &v_rect, const UIColor &v_color, BORDER_SIZE v_border) = 0;
+    virtual bool DrawRect(const UIRect &v_rect, const UIColor &v_color,
+                          long v_border) = 0;
     virtual bool DrawFillRect(const UIRect &v_rect, const UIColor &v_color) = 0;
 };
 
 class DUIMINI_API IUIRenderImage {
 public:
     virtual bool Load(LPCTSTR v_path) = 0;
-    virtual bool Release() = 0;
     virtual LPVOID GetInterface() const = 0;
     virtual long GetWidth() const = 0;
     virtual long GetHeight() const = 0;

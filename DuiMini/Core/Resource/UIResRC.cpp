@@ -18,7 +18,7 @@ UIResRC::UIResRC(LPCTSTR v_info) {
 UIResRC::~UIResRC() {}
 
 void UIResRC::SetResInfo(LPCTSTR v_info) {
-    resid_ = _ttoi(v_info);
+    resid_ = UStr(v_info).Str2LL();
     UIResZip::SetResInfo(_T(""));
 }
 
@@ -38,13 +38,10 @@ ZFile UIResRC::OpenZip() {
 
     FILE* fp;
     _tfopen_s(&fp, tmpfile, _T("wb"));
-    if (!fp) {
-        UISetError(kLL_Error, kEC_FileFail,
-                   _T("Temp v_path permission denied!"));
-        return nullptr;
-    }
-    fwrite(file, (UINT)SizeofResource(UISystem::GetInstance(),
-                                      srcsys), 1, fp);
+    if (!fp)
+        UISetError(kEL_Fatal, kEC_FileFail,
+                   ErrorMsg_FileFail(tmpfile));
+    fwrite(file, SizeofResource(UISystem::GetInstance(), srcsys), 1, fp);
     fclose(fp);
     UnlockResource(globalsys);
     FreeResource(globalsys);

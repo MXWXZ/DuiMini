@@ -19,21 +19,17 @@ public:
     ~UIRenderImage();
 
     bool Load(LPCTSTR v_path);
-    bool Release();
     void* GetInterface() const;
     long GetWidth() const;
     long GetHeight() const;
 
 private:
-    IUIRenderImage* renderimg_ = nullptr;
+    shared_ptr<IUIRenderImage> renderimg_ = nullptr;
 };
 
-#define RENDER_CALL_START   if (!render_)           \
-                                return false;       \
-                            bool ret = 
-#define RENDER_CALL_END     if (!ret)               \
-                                UIHandleError();    \
-                            return ret;
+#define RENDER_CALL(x) if (!render_)             \
+                           return false;         \
+                       return x
 
 class DUIMINI_API UIRender {
 public:
@@ -62,13 +58,13 @@ public:
     bool DrawString(LPCTSTR v_text, const UIFont &v_font,
                     const UIStringFormat &v_format, const UIRect &v_rect);
     bool DrawRect(const UIRect &v_rect, const UIColor &v_color,
-                  BORDER_SIZE v_border);
+                  long v_border);
     bool DrawFillRect(const UIRect &v_rect, const UIColor &v_color);
 
 private:
-    static IUIRender* SelectRender(IUIRender** v_pointer);
+    static IUIRender* SelectRender(shared_ptr<IUIRender>* v_pointer);
 
-    IUIRender* render_ = nullptr;
+    shared_ptr<IUIRender> render_ = nullptr;
     static RenderMode render_mode_;
 };
 }    // namespace DuiMini

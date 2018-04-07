@@ -9,7 +9,6 @@
 
 // system header files
 #include <cstdio>
-#include <cassert>
 #include <clocale>
 #include <ctime>
 #include <algorithm>
@@ -20,7 +19,8 @@
 #include <map>
 #include <vector>
 #include <utility>
-#include <CommCtrl.h> 
+#include <memory>
+#include "CommCtrl.h"
 #pragma comment(lib,"comctl32.lib")  
 
 #if defined _M_IX86
@@ -33,24 +33,13 @@
 #pragma comment(linker, "/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #endif
 
-// third-part
-#include "thirdpart/pugixml/pugixml.hpp"      // pugixml 1.8.1
-
-#include "thirdpart/zlib/unzip.h"        // zlib 1.2.11
-#include "thirdpart/zlib/iowin32.h"
-#ifdef _WIN64
-#pragma comment(lib, "thirdpart/zlib/zlib_x64.lib")
-#else
-#pragma comment(lib, "thirdpart/zlib/zlib_x86.lib")
-#endif
-
 // DuiMini
 #include "UIDefine.h"
 
 #include "Utils/UIUtils.h"
-#include "Utils/UIRecLog.h"
 #include "Utils/UIException.h"
 #include "Utils/UIUnzip.h"
+#include "Utils/UIXmlLoader.h"
 
 #include "Core/UIInterface.h"
 #include "Core/Render/UIRender.h"

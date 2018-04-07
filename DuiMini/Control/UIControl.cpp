@@ -34,7 +34,7 @@ CUStr UIControl::GetAttribute(LPCTSTR v_name) const {
 }
 
 void UIControl::Paint(bool v_background) {
-    BORDER_SIZE size = GetBorderSize();
+    long size = GetBorderSize();
     if (size != 0)
         basewnd_->GetRender()->DrawRect(rect_, GetBorderColor(), size);
 }
@@ -124,8 +124,6 @@ bool UIControl::Event(const UIEvent& v_event) {
     case kWM_RButtonDBClick:
         if (flg)
             (ret = OnRButtonDBClick(v_event)), flg = false;
-        UIRecLog::RecordLog(kLL_Info, _T("Message hit! Control name:\"%s\",Message:%d"),
-                            GetAttribute(_T("name")).GetData(), v_event.GetMsg());
         break;
 
     case kWM_Disable:
@@ -329,12 +327,12 @@ ALPHA UIControl::GetAlpha() const {
     return (ALPHA)GetAttribute(_T("alpha")).Str2LL();
 }
 
-void UIControl::SetBorderSize(BORDER_SIZE v_border) {
+void UIControl::SetBorderSize(long v_border) {
     SetAttribute(_T("bordersize"), UStr(v_border));
 }
 
-BORDER_SIZE UIControl::GetBorderSize() const {
-    return (BORDER_SIZE)GetAttribute(_T("bordersize")).Str2LL();
+long UIControl::GetBorderSize() const {
+    return (long)GetAttribute(_T("bordersize")).Str2LL();
 }
 
 void UIControl::SetBorderColor(LPCTSTR v_color) {

@@ -15,12 +15,7 @@ public:
     ~UIDlgBuilder();
 
 public:
-    /**
-     * [ER]Init from xmlnode and release the current one
-     * @param    xmlnode v_root:xml root
-     * @return   first ctrl
-     */
-    UIControl* Init(xmlnode v_root, UIWindow* v_wnd);
+    UIControl* Init(UIXmlNode v_root, UIWindow* v_wnd);
 
     void Release();
 
@@ -46,9 +41,9 @@ public:
     UIDialog* GetCtrlRoot();
 
 private:
-    UIControl* Parse(UIWindow* v_wnd, xmlnode v_root,
-                      UIControl* v_parent = nullptr);
-    UIDialog* ctrl_root_ = nullptr;
-    xmlnode xml_root_;
+    UIControl* Parse(UIWindow* v_wnd, UIXmlNode v_root,
+                     UIControl* v_parent = nullptr);
+    shared_ptr<UIDialog> ctrl_root_ = nullptr;
+    UIXmlNode xml_root_;
 };
 }    // namespace DuiMini

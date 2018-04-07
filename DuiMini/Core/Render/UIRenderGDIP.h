@@ -26,7 +26,7 @@ public:
     bool DrawString(LPCTSTR v_text, const UIFont &v_font,
                     const UIStringFormat &v_format, const UIRect &v_rect) override;
     bool DrawRect(const UIRect &v_rect, const UIColor &v_color,
-                  BORDER_SIZE v_border) override;
+                  long v_border) override;
     bool DrawFillRect(const UIRect &v_rect, const UIColor &v_color) override;
 
 private:
@@ -44,12 +44,11 @@ public:
     ~UIRenderImageGDIP();
 
     bool Load(LPCTSTR v_path) override;
-    bool Release() override;
     LPVOID GetInterface() const override;
     long GetWidth() const override;
     long GetHeight() const override;
 
 private:
-    Gdiplus::Image* img_ = nullptr;
+    shared_ptr<Gdiplus::Image> img_ = nullptr;
 };
 }    // namespace DuiMini

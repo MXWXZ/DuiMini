@@ -12,7 +12,7 @@ namespace DuiMini {
 UINT UIWindow::classname_cnt_ = 0;
 
 UIWindow::UIWindow() {
-    render_ = new UIRender;
+    render_ = make_shared<UIRender>();
 }
 
 UIWindow::UIWindow(LPCTSTR v_name)
@@ -21,10 +21,6 @@ UIWindow::UIWindow(LPCTSTR v_name)
 }
 
 UIWindow::~UIWindow() {
-    delete builder_;
-    builder_ = nullptr;
-    delete render_;
-    render_ = nullptr;
     if (tooltip_hwnd_) {
         DestroyWindow(tooltip_hwnd_);
         tooltip_hwnd_ = NULL;
@@ -49,17 +45,16 @@ CUStr UIWindow::GetDlgName() const {
 }
 
 bool UIWindow::SetDlgBuilder(LPCTSTR v_dlgname) {
-    if (builder_)
-        return false;
-    builder_ = new UIDlgBuilder;
+    builder_ = make_shared<UIDlgBuilder>();
     UStr dlg_file = UIConfig::FindDlgFile(v_dlgname);
-    if (dlg_file.IsEmpty())
+    if (dlg_file.IsEmpty()) {
+        UISetError(kEL_Warning, kEC_IDInvalid, ErrorMsg_IDInvalid(v_dlgname));
         return false;
+    }
     UIXmlLoader *config = (UIXmlLoader*)UIResource::LoadRes(kFT_XML, dlg_file);
-    builder_->Init(config->GetRoot(), this);
+    UIControl* ret = builder_->Init(config->GetRoot(), this);
     UIResource::ReleaseRes(config);
-    UIHandleError();
-    return true;
+    return ret;
 }
 
 bool UIWindow::OnCloseButton(const UIEvent& v_event) {
@@ -107,7 +102,7 @@ void UIWindow::OnRestore() {
 void UIWindow::OnMinimize() {}
 
 UIDlgBuilder* UIWindow::GetDlgBuilder() const {
-    return builder_;
+    return builder_.get();
 }
 
 LRESULT UIWindow::SendWindowMessage(UINT v_msg, WPARAM v_wparam,
@@ -124,7 +119,7 @@ UIControl* UIWindow::CreateControl(UIControl* v_ctrl,
 
 bool UIWindow::FinishCreateControl(UIControl* v_ctrl) {
     if (!builder_)
-        return false;
+        return nullptr;
     return builder_->FinishCreateControl(v_ctrl);
 }
 
@@ -132,8 +127,7 @@ bool UIWindow::BindMsgHandler(LPCTSTR v_name, WindowMessage v_msg,
                               MsgHandleFun v_func) const {
     UIControl* ctrl = GetDialog()->FindCtrlFromName(v_name);
     if (!ctrl) {
-        UIHandleError(kLL_Warning, kEC_IDInvalid,
-                      _T("Ctrl name \"%s\" invalid!"), v_name);
+        UISetError(kEL_Warning, kEC_IDInvalid, ErrorMsg_IDInvalid(v_name));
         return false;
     }
     ctrl->SetMsgHandler(v_msg, v_func);
@@ -143,8 +137,7 @@ bool UIWindow::BindMsgHandler(LPCTSTR v_name, WindowMessage v_msg,
 bool UIWindow::UnbindMsgHandler(LPCTSTR v_name, WindowMessage v_msg) const {
     UIControl* ctrl = GetDialog()->FindCtrlFromName(v_name);
     if (!ctrl) {
-        UIHandleError(kLL_Warning, kEC_IDInvalid,
-                      _T("Ctrl name \"%s\" invalid!"), v_name);
+        UISetError(kEL_Warning, kEC_IDInvalid, ErrorMsg_IDInvalid(v_name));
         return false;
     }
     ctrl->SetMsgHandler(v_msg, nullptr);
@@ -176,10 +169,10 @@ void UIWindow::ChangeLang(LANGID v_id) {
 }
 
 UIRender* UIWindow::GetRender() const {
-    return render_;
+    return render_.get();
 }
 
-UIControl* UIWindow::FindCtrlFromName(LPCTSTR v_name) {
+UIControl* UIWindow::FindCtrlFromName(LPCTSTR v_name) const {
     if (!builder_)
         return nullptr;
     return GetDialog()->FindCtrlFromName(v_name);
@@ -503,8 +496,7 @@ bool UIWindow::SetIcon(UINT v_res) {
                                       ::GetSystemMetrics(SM_CYSMICON),
                                       LR_DEFAULTCOLOR);
     if (!icon || !iconsm) {
-        UIHandleError(kLL_Warning, kEC_IDInvalid, _T("Icon id \"%u\" invalid!"),
-                      v_res);
+        UISetError(kEL_Warning, kEC_IDInvalid, ErrorMsg_IDInvalid(UStr(v_res)));
         return false;
     }
     SendWindowMessage(WM_SETICON, ICON_BIG, (LPARAM)icon);
@@ -579,8 +571,8 @@ HWND UIWindow::Create(LPCTSTR v_classname) {
     wce.hIconSm = NULL;
     ATOM nAtom = RegisterClassEx(&wce);
     if (!nAtom) {
-        UIHandleError(kLL_Warning, kEC_RegWndFailed,
-                      _T("Register window class failed"));
+        UISetError(kEL_Warning, kEC_WindowsFail,
+                   _T("Register window class failed"));
         return nullptr;
     }
 

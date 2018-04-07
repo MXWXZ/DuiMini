@@ -50,8 +50,8 @@ public:
 
     void SetAlpha(ALPHA v_alpha);
     ALPHA GetAlpha() const;
-    void SetBorderSize(BORDER_SIZE v_border);
-    BORDER_SIZE GetBorderSize() const;
+    void SetBorderSize(long v_border);
+    long GetBorderSize() const;
     void SetBorderColor(LPCTSTR v_color);
     UIColor GetBorderColor() const;
     void SetToolTip(LPCTSTR v_str);
@@ -163,10 +163,10 @@ protected:
     CUStr DivideStr(LPCTSTR v_str, unsigned short v_cnt) const;
 
 protected:
-    UIControl* parent_ = nullptr;        // control parent
-    UIWindow* basewnd_ = nullptr;        // attatch the window
-    UIAttr attr_;                        // attribute
-    UIRect rect_;                        // control rect
+    UIControl* parent_ = nullptr;               // control parent
+    UIWindow* basewnd_ = nullptr;               // attatch the window
+    UIAttr attr_;                               // attribute
+    UIRect rect_;                               // control rect
     MsgHandleFun msgmap_[kWM_End_] = { 0 };     // message map
 };
 }   // namespace DuiMini

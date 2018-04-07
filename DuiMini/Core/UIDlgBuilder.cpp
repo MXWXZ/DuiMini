@@ -15,15 +15,12 @@ UIDlgBuilder::~UIDlgBuilder() {
     Release();
 }
 
-UIControl* UIDlgBuilder::Init(xmlnode v_root, UIWindow* v_wnd) {
+UIControl* UIDlgBuilder::Init(UIXmlNode v_root, UIWindow* v_wnd) {
     xml_root_ = v_root;
     return Parse(v_wnd, xml_root_);
 }
 
-void UIDlgBuilder::Release() {
-    delete ctrl_root_;
-    ctrl_root_ = nullptr;
-}
+void UIDlgBuilder::Release() {}
 
 UIControl* UIDlgBuilder::CreateControl(UIControl* v_ctrl,
                                        UIWindow* v_wnd,
@@ -53,45 +50,44 @@ bool UIDlgBuilder::FinishCreateControl(UIControl * v_ctrl) {
 }
 
 UIDialog* UIDlgBuilder::GetCtrlRoot() {
-    return ctrl_root_;
+    return ctrl_root_.get();
 }
 
-UIControl* UIDlgBuilder::Parse(UIWindow* v_wnd, xmlnode v_root,
+UIControl* UIDlgBuilder::Parse(UIWindow* v_wnd, UIXmlNode v_root,
                                 UIControl* v_parent/* = nullptr*/) {
-    for (xmlnode node = v_root; node != nullptr;
-         node = node.next_sibling()) {
-        if (!v_parent && !CmpStr(node.name(), CTRLNAME_DIALOG)) {
-            UISetError(kLL_Warning, kEC_CtrlFormatInvalid,
+    for (UIXmlNode node = v_root; node;node = node.NextSibling()) {
+        if (!v_parent && node.GetName() != CTRLNAME_DIALOG) {
+            UISetError(kEL_Warning, kEC_FormatInvalid,
                        _T("Dialog control must be the root."));
             return nullptr;
         }
-        LPCTSTR ctrl_name = node.name();
-        size_t ctrl_namelen = _tcslen(ctrl_name);
+        UStr ctrl_name = node.GetName();
+        size_t ctrl_namelen = ctrl_name.GetLength();
         UIControl* new_ctrl = nullptr;
         // TODO: Add new Ctrl
         switch (ctrl_namelen) {
         case 3:
         {
-            if (CmpStr(ctrl_name, CTRLNAME_DIALOG)) {
+            if (ctrl_name == CTRLNAME_DIALOG) {
                 if (v_parent) {
-                    UISetError(kLL_Warning, kEC_CtrlFormatInvalid,
+                    UISetError(kEL_Warning, kEC_FormatInvalid,
                                _T("Dialog control do not allow nesting."));
                     return nullptr;
                 }
                 new_ctrl = new UIDialog;
-                ctrl_root_ = (UIDialog*)new_ctrl;
+                ctrl_root_.reset((UIDialog*)new_ctrl);
             }
-            if (CmpStr(ctrl_name, CTRLNAME_IMAGE))
+            if (ctrl_name == CTRLNAME_IMAGE)
                 new_ctrl = new UIImage;
-            if (CmpStr(ctrl_name, CTRLNAME_BUTTON))
+            if (ctrl_name == CTRLNAME_BUTTON)
                 new_ctrl = new UIButton;
-            if (CmpStr(ctrl_name, CTRLNAME_TEXT))
+            if (ctrl_name == CTRLNAME_TEXT)
                 new_ctrl = new UIText;
             break;
         }
         case 9:
         {
-            if (CmpStr(ctrl_name, CTRLNAME_CONTAINER))
+            if (ctrl_name == CTRLNAME_CONTAINER)
                 new_ctrl = new UIContainer;
 
             break;
@@ -99,23 +95,22 @@ UIControl* UIDlgBuilder::Parse(UIWindow* v_wnd, xmlnode v_root,
         }
         // Invalid ctrl name
         if (!new_ctrl) {
-            UISetError(kLL_Warning, kEC_CtrlKindInvalid,
+            UISetError(kEL_Warning, kEC_FormatInvalid,
                        _T("Control Kind \"%s\" invalid"), ctrl_name);
             return nullptr;
         }
 
         CreateControl(new_ctrl, v_wnd, v_parent);
         // Process attributes
-        for (xmlattr attr = node.first_attribute();
-             attr != nullptr;
-             attr = attr.next_attribute())
-            new_ctrl->SetAttribute(attr.name(), attr.value());
+        for (UIXmlAttr attr = node.FirstAttribute(); attr;
+             attr = attr.NextAttribute())
+            new_ctrl->SetAttribute(attr.GetName(), attr.GetValue());
         FinishCreateControl(new_ctrl);
 
         // Add children
-        if (node.first_child())
-            Parse(v_wnd, node.first_child(), new_ctrl);
+        if (node.FirstChild())
+            Parse(v_wnd, node.FirstChild(), new_ctrl);
     }
-    return ctrl_root_;
+    return ctrl_root_.get();
 }
 }    // namespace DuiMini

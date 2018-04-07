@@ -8,43 +8,55 @@
 #pragma once
 
 namespace DuiMini {
-#define UIHandleError UIException::HandleError
-#define UISetError UIException::SetError
-#define UIGetLastError UIException::GetLastError
-
-enum ErrorCode {
-    kEC_Success = 0,
-    kEC_IDInvalid,
-    kEC_CtrlKindInvalid,
-    kEC_CtrlFormatInvalid,
-    kEC_RegWndFailed,
-    kEC_ThirdPartFail,
-    kEC_FontLangMismatch,
-
-    kEC_FatalError_,      // greater than this will quit the program
-
-    kEC_FileFail,
-
-    kEC_LogFileFail,     // keep this value at the end
+/**
+ * kEL_Normal: no error occured
+ * kEL_Warning: something goes wrong, but program can still running
+ * kEL_Error: key function goes wrong, program may still running but will be
+ *            affect.
+ * kEL_Fatal: Fatal error, program will be exit automatically
+ */
+enum ErrorLevel {
+    kEL_Normal = 0,
+    kEL_Warning,
+    kEL_Error,
+    kEL_Fatal
 };
 
-typedef bool(*ExtraHandleFun)(LogLevel v_log_level,
-                              ErrorCode v_error_code,
+enum ErrorCode {
+    kEC_Success=0,
+    kEC_FileFail,
+    kEC_WindowsFail,
+    kEC_ThirdPartFail,
+    kEC_IDInvalid,
+    kEC_FormatInvalid,
+    // Add error code here
+
+    kEC_Codecnt     // do NOT modify this
+};
+
+#define ErrorMsg_FileFail(file) _T("File \"%s\" can't access!"), file
+#define ErrorMsg_IDInvalid(id) _T("ID %s is invalid!"), id
+#define ErrorMsg_ThirdPartFail(func) _T("Thirdpart function %s failed!"), #func
+
+#define UISetError(level, code, v_msg, ...) UIException::SetError(level,code,\
+                                                __FUNCTION__,__LINE__,\
+                                                v_msg, ##__VA_ARGS__)
+#define UIGetLastError UIException::GetLastError
+#define UIGetLastErrorMsg UIException::GetLastErrorMsg
+
+typedef bool(*ExtraHandleFun)(ErrorLevel v_level, ErrorCode v_code,
                               UStr v_error_msg);
 
 class DUIMINI_API UIException {
 public:
-    static void SetError(LogLevel v_log_level, ErrorCode v_error_code,
-                         LPCTSTR v_error_msg, ...);
-    static void HandleError();
-    static void HandleError(LogLevel v_log_level, ErrorCode v_error_code,
-                            LPCTSTR v_error_msg, ...);
+    static void SetError(ErrorLevel v_level, ErrorCode v_code,
+                         LPCSTR v_func, int v_line, LPCTSTR v_msg, ...);
 
     static ErrorCode GetLastError();
+    static CUStr GetLastErrorMsg();
     static void SetExtraHandleFun(ExtraHandleFun v_extra_fun);
 
 private:
-    static LogLevel log_level_;
     static ErrorCode error_code_;
     static UStr error_msg_;
     static ExtraHandleFun extra_fun_;
