@@ -9,18 +9,18 @@
 #include "Core/UIDlgBuilder.h"
 
 namespace DuiMini {
-#define MSG_MAP_BEGIN(theclass) virtual void _CtrlBindMsgHandler() { \
-                                    typedef theclass _thisclass;
-#define ON_CONTROL_MSG(name, msg, func)   BindMsgHandler(name, msg, (MsgHandleFun)(&_thisclass::func));
-#define ON_PARENT_MSG(parentclass)  parentclass::_CtrlBindMsgHandler();
-#define MSG_MAP_END             }
+#define MSG_MAP_BEGIN(theclass)         virtual void _CtrlBindMsgHandler() { \
+                                            typedef theclass _thisclass;
+#define ON_CONTROL_MSG(name, msg, func)     BindMsgHandler(name, msg, (MsgHandleFun)(&_thisclass::func));
+#define ON_PARENT_MSG(parentclass)          parentclass::_CtrlBindMsgHandler();
+#define MSG_MAP_END                     }
 
 #define VAR_MAP_BEGIN               virtual void _CtrlBindVar() {       \
                                         UIControl** tmp = nullptr;
 #define ON_CONTROL_VAR(name, var)       tmp = (UIControl**)&var;       \
                                         *tmp = FindCtrlFromName(name); \
                                         if (!var)                      \
-                                            UIHandleError(kEL_Warning, kEC_IDInvalid, _T("Ctrl name \"%s\" invalid!"), name);
+                                            UISetError(kEL_Warning, kEC_IDInvalid, ErrorMsg_IDInvalid(name));
 #define ON_PARENT_VAR(parentclass)      parentclass::_CtrlBindVar();
 #define VAR_MAP_END                 }
 

@@ -57,9 +57,10 @@ enum WindowMessage {
     kWM_RButtonClick,  //                    ...
     kWM_RButtonDBClick,//                    ...
 
+    kWM_IgnoreLimit_,  // after this will ignore attribute limit
+
     kWM_Disable,       //
     kWM_Invisible,     //
-    kWM_IgnoreLimit_,  // after this will ignore attribute limit
     kWM_Active,        //
     kWM_Visible,       //
 

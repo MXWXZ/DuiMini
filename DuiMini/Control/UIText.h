@@ -43,7 +43,7 @@ public:
         DEFAULT_ATTR(_T("vertical"), _T("0"))
         DEFAULT_ATTR(_T("align"), _T("lt"))
         PARENT_ATTR(UIControl)
-        DEFAULT_ATTR(_T("background"), _T("1"))
+        DEFAULT_ATTR(_T("transmouse"), _T("single"))
         ATTR_MAP_END
 
     LPVOID GetInterface(LPCTSTR v_name) override;

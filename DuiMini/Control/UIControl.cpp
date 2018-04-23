@@ -25,7 +25,7 @@ void UIControl::AfterSetAttribute() {
     UpdatePos();
     INIT_STATE(DisableCtrl);
     INIT_STATE(VisibleCtrl);
-    INIT_STATE(AttachBackground);
+    INIT_STATE(AttachBgPaint);
 }
 
 CUStr UIControl::GetAttribute(LPCTSTR v_name) const {
@@ -57,7 +57,10 @@ UIWindow* UIControl::GetBaseWindow() const {
 
 UIControl* UIControl::FindCtrlFromPT(POINT v_pt) {
     if (PtInRect(v_pt) && VisibleCtrl(STAY)) {
-        if (AttachBackground(STAY)) {
+        CtrlTransmouse mode = GetTransmouse();
+        if (mode == kCT_Single) {
+            return parent_;
+        } else if (mode == kCT_All) {
             if (!basewnd_)
                 return nullptr;
             return basewnd_->GetDialog();
@@ -314,8 +317,8 @@ bool UIControl::VisibleCtrl(BOOL v_visible) {
         STATE_FUNC_END
 }
 
-bool UIControl::AttachBackground(BOOL v_bg) {
-    STATE_FUNC_START(_T("background"), v_bg)
+bool UIControl::AttachBgPaint(BOOL v_bg) {
+    STATE_FUNC_START(_T("bgpaint"), v_bg)
         STATE_FUNC_END
 }
 
@@ -357,6 +360,20 @@ void UIControl::SetToolTipWidth(long v_width) {
 
 long UIControl::GetToolTipWidth() const {
     return (long)GetAttribute(_T("tooltipwidth")).Str2LL();
+}
+
+void UIControl::SetTransmouse(LPCTSTR v_str) {
+    SetAttribute(_T("transmouse"), v_str);
+}
+
+CtrlTransmouse UIControl::GetTransmouse() const {
+    UStr mode = GetAttribute(_T("transmouse"));
+    if (mode == _T("all"))
+        return kCT_All;
+    else if (mode == _T("single"))
+        return kCT_Single;
+    else
+        return kCT_None;
 }
 
 }   // namespace DuiMini

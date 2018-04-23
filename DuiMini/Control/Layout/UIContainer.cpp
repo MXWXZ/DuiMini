@@ -63,7 +63,7 @@ void UIContainer::Paint(bool v_background/* = false*/) {
     basewnd_->GetRender()->DrawFillRect(rect_, GetBGColor());
     for (UINT it = 0; it < item_.GetSize(); ++it) {
         UIControl* ctrl = (UIControl*)item_[it];
-        if (ctrl->AttachBackground(STAY) == v_background
+        if (ctrl->AttachBgPaint(STAY) == v_background
             && ctrl->VisibleCtrl(STAY))
             ctrl->Paint(v_background);
     }
@@ -123,9 +123,8 @@ bool UIContainer::Event(const UIEvent &v_event) {
     case kWM_SkinChange:
     case kWM_LangChange:
     {
-        for (UINT it = 0; it < item_.GetSize(); ++it) {
+        for (UINT it = 0; it < item_.GetSize(); ++it)
             ((UIControl*)item_[it])->Event(v_event);
-        }
     }
     }
     return UIControl::Event(v_event);

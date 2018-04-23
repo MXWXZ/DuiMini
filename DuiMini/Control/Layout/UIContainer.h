@@ -28,7 +28,7 @@ public:
     ATTR_MAP_BEGIN
         DEFAULT_ATTR(_T("bgcolor"), _T("transparent"))
         PARENT_ATTR(UIControl)
-        DEFAULT_ATTR(_T("background"), _T("1"))
+        DEFAULT_ATTR(_T("transmouse"), _T("single"))
         ATTR_MAP_END
 
     void Paint(bool v_background = false) override;

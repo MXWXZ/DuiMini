@@ -48,10 +48,10 @@ void UIImage::SetMode(LPCTSTR v_mode) {
 
 ImageMode UIImage::GetMode() const {
     UStr mode = GetAttribute(_T("mode"));
-    if (mode == _T("extrude"))
-        return kIM_Extrude;
-    else
+    if (mode == _T("tile"))
         return kIM_Tile;
+    else
+        return kIM_Extrude;
 }
 
 LPVOID UIImage::GetInterface(LPCTSTR v_name) {

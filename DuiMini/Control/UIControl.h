@@ -27,6 +27,12 @@ namespace DuiMini {
 #define DEFAULT_MSGFUNC(func) virtual bool func(const UIEvent& v_event) { return true; }
 #define OVERRIDE_MSGFUNC(func) bool func(const UIEvent& v_event) override;
 
+enum CtrlTransmouse {
+    kCT_None,
+    kCT_Single,
+    kCT_All,
+};
+
 class DUIMINI_API UIControl {
 public:
     UIControl();
@@ -41,12 +47,8 @@ public:
 
     bool DisableCtrl(BOOL v_disable = TRUE);
     bool VisibleCtrl(BOOL v_visible = TRUE);
-    /**
-    * background
-    * @param    BOOL v_bg:TRUE/FALSE Attach/Detach, STAY not change state
-    * @return   former state
-    */
-    bool AttachBackground(BOOL v_bg);
+
+    bool AttachBgPaint(BOOL v_bg);
 
     void SetAlpha(ALPHA v_alpha);
     ALPHA GetAlpha() const;
@@ -58,6 +60,8 @@ public:
     CUStr GetToolTip() const;
     void SetToolTipWidth(long v_width);
     long GetToolTipWidth() const;
+    void SetTransmouse(LPCTSTR v_str);
+    CtrlTransmouse GetTransmouse() const;
 
 public:
     // Attribute
@@ -67,7 +71,8 @@ public:
         DEFAULT_ATTR(_T("width"), _T("0"))
         DEFAULT_ATTR(_T("height"), _T("0"))
         DEFAULT_ATTR(_T("size"), _T("0,0"))
-        DEFAULT_ATTR(_T("background"), _T("0"))
+        DEFAULT_ATTR(_T("bgpaint"), _T("0"))
+        DEFAULT_ATTR(_T("transmouse"), _T("none"))
         DEFAULT_ATTR(_T("disable"), _T("0"))
         DEFAULT_ATTR(_T("visible"), _T("1"))
         DEFAULT_ATTR(_T("alpha"), _T("255"))
