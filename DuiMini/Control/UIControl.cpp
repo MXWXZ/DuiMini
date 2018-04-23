@@ -59,7 +59,7 @@ UIControl* UIControl::FindCtrlFromPT(POINT v_pt) {
     if (PtInRect(v_pt) && VisibleCtrl(STAY)) {
         CtrlTransmouse mode = GetTransmouse();
         if (mode == kCT_Single) {
-            return parent_;
+            return nullptr;
         } else if (mode == kCT_All) {
             if (!basewnd_)
                 return nullptr;
