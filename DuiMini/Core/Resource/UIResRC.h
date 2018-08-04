@@ -12,7 +12,7 @@ namespace DuiMini {
 class DUIMINI_API UIResRC :public UIResZip {
 public:
     UIResRC();
-    explicit UIResRC(LPCTSTR v_info);
+    UIResRC(LPCTSTR v_info);
     virtual ~UIResRC();
 
     void SetResInfo(LPCTSTR v_info) override;

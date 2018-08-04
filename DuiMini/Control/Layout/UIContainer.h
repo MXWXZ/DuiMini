@@ -20,7 +20,7 @@ public:
 public:
     UIControl* GetItem(UINT v_index) const override;
     UINT GetCount() const override;
-    bool Add(UIControl* v_ctrl) override;
+    void Add(UIControl* v_ctrl) override;
     bool Remove(UIControl* v_ctrl) override;
     void RemoveAll() override;
 

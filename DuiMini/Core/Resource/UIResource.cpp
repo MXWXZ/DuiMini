@@ -17,25 +17,27 @@ ResType UIResource::restype_ = kRT_File;
 UIResItem UIResource::res_item_;
 
 LPVOID UIResource::LoadRes(FileType v_type, LPCTSTR v_path) {
-    UIResItemIt &itend = res_item_.end();
-    for (UIResItemIt it = res_item_.begin(); it != itend; ++it)
-        if ((*it)->path_ == v_path) {
-            ++((*it)->using_);
-            return (*it)->res_;
+    // search cached res
+    for (auto& i : res_item_) {
+        if (i->path_ == v_path) {
+            ++(i->using_);      // finded, using count+1
+            return i->res_;
         }
+    }
 
+    // not find, new res
     shared_ptr<LoadedRes> tmp(new LoadedRes);
     tmp->path_ = v_path;
     tmp->type_ = v_type;
     tmp->using_ = 1;
     switch (v_type) {
     case kFT_XML:
-        tmp->res_ = (LPVOID)(new UIXmlLoader(v_path));  // load failed will exit
+        tmp->res_ = (LPVOID)(new UIXmlLoader(v_path));
         break;
     case kFT_PIC:
         UIRenderImage* obj = new UIRenderImage;
-        if (obj->Load(v_path))
-            tmp->res_ = (LPVOID)obj;
+        obj->Load(v_path);
+        tmp->res_ = (LPVOID)obj;
         break;
     }
     if (tmp->res_)
@@ -44,27 +46,27 @@ LPVOID UIResource::LoadRes(FileType v_type, LPCTSTR v_path) {
 }
 
 void UIResource::ReleaseResByName(LPCTSTR v_path) {
-    UIResItemIt &itend = res_item_.end();
-    for (UIResItemIt it = res_item_.begin(); it != itend; ++it)
-        if ((*it)->path_ == v_path) {
-            --((*it)->using_);
-            if ((*it)->using_ > 0)
+    for (auto i = res_item_.begin(); i != res_item_.end();++i) {
+        if ((*i)->path_ == v_path) {
+            --((*i)->using_);
+            if ((*i)->using_ > 0)
                 break;
-            res_item_.erase(it);
+            res_item_.erase(i);
             break;
         }
+    }
 }
 
 void UIResource::ReleaseRes(LPVOID v_res) {
-    UIResItemIt &itend = res_item_.end();
-    for (UIResItemIt it = res_item_.begin(); it != itend; ++it)
-        if ((*it)->res_ == v_res) {
-            --((*it)->using_);
-            if ((*it)->using_ > 0)
+    for (auto i = res_item_.begin(); i != res_item_.end(); ++i) {
+        if ((*i)->res_ == v_res) {
+            --((*i)->using_);
+            if ((*i)->using_ > 0)
                 break;
-            res_item_.erase(it);
+            res_item_.erase(i);
             break;
         }
+    }
 }
 
 void UIResource::SetResType(ResType v_type) {
@@ -87,50 +89,46 @@ ResType UIResource::GetResType() {
 }
 
 FILESIZE UIResource::GetFileSize(LPCTSTR v_path) {
-    if (!resclass_)
-        return -1;
-    int ret = -1;
-    if (UStr(v_path).Find(_T(":")) != -1) {
+    assert(resclass_);
+    FILESIZE ret;
+    if (UStr(v_path).Find(_T(":")) != -1) {  // full path
         FILE* fp;
         _tfopen_s(&fp, v_path, _T("rb"));
         if (!fp)
-            UISetError(kEL_Fatal, kEC_FileFail,
-                       ErrorMsg_FileFail(v_path));
+            ErrorMsg_FileFail(v_path);
         fseek(fp, 0, SEEK_END);
         ret = ftell(fp);
         fclose(fp);
     } else {
         ret = resclass_->GetFileSize(v_path);
+        if (ret == FILESIZE(-1))
+            ErrorMsg_FileFail(v_path);
     }
     return ret;
 }
 
-bool UIResource::GetFile(LPCTSTR v_path, BYTE* v_buffer, long v_size) {
-    if (!resclass_)
-        return false;
+void UIResource::GetFile(LPCTSTR v_path, BYTE* v_buffer, FILESIZE v_size) {
+    assert(resclass_);
     if (UStr(v_path).Find(_T(":")) != -1) {
         FILE* fp;
         fp = _tfopen(v_path, _T("rb"));
         if (!fp)
-            UISetError(kEL_Fatal, kEC_FileFail,
-                       ErrorMsg_FileFail(v_path));
+            ErrorMsg_FileFail(v_path);
         fread(v_buffer, 1, v_size, fp);
         fclose(fp);
     } else {
-        return resclass_->GetFile(v_path, v_buffer, v_size);
+        if (!resclass_->GetFile(v_path, v_buffer, v_size))
+            ErrorMsg_FileFail(v_path);
     }
-    return true;
 }
 
 void UIResource::SetResInfo(LPCTSTR v_info) {
-    if (!resclass_)
-        return;
+    assert(resclass_);
     resclass_->SetResInfo(v_info);
 }
 
 CUStr UIResource::GetResInfo() {
-    if (!resclass_)
-        return CUStr();
+    assert(resclass_);
     return resclass_->GetResInfo();
 }
 }   // namespace DuiMini

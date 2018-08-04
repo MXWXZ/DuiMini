@@ -25,8 +25,7 @@ void UIDlgBuilder::Release() {}
 UIControl* UIDlgBuilder::CreateControl(UIControl* v_ctrl,
                                        UIWindow* v_wnd,
                                        UIControl* v_parent/* = nullptr*/) {
-    if (!v_ctrl || !v_wnd)
-        return nullptr;
+    assert(v_ctrl && v_wnd);
     // Set basewnd
     v_ctrl->SetBaseWindow(v_wnd);
     // Attach to parent (parent must have container attribute)
@@ -43,8 +42,7 @@ UIControl* UIDlgBuilder::CreateControl(UIControl* v_ctrl,
 }
 
 bool UIDlgBuilder::FinishCreateControl(UIControl * v_ctrl) {
-    if (!v_ctrl)
-        return false;
+    assert(v_ctrl);
     v_ctrl->AfterSetAttribute();
     return true;
 }
@@ -57,8 +55,7 @@ UIControl* UIDlgBuilder::Parse(UIWindow* v_wnd, UIXmlNode v_root,
                                 UIControl* v_parent/* = nullptr*/) {
     for (UIXmlNode node = v_root; node;node = node.NextSibling()) {
         if (!v_parent && node.GetName() != CTRLNAME_DIALOG) {
-            UISetError(kEL_Warning, kEC_FormatInvalid,
-                       _T("Dialog control must be the root."));
+            ErrorMsg_FormatInvalid(_T("Dialog control (must be the root)"));
             return nullptr;
         }
         UStr ctrl_name = node.GetName();
@@ -70,8 +67,7 @@ UIControl* UIDlgBuilder::Parse(UIWindow* v_wnd, UIXmlNode v_root,
         {
             if (ctrl_name == CTRLNAME_DIALOG) {
                 if (v_parent) {
-                    UISetError(kEL_Warning, kEC_FormatInvalid,
-                               _T("Dialog control do not allow nesting."));
+                    ErrorMsg_FormatInvalid(_T("Dialog control (do not allow nesting)"));
                     return nullptr;
                 }
                 new_ctrl = new UIDialog;
@@ -95,8 +91,7 @@ UIControl* UIDlgBuilder::Parse(UIWindow* v_wnd, UIXmlNode v_root,
         }
         // Invalid ctrl name
         if (!new_ctrl) {
-            UISetError(kEL_Warning, kEC_FormatInvalid,
-                       _T("Control Kind \"%s\" invalid"), ctrl_name);
+            ErrorMsg_FormatInvalid(ctrl_name.GetData());
             return nullptr;
         }
 

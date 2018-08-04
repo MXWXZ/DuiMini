@@ -88,10 +88,10 @@ public:
     virtual void Paint(bool v_background = false);
 
     // Parent&Base
-    virtual void SetParent(UIControl* v_parent);
-    virtual UIControl* GetParent() const;
-    virtual void SetBaseWindow(UIWindow* v_basewnd);
-    virtual UIWindow* GetBaseWindow() const;
+    virtual void SetParent(UIControl* v_parent) { parent_ = v_parent; }
+    virtual UIControl* GetParent() const { return parent_; }
+    virtual void SetBaseWindow(UIWindow* v_basewnd) { basewnd_ = v_basewnd; }
+    virtual UIWindow* GetBaseWindow() const { return basewnd_; }
     virtual LPVOID GetInterface(LPCTSTR v_name);
 
     /**

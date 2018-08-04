@@ -38,7 +38,7 @@ public:
     /**
      * Locate file in zip
      * @param    LPCTSTR v_relativepath: relative path (e.g. abc/123.txt)
-     * @return   -1 when file can't access,otherwise is the file size
+     * @return   FILESIZE(-1) when file can't access,otherwise is the file size
      * WARNING: Please better to use '/' to divide in relative path,
      * this function will AUTOMATICALLY turn '\\' to '/' (zlib ONLY allows '/')
      */
@@ -46,8 +46,9 @@ public:
 
     /**
      * Unzip file
-     * @param    BYTE* v_buffer: buffer to recive data(please call
+     * @param   BYTE* v_buffer: buffer to recive data(please call
      * [LocateZipItem] to get the size and apply for memory space)
+     * @return  true for success
      * WARNING: this function MUST be used after calling [LocateZipItem] and
      * will NOT check if there is enough space in the buffer.
      */

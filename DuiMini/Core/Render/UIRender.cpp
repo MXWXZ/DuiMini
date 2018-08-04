@@ -18,30 +18,27 @@ UIRenderImage::UIRenderImage(LPCTSTR v_path) {
 
 UIRenderImage::~UIRenderImage() {}
 
-bool UIRenderImage::Load(LPCTSTR v_path) {
+void UIRenderImage::Load(LPCTSTR v_path) {
     switch (UIRender::GetRenderMode()) {
     case kRM_GDIPlus:
         renderimg_.reset(new UIRenderImageGDIP());
         break;
     }
-    return renderimg_->Load(v_path);
+    renderimg_->Load(v_path);
 }
 
 void* UIRenderImage::GetInterface() const {
-    if (!renderimg_)
-        return nullptr;
+    assert(renderimg_);
     return renderimg_->GetInterface();
 }
 
-long UIRenderImage::GetWidth() const {
-    if (!renderimg_)
-        return 0;
+UINT UIRenderImage::GetWidth() const {
+    assert(renderimg_);
     return renderimg_->GetWidth();
 }
 
-long UIRenderImage::GetHeight() const {
-    if (!renderimg_)
-        return 0;
+UINT UIRenderImage::GetHeight() const {
+    assert(renderimg_);
     return renderimg_->GetHeight();
 }
 
@@ -55,70 +52,66 @@ UIRender::UIRender() {
 
 UIRender::~UIRender() {}
 
-bool UIRender::GlobalInit() {
+void UIRender::GlobalInit() {
     // Using an new object for global init
     shared_ptr<IUIRender> render = nullptr;
     SelectRender(&render);
-    return render->GlobalInit();
+    render->GlobalInit();
 }
 
-bool UIRender::GlobalInit(RenderMode v_mode) {
+void UIRender::GlobalInit(RenderMode v_mode) {
     SetRenderMode(v_mode);
-    return GlobalInit();
+    GlobalInit();
 }
 
-bool UIRender::GlobalRelease() {
+void UIRender::GlobalRelease() {
     shared_ptr<IUIRender> render = nullptr;
     SelectRender(&render);
-    return render->GlobalRelease();
+    render->GlobalRelease();
 }
 
-void UIRender::SetRenderMode(RenderMode v_mode) {
-    render_mode_ = v_mode;
+void UIRender::Paint(UIWindow* v_wnd) {
+    assert(render_);
+    render_->Paint(v_wnd);
 }
 
-RenderMode UIRender::GetRenderMode() {
-    return render_mode_;
+void UIRender::RedrawBackground() {
+    assert(render_);
+    render_->RedrawBackground();
 }
 
-bool UIRender::Paint(UIWindow* v_wnd) {
-    RENDER_CALL(render_->Paint(v_wnd));
-}
-
-bool UIRender::RedrawBackground() {
-    RENDER_CALL(render_->RedrawBackground());
-}
-
-bool UIRender::DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
+void UIRender::DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
                          ALPHA v_alpha/* = 255*/, ImageMode v_mode/* = kIM_Extrude*/) {
-    if (!v_img)
-        return false;
-    RENDER_CALL(render_->DrawImage(v_img, v_destrect,
-                                   UIRect(0, 0, v_img->GetWidth(),
-                                          v_img->GetHeight()),
-                                   v_alpha, v_mode));
+    assert(render_ && v_img);
+    render_->DrawImage(v_img, v_destrect,
+                       UIRect(0, 0, v_img->GetWidth(),
+                              v_img->GetHeight()),
+                       v_alpha, v_mode);
 }
 
-bool UIRender::DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
+void UIRender::DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
                          const UIRect& v_srcrect, ALPHA v_alpha/* = 255*/,
                          ImageMode v_mode/* = kIM_Extrude*/) {
-    RENDER_CALL(render_->DrawImage(v_img, v_destrect, v_srcrect, v_alpha,
-                                   v_mode));
+    assert(render_);
+    render_->DrawImage(v_img, v_destrect, v_srcrect, v_alpha, v_mode);
 }
 
-bool UIRender::DrawString(LPCTSTR v_text, const UIFont &v_font,
+void UIRender::DrawString(LPCTSTR v_text, const UIFont &v_font,
                           const UIStringFormat &v_format,
                           const UIRect &v_rect) {
-    RENDER_CALL(render_->DrawString(v_text, v_font, v_format, v_rect));
+    assert(render_);
+    render_->DrawString(v_text, v_font, v_format, v_rect);
 }
 
-bool UIRender::DrawRect(const UIRect &v_rect, const UIColor &v_color,
+void UIRender::DrawRect(const UIRect &v_rect, const UIColor &v_color,
                         long v_border) {
-    RENDER_CALL(render_->DrawRect(v_rect, v_color, v_border));
+    assert(render_);
+    render_->DrawRect(v_rect, v_color, v_border);
 }
 
-bool UIRender::DrawFillRect(const UIRect &v_rect, const UIColor &v_color) {
-    RENDER_CALL(render_->DrawFillRect(v_rect, v_color));
+void UIRender::DrawFillRect(const UIRect &v_rect, const UIColor &v_color) {
+    assert(render_);
+    render_->DrawFillRect(v_rect, v_color);
 }
 
 IUIRender* UIRender::SelectRender(shared_ptr<IUIRender>* v_pointer) {

@@ -1,11 +1,9 @@
 /**
- * Copyright (c) 2017-2050
+ * Copyright (c) 2018-2050
  * All rights reserved.
  *
  * @Author:MXWXZ
- * @Date:2017/10/17
- *
- * @Description:
+ * @Date:2018/08/01
  */
 #include "stdafx.h"
 #include "UIUtils.h"
@@ -26,10 +24,8 @@ CUStr UIUtils::GetTimeStr(LPCTSTR v_str) {
 }
 
 UIRect UIUtils::GetScreenSize() {
-    UIRect ret;
-    ret.right = GetSystemMetrics(SM_CXSCREEN);
-    ret.bottom = GetSystemMetrics(SM_CYSCREEN);
-    return ret;
+    return UIRect(0, 0, GetSystemMetrics(SM_CXSCREEN),
+                  GetSystemMetrics(SM_CYSCREEN));
 }
 
 UIRect UIUtils::GetWorkAreaSize() {
@@ -38,112 +34,64 @@ UIRect UIUtils::GetWorkAreaSize() {
     return ret;
 }
 
-////////////////////////////////////////
-
-UIPtrArray::UIPtrArray() {}
-
-UIPtrArray::UIPtrArray(UINT v_size) {
-    allocated_ = v_size;
-    ptrvoid_ = (LPVOID*)malloc(v_size * sizeof(LPVOID));
-    ZeroMemory(ptrvoid_, v_size * sizeof(LPVOID));
+shared_ptr_tchar UIUtils::SafeTStr(size_t v_len) {
+    return shared_ptr_tchar(new TCHAR[v_len]);
 }
 
-UIPtrArray::~UIPtrArray() {
-    Empty();
+shared_ptr_char UIUtils::SafeStr(size_t v_len) {
+    return shared_ptr_char(new char[v_len]);
 }
 
-void UIPtrArray::Empty() {
-    if (ptrvoid_ != nullptr)
-        free(ptrvoid_);
-    ptrvoid_ = nullptr;
-    count_ = allocated_ = 0;
+shared_ptr_wchar UIUtils::SafeWStr(size_t v_len) {
+    return shared_ptr_wchar(new wchar_t[v_len]);
 }
 
-void UIPtrArray::Resize(UINT v_size) {
-    Empty();
-    ptrvoid_ = (LPVOID*)malloc(v_size * sizeof(LPVOID));
-    ZeroMemory(ptrvoid_, v_size * sizeof(LPVOID));
-    allocated_ = v_size;
-    count_ = v_size;
+shared_ptr_byte UIUtils::SafeBYTE(size_t v_len) {
+    return shared_ptr_byte(new BYTE[v_len]);
 }
 
-bool UIPtrArray::IsEmpty() const {
-    return count_ == 0;
+shared_ptr_wchar UIUtils::Convert2WStr(LPCSTR v_str) {
+    int len = MultiByteToWideChar(CP_UTF8, 0, v_str, -1, NULL, 0);
+    auto ret = SafeWStr(len);
+    MultiByteToWideChar(CP_UTF8, 0, v_str, -1, ret.get(), len);
+    return ret;
 }
 
-bool UIPtrArray::Add(LPVOID v_data) {
-    if (++count_ >= allocated_) {
-        allocated_ *= 2;
-        if (allocated_ == 0)
-            allocated_ = 11;
-        ptrvoid_ = (LPVOID*)realloc(ptrvoid_, allocated_ * sizeof(LPVOID));
-        if (!ptrvoid_)
-            return false;
-    }
-    ptrvoid_[count_ - 1] = v_data;
-    return true;
+shared_ptr_wchar UIUtils::Convert2WStr(LPCWSTR v_str) {
+    int len = wcslen(v_str);
+    auto ret = SafeWStr(len);
+    wcscpy_s(ret.get(), len, v_str);
+    return ret;
 }
 
-bool UIPtrArray::InsertAt(UINT v_index, LPVOID v_data) {
-    if (v_index == count_)
-        return Add(v_data);
-    if (v_index < 0 || v_index > count_)
-        return false;
-    if (++count_ >= allocated_) {
-        allocated_ *= 2;
-        if (allocated_ == 0)
-            allocated_ = 11;
-        ptrvoid_ = (LPVOID*)realloc(ptrvoid_, allocated_ * sizeof(LPVOID));
-        if (!ptrvoid_)
-            return false;
-    }
-    memmove(&ptrvoid_[v_index + 1],
-            &ptrvoid_[v_index], (count_ - v_index - 1) * sizeof(LPVOID));
-    ptrvoid_[v_index] = v_data;
-    return true;
+shared_ptr_char UIUtils::Convert2Str(LPCWSTR v_str) {
+    int len = WideCharToMultiByte(CP_ACP, 0, v_str, -1, NULL, 0, NULL, NULL);
+    auto ret = SafeStr(len);
+    WideCharToMultiByte(CP_ACP, 0, v_str, -1, ret.get(), len, NULL, NULL);
+    return ret;
 }
 
-bool UIPtrArray::SetAt(UINT v_index, LPVOID v_data) {
-    if (v_index < 0 || v_index >= count_)
-        return false;
-    ptrvoid_[v_index] = v_data;
-    return true;
+shared_ptr_char UIUtils::Convert2Str(LPCSTR v_str) {
+    int len = strlen(v_str);
+    auto ret = SafeStr(len);
+    strcpy_s(ret.get(), len, v_str);
+    return ret;
 }
 
-bool UIPtrArray::Remove(UINT v_index) {
-    if (v_index < 0 || v_index >= count_)
-        return false;
-    if (v_index < --count_)
-        CopyMemory(ptrvoid_ + v_index,
-                   ptrvoid_ + v_index + 1, (count_ - v_index) * sizeof(LPVOID));
-    return true;
+shared_ptr_tchar UIUtils::Convert2TStr(LPCSTR v_str) {
+#ifdef _UNICODE
+    return Convert2WStr(v_str);
+#else
+    return Convert2Str(v_str);
+#endif
 }
 
-int UIPtrArray::Find(LPVOID v_data) const {
-    for (UINT i = 0; i < count_; ++i)
-        if (ptrvoid_[i] == v_data)
-            return i;
-    return -1;
-}
-
-UINT UIPtrArray::GetSize() const {
-    return count_;
-}
-
-LPVOID* UIPtrArray::GetData() {
-    return ptrvoid_;
-}
-
-LPVOID UIPtrArray::GetAt(UINT v_index) const {
-    if (v_index < 0 || v_index >= count_)
-        return nullptr;
-    return ptrvoid_[v_index];
-}
-
-LPVOID UIPtrArray::operator[] (UINT v_index) const {
-    if (v_index >= count_)
-        return nullptr;
-    return ptrvoid_[v_index];
+shared_ptr_tchar UIUtils::Convert2TStr(LPCWSTR v_str) {
+#ifdef _UNICODE
+    return Convert2WStr(v_str);
+#else
+    return Convert2Str(v_str);
+#endif
 }
 
 ////////////////////////////////////////
@@ -162,15 +110,11 @@ UIString::UIString(const UIString& v_src) {
     buffer_ = v_src.buffer_;
 }
 
+UIString::UIString(UIString&& v_src) {
+    buffer_ = move(v_src.buffer_);
+}
+
 UIString::~UIString() {}
-
-size_t UIString::GetLength() const {
-    return buffer_.length();
-}
-
-UIString::operator LPCTSTR() const {
-    return GetData();
-}
 
 void UIString::Append(LPCTSTR v_str) {
     buffer_.append(v_str);
@@ -191,12 +135,36 @@ void UIString::Empty() {
     buffer_.clear();
 }
 
+size_t UIString::GetLength() const {
+    return buffer_.length();
+}
+
+void UIString::SetAt(size_t v_index, TCHAR v_ch) {
+    buffer_[v_index] = v_ch;
+}
+
+TCHAR UIString::GetAt(size_t v_index) const {
+    return buffer_[v_index];
+}
+
+shared_ptr_char UIString::CreateStr() const {
+    return UIUtils::Convert2Str(buffer_.c_str());
+}
+
+shared_ptr_wchar UIString::CreateWStr() const {
+    return UIUtils::Convert2WStr(buffer_.c_str());
+}
+
 LPCTSTR UIString::GetData() const {
     return buffer_.c_str();
 }
 
 LL UIString::Str2LL() const {
     return std::stoll(buffer_.c_str(), nullptr, 10);
+}
+
+double UIString::Str2Double() const {
+    return std::stod(buffer_.c_str());
 }
 
 UIString UIString::Str2Hex() const {
@@ -233,21 +201,31 @@ UIString UIString::Hex2Str() const {
     return ret;
 }
 
-TCHAR UIString::GetAt(size_t v_index) const {
-    return buffer_[v_index];
+UIString::operator LPCTSTR() const {
+    return GetData();
 }
 
 TCHAR UIString::operator[] (int v_index) const {
     return GetAt(v_index);
 }
 
-const UIString& UIString::operator=(LPCTSTR v_str) {
+UIString& UIString::operator=(const TCHAR v_ch) {
+    buffer_ = v_ch;
+    return *this;
+}
+
+UIString& UIString::operator=(LPCTSTR v_str) {
     Assign(v_str);
     return *this;
 }
 
-const UIString& UIString::operator=(const TCHAR v_ch) {
-    buffer_ = v_ch;
+UIString& UIString::operator=(UIString& v_str) {
+    buffer_ = v_str.buffer_;
+    return *this;
+}
+
+UIString& UIString::operator=(UIString&& v_str) {
+    buffer_ = move(v_str.buffer_);
     return *this;
 }
 
@@ -257,12 +235,12 @@ UIString UIString::operator+(LPCTSTR v_str) const {
     return tmp;
 }
 
-const UIString& UIString::operator+=(LPCTSTR v_str) {
+UIString& UIString::operator+=(LPCTSTR v_str) {
     Append(v_str);
     return *this;
 }
 
-const UIString& UIString::operator+=(const TCHAR v_ch) {
+UIString& UIString::operator+=(const TCHAR v_ch) {
     TCHAR v_str[] = { v_ch, _T('\0') };
     Append(v_str);
     return *this;
@@ -275,9 +253,6 @@ bool UIString::operator <  (LPCTSTR v_str) const { return (Compare(v_str) < 0); 
 bool UIString::operator >= (LPCTSTR v_str) const { return (Compare(v_str) >= 0); }
 bool UIString::operator >  (LPCTSTR v_str) const { return (Compare(v_str) > 0); }
 
-void UIString::SetAt(size_t v_index, TCHAR v_ch) {
-    buffer_[v_index] = v_ch;
-}
 
 int UIString::Compare(LPCTSTR v_str) const {
     return buffer_.compare(v_str);
@@ -441,30 +416,6 @@ UIEvent::~UIEvent() {}
 
 UIEvent::operator WindowMessage() const {
     return GetMsg();
-}
-
-WindowMessage UIEvent::GetMsg() const {
-    return msg_;
-}
-
-WPARAM UIEvent::GetWParam() const {
-    return wparam_;
-}
-
-LPARAM UIEvent::GetLParam() const {
-    return lparam_;
-}
-
-void UIEvent::SetMsg(WindowMessage v_msg) {
-    msg_ = v_msg;
-}
-
-void UIEvent::SetWParam(WPARAM v_wparam) {
-    wparam_ = v_wparam;
-}
-
-void UIEvent::SetLParam(LPARAM v_lparam) {
-    lparam_ = v_lparam;
 }
 
 bool UIEvent::SetMsgFromWinMsg(UINT v_winmsg) {

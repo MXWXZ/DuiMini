@@ -73,19 +73,10 @@ enum WindowMessage {
 // make type beautiful
 typedef long long LL;
 typedef unsigned short ALPHA;
-typedef unsigned short SKINID;
-typedef unsigned short LANGID;
-typedef unsigned short FONTID;
+typedef unsigned short CFGID;
 typedef unsigned short COLOR;
-typedef long FILESIZE;
+typedef unsigned int FILESIZE;
 #define STAY -1
-
-// make function beautiful
-#define CmpStr(x, y) _tcscmp(x, y) == 0
-#define GetStr2WStrLen(str) MultiByteToWideChar(CP_UTF8, 0, str, -1, NULL, 0)
-#define Str2WStr(str, wstr, len) MultiByteToWideChar(CP_UTF8, 0, str, -1, wstr, len)
-#define GetWStr2Strlen(wstr) WideCharToMultiByte(CP_ACP, 0, wstr, -1, NULL, 0, NULL, NULL)
-#define WStr2Str(wstr,str,len) WideCharToMultiByte(CP_ACP, 0, wstr, -1, str, len, NULL, NULL)
 
 // string/wstring
 #ifdef _UNICODE
@@ -99,5 +90,14 @@ typedef std::string tstring;
 #define shared_ptr std::shared_ptr
 #define make_shared std::make_shared
 
+typedef shared_ptr<char[]> shared_ptr_char;
+typedef shared_ptr<wchar_t[]> shared_ptr_wchar;
+typedef shared_ptr<TCHAR[]> shared_ptr_tchar;
+typedef shared_ptr<BYTE[]> shared_ptr_byte;
+
+// make function beautiful
+#define CmpStr(x, y) _tcscmp(x, y) == 0
+
 #pragma warning(disable: 4244)            // warnings when converting
+#pragma warning(disable: 4267)            // warnings when converting
 #pragma warning(disable: 4251)            // warnings when exporting string

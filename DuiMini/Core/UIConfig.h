@@ -20,6 +20,15 @@ enum StringAlign {
     kSA_RB,
 };
 
+enum StringTrimming {
+    kST_None = 0,
+    kST_Ch = 1,
+    kST_Word = 2,
+    kST_DotCh = 3,
+    kST_DotWord = 4,
+    kST_DotMid = 5
+};
+
 struct DUIMINI_API UIFont {
     UStr name_;
     UStr lang_;
@@ -54,28 +63,28 @@ public:
     static void LoadConfig(LPCTSTR v_relativepath = DEFAULT_RESFILE);
 
     // find id
-    static LANGID FindLangID(LPCTSTR v_name);
-    static FONTID FindFontID(LPCTSTR v_name);
-    static SKINID FindSkinID(LPCTSTR v_name);
+    static CFGID FindLangID(LPCTSTR v_name);
+    static CFGID FindFontID(LPCTSTR v_name);
+    static CFGID FindSkinID(LPCTSTR v_name);
 
     // Get shown config id
-    static LANGID GetShownLangID();
-    static FONTID GetShownFontID();
-    static SKINID GetShownSkinID();
+    static CFGID GetShownLangID() { return shownlang_; }
+    static CFGID GetShownFontID() { return shownfont_; }
+    static CFGID GetShownSkinID() { return shownskin_; }
 
     // Get shown config
-    static UIAttr* GetShownLang();
-    static UIAttr* GetShownFont();
-    static UIAttr* GetShownSkin();
+    static UIAttr& GetShownLang() { return lang_[shownlang_]; }
+    static UIAttr& GetShownFont() { return font_[shownfont_]; }
+    static UIAttr& GetShownSkin() { return skin_[shownskin_]; }
 
     /**
     * Set Shown Config
     * @param    v_id:config id
     */
-    static bool SetShownLang(LANGID v_id);
-    static bool SetShownFont(FONTID v_id);
-    static bool SetShownSkin(SKINID v_id);
-    static bool AddSystemSkin(SKINID v_id);
+    static bool SetShownLang(CFGID v_id);
+    static bool SetShownFont(CFGID v_id);
+    static bool SetShownSkin(CFGID v_id);
+    static bool AddSystemSkin(CFGID v_id);
 
     /**
     * Find dlg config
@@ -115,7 +124,7 @@ public:
      * Get current font style
      * @return   font style
      */
-    static UIFont GetFontStyle();
+    static UIFont GetFontStyle() { return font_style_; }
     /**
      * Find font
      * @param    LPCTSTR v_name:font name
@@ -145,15 +154,18 @@ private:
     * Find next CFG item with v_name=v_value
     * @return   nullptr for not find
     */
-    static UIAttr* FindNextCFGItem(UICFGItem &v_item, UINT v_start,
+    static UIAttr* FindNextCFGItem(UICFGItem& v_item, UINT v_start,
                                    LPCTSTR v_name, LPCTSTR v_value);
+
+    static CFGID FindItemID(const UICFGItem& v_item, LPCTSTR v_name);
+    static UIAttr* FindItem(UICFGItem& v_item, LPCTSTR v_name);
 
 private:
     static UICFGItem dlg_;            // dlg config
 
-    static LANGID shownlang_;         // shown lang
-    static SKINID shownskin_;         // shown skin
-    static FONTID shownfont_;         // shown font
+    static CFGID shownlang_;          // shown lang
+    static CFGID shownskin_;          // shown skin
+    static CFGID shownfont_;          // shown font
     static UICFGItem lang_;           // language config
     static UICFGItem skin_;           // skin config
     static UICFGItem font_;           // font config

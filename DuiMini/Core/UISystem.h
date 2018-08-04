@@ -31,13 +31,8 @@ public:
     */
     static void Exit(const int v_code = 0);
 
-    /**
-     * Set program Instance
-     * @param    HINSTANCE v_instance:program HINSTANCE,usually the param
-     * of WinMain
-    */
-    static void SetInstance(HINSTANCE v_instance);
-    static HINSTANCE GetInstance();
+    static void SetInstance(HINSTANCE v_inst) { instance_ = v_inst; }
+    static HINSTANCE GetInstance() { return instance_; }
 
     /**
      * change language/skin
@@ -45,19 +40,23 @@ public:
      * @return   true for success
      * ALL windows will receive event and global config will be change!
      */
-    static bool ChangeSkin(SKINID v_id);
-    static bool ChangeLang(LANGID v_id);
+    static bool ChangeSkin(CFGID v_id);
+    static bool ChangeLang(CFGID v_id);
 
     /**
      * Window operation
+     * Tip: here only register Window pointer to the ui system
+     *      the operation you did here only affect the record of windows in the
+     *      system and will DO NOTHING to the window itself(e.g. release the 
+     *      space or anything else)
      */
-    static bool AddWindow(UIWindow* v_window);
+    static void AddWindow(UIWindow* v_window);
     static UIWindow* GetWindow(LPCTSTR v_classname);
     static bool RemoveWindow(UIWindow* v_window);
     static void RemoveAllWindow();
 
 private:
-    static HINSTANCE instance_;     // program instance
+    static HINSTANCE instance_;
     static UIPtrArray window_;      // created window
 };
 

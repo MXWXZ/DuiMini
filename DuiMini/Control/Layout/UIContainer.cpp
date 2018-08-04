@@ -24,45 +24,46 @@ UIColor UIContainer::GetBGColor() const {
 }
 
 UIControl* UIContainer::GetItem(UINT v_index) const {
-    if (v_index >= item_.GetSize())
+    if (v_index >= item_.size())
         return nullptr;
     return (UIControl*)item_[v_index];
 }
 
 UINT UIContainer::GetCount() const {
-    return item_.GetSize();
+    return item_.size();
 }
 
-bool UIContainer::Add(UIControl* v_ctrl) {
-    return item_.Add(v_ctrl);
+void UIContainer::Add(UIControl* v_ctrl) {
+    item_.push_back(v_ctrl);
 }
 
 bool UIContainer::Remove(UIControl* v_ctrl) {
-    for (UINT it = 0; it < item_.GetSize(); ++it) {
-        if ((UIControl*)item_[it] == v_ctrl) {
+    for (auto i = item_.begin(); i != item_.end(); ++i) {
+        if ((UIControl*)(*i) == v_ctrl) {
             // if parent exist, "delete" will call UIContainer::Remove
             v_ctrl->SetParent(nullptr);     // Prevent dead recursive
             delete v_ctrl;
-            return item_.Remove(it);
+            item_.erase(i);
+            return true;
         }
     }
     return false;
 }
 
 void UIContainer::RemoveAll() {
-    for (UINT it = 0; it < item_.GetSize(); ++it) {
-        UIControl* ctrl = (UIControl*)item_[it];
+    for (auto& i : item_) {
+        UIControl* ctrl = (UIControl*)i;
         // if parent exist, "delete" will call UIContainer::Remove
         ctrl->SetParent(nullptr);     // Prevent dead recursive
         delete ctrl;
     }
-    item_.Empty();
+    item_.clear();
 }
 
 void UIContainer::Paint(bool v_background/* = false*/) {
     basewnd_->GetRender()->DrawFillRect(rect_, GetBGColor());
-    for (UINT it = 0; it < item_.GetSize(); ++it) {
-        UIControl* ctrl = (UIControl*)item_[it];
+    for (auto& i : item_) {
+        UIControl* ctrl = (UIControl*)i;
         if (ctrl->AttachBgPaint(STAY) == v_background
             && ctrl->VisibleCtrl(STAY))
             ctrl->Paint(v_background);
@@ -73,8 +74,8 @@ UIControl* UIContainer::FindCtrlFromPT(POINT v_pt) {
     if (!PtInRect(v_pt))
         return nullptr;
     UIControl* ret = nullptr;
-    for (UINT it = 0; it != item_.GetSize(); ++it) {
-        UIControl* ctrl = ((UIControl*)item_[it])->FindCtrlFromPT(v_pt);
+    for (auto& i : item_) {
+        UIControl* ctrl = ((UIControl*)i)->FindCtrlFromPT(v_pt);
         if (ctrl != nullptr)    // last pos match
             ret = ctrl;
     }
@@ -84,8 +85,8 @@ UIControl* UIContainer::FindCtrlFromPT(POINT v_pt) {
 }
 
 void UIContainer::SetBaseWindow(UIWindow* v_basewnd) {
-    for (UINT it = 0; it < item_.GetSize(); ++it)
-        ((UIControl*)item_[it])->SetBaseWindow(v_basewnd);
+    for (auto& i : item_)
+        ((UIControl*)i)->SetBaseWindow(v_basewnd);
     // set all his children nodes' base window first
     // then set his own's
     UIControl::SetBaseWindow(v_basewnd);
@@ -98,8 +99,8 @@ LPVOID UIContainer::GetInterface(LPCTSTR v_name) {
 }
 
 UIControl* UIContainer::FindCtrlFromName(LPCTSTR v_name) {
-    for (UINT it = 0; it != item_.GetSize(); ++it) {
-        UIControl* ctrl = ((UIControl*)item_[it])->FindCtrlFromName(v_name);
+    for (auto& i : item_) {
+        UIControl* ctrl = ((UIControl*)i)->FindCtrlFromName(v_name);
         if (ctrl != nullptr)    // first name match
             return ctrl;
     }
@@ -107,8 +108,8 @@ UIControl* UIContainer::FindCtrlFromName(LPCTSTR v_name) {
 }
 
 UIRect UIContainer::UpdatePos() {
-    for (UINT it = 0; it < item_.GetSize(); ++it) {
-        UIControl* ctrl = (UIControl*)item_[it];
+    for (auto& i : item_) {
+        UIControl* ctrl = (UIControl*)i;
         ctrl->UpdatePos();
     }
     return UIControl::UpdatePos();
@@ -122,10 +123,9 @@ bool UIContainer::Event(const UIEvent &v_event) {
     case kWM_Invisible:
     case kWM_SkinChange:
     case kWM_LangChange:
-    {
-        for (UINT it = 0; it < item_.GetSize(); ++it)
-            ((UIControl*)item_[it])->Event(v_event);
-    }
+        for (auto& i : item_)
+            ((UIControl*)i)->Event(v_event);
+        break;
     }
     return UIControl::Event(v_event);
 }

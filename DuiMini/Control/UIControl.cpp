@@ -29,7 +29,7 @@ void UIControl::AfterSetAttribute() {
 }
 
 CUStr UIControl::GetAttribute(LPCTSTR v_name) const {
-    CUIAttrIt it = attr_.find(v_name);
+    auto it = attr_.find(v_name);
     return it != attr_.end() ? it->second : CUStr();
 }
 
@@ -37,22 +37,6 @@ void UIControl::Paint(bool v_background) {
     long size = GetBorderSize();
     if (size != 0)
         basewnd_->GetRender()->DrawRect(rect_, GetBorderColor(), size);
-}
-
-void UIControl::SetParent(UIControl* v_parent) {
-    parent_ = v_parent;
-}
-
-UIControl* UIControl::GetParent() const {
-    return parent_;
-}
-
-void UIControl::SetBaseWindow(UIWindow* v_basewnd) {
-    basewnd_ = v_basewnd;
-}
-
-UIWindow* UIControl::GetBaseWindow() const {
-    return basewnd_;
 }
 
 UIControl* UIControl::FindCtrlFromPT(POINT v_pt) {
@@ -79,18 +63,16 @@ UIControl* UIControl::FindCtrlFromName(LPCTSTR v_name) {
 }
 
 bool UIControl::Event(const UIEvent& v_event) {
+    // check control status, ignore msg when disabled or invisible
     if (v_event < kWM_IgnoreLimit_ && (DisableCtrl(STAY) || !VisibleCtrl(STAY)))
         return true;
-    bool ret = true;
+
     // call notify func
-    if (msgmap_[v_event]) {
-        if (!basewnd_)
+    if (msgmap_[v_event])
+        if (!msgmap_[v_event](v_event))
             return false;
-        ret = (basewnd_->*msgmap_[v_event])(v_event);
-    }
-    if (!ret)
-        return false;
-    bool flg = true;
+
+    bool ret = true;
     // TODO: Add new Msg
     switch (v_event) {
     case kWM_MouseEnter:
@@ -100,33 +82,32 @@ bool UIControl::Event(const UIEvent& v_event) {
         ret = OnMouseLeave(v_event);
         break;
     case kWM_MouseMove:
-        OnMouseMove(v_event);
-        return true;    // Do NOT record MouseMove MSG
+        ret = OnMouseMove(v_event);
+        break;
 
     case kWM_LButtonDown:
-        if (flg)
-            (ret = OnLButtonDown(v_event)), flg = false;
+        ret = OnLButtonDown(v_event);
+        break;
     case kWM_LButtonUp:
-        if (flg)
-            (ret = OnLButtonUp(v_event)), flg = false;
+        ret = OnLButtonUp(v_event);
+        break;
     case kWM_LButtonClick:
-        if (flg)
-            (ret = OnLButtonClick(v_event)), flg = false;
+        ret = OnLButtonClick(v_event);
+        break;
     case kWM_LButtonDBClick:
-        if (flg)
-            (ret = OnLButtonDBClick(v_event)), flg = false;
+        ret = OnLButtonDBClick(v_event);
+        break;
     case kWM_RButtonDown:
-        if (flg)
-            (ret = OnRButtonDown(v_event)), flg = false;
+        ret = OnRButtonDown(v_event);
+        break;
     case kWM_RButtonUp:
-        if (flg)
-            (ret = OnRButtonUp(v_event)), flg = false;
+        ret = OnRButtonUp(v_event);
+        break;
     case kWM_RButtonClick:
-        if (flg)
-            (ret = OnRButtonClick(v_event)), flg = false;
+        ret = OnRButtonClick(v_event);
+        break;
     case kWM_RButtonDBClick:
-        if (flg)
-            (ret = OnRButtonDBClick(v_event)), flg = false;
+        ret = OnRButtonDBClick(v_event);
         break;
 
     case kWM_Disable:
@@ -148,6 +129,13 @@ bool UIControl::Event(const UIEvent& v_event) {
         ret = OnLangChange(v_event);
         break;
     }
+#ifdef _DEBUG
+    UStr debugmsg;
+    debugmsg.Format(_T("Control \"%s\" notify message %d!\n"),
+                    GetName().GetData(), v_event.GetMsg());
+    if (v_event != kWM_MouseMove)   // ignore too frequent msg
+        OutputDebugString(debugmsg);
+#endif // _DEBUG
     return ret;
 }
 
@@ -188,7 +176,7 @@ long UIControl::ParsePosStr(LPCTSTR v_str, StrLoc v_loc,
             center = (parentrc.top + parentrc.bottom) / 2;
         return center + offset;
     } else if (str[0] == '%') {
-        long percent = str.Right(str.GetLength() - 1).Str2LL();
+        double percent = str.Right(str.GetLength() - 1).Str2Double();
         long ret;
         if (v_loc == left || v_loc == right)
             ret = parentrc.left + parentrc.width()*percent / 100;

@@ -28,7 +28,7 @@ public:
     /**
     * Get resource file size
     * @param    LPCTSTR v_path: relative path
-    * @return   -1 when file can't access,otherwise is the file size
+    * @return   FILESIZE(-1) when file can't access, otherwise is file size
     */
     virtual FILESIZE GetFileSize(LPCTSTR v_path) = 0;
 
@@ -37,7 +37,7 @@ public:
     * @param    LPCTSTR v_path: relative path
     * @param    BYTE* v_buf: buffer
     * @param    FILESIZE v_size: buffer size
-    * @return   true if succeed
+    * @param    true for success
     */
     virtual bool GetFile(LPCTSTR v_path, BYTE* v_buf, FILESIZE v_size) = 0;
 };
@@ -50,7 +50,7 @@ class DUIMINI_API IUIContainer {
 public:
     virtual UIControl* GetItem(UINT v_index) const = 0;
     virtual UINT GetCount() const = 0;
-    virtual bool Add(UIControl* v_ctrl) = 0;
+    virtual void Add(UIControl* v_ctrl) = 0;
     virtual bool Remove(UIControl* v_ctrl) = 0;
     virtual void RemoveAll() = 0;
 };
@@ -63,15 +63,6 @@ class DUIMINI_API UIRenderImage;
 struct DUIMINI_API UIFont;
 struct DUIMINI_API UIStringFormat;
 class DUIMINI_API UIRect;
-// font string trimming
-enum StringTrimming {
-    kST_None = 0,
-    kST_Ch = 1,
-    kST_Word = 2,
-    kST_DotCh = 3,
-    kST_DotWord = 4,
-    kST_DotMid = 5
-};
 // image mode
 enum ImageMode {
     kIM_Extrude,
@@ -79,28 +70,29 @@ enum ImageMode {
 };
 class DUIMINI_API IUIRender {
 public:
-    virtual bool GlobalInit() = 0;
-    virtual bool GlobalRelease() = 0;
-    virtual bool Paint(UIWindow* v_wnd) = 0;
+    virtual void GlobalInit() = 0;
+    virtual void GlobalRelease() = 0;
+    virtual void Paint(UIWindow* v_wnd) = 0;
 
-    // For buffering drawing, renew background buffer, NO SYNC SCREEN
-    virtual bool RedrawBackground() = 0;
+    // For buffering drawing, renew background buffer, NO SYNC FRONT SCREEN
+    virtual void RedrawBackground() = 0;
 
-    virtual bool DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
-                           const UIRect& v_srcrect, ALPHA v_alpha = 255,
+    virtual void DrawImage(UIRenderImage* v_img, const UIRect &v_destrect,
+                           const UIRect &v_srcrect, ALPHA v_alpha = 255,
                            ImageMode v_mode = kIM_Extrude) = 0;
-    virtual bool DrawString(LPCTSTR v_text, const UIFont &v_font,
-                            const UIStringFormat &v_format, const UIRect &v_rect) = 0;
-    virtual bool DrawRect(const UIRect &v_rect, const UIColor &v_color,
+    virtual void DrawString(LPCTSTR v_text, const UIFont &v_font,
+                            const UIStringFormat &v_format,
+                            const UIRect &v_rect) = 0;
+    virtual void DrawRect(const UIRect &v_rect, const UIColor &v_color,
                           long v_border) = 0;
-    virtual bool DrawFillRect(const UIRect &v_rect, const UIColor &v_color) = 0;
+    virtual void DrawFillRect(const UIRect &v_rect, const UIColor &v_color) = 0;
 };
 
 class DUIMINI_API IUIRenderImage {
 public:
-    virtual bool Load(LPCTSTR v_path) = 0;
+    virtual void Load(LPCTSTR v_path) = 0;
     virtual LPVOID GetInterface() const = 0;
-    virtual long GetWidth() const = 0;
-    virtual long GetHeight() const = 0;
+    virtual UINT GetWidth() const = 0;
+    virtual UINT GetHeight() const = 0;
 };
 }   // namespace DuiMini

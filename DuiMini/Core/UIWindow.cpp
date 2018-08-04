@@ -9,7 +9,6 @@
 #include "UIWindow.h"
 
 namespace DuiMini {
-UINT UIWindow::classname_cnt_ = 0;
 
 UIWindow::UIWindow() {
     render_ = make_shared<UIRender>();
@@ -28,31 +27,15 @@ UIWindow::~UIWindow() {
     UISystem::RemoveWindow(this);
 }
 
-UIDialog* UIWindow::GetDialog() const {
-    return builder_->GetCtrlRoot();
-}
-
-HWND UIWindow::GetHWND() const {
-    return hwnd_;
-}
-
-void UIWindow::SetDlgName(LPCTSTR v_dlgname) {
-    dlgname_ = v_dlgname;
-}
-
-CUStr UIWindow::GetDlgName() const {
-    return dlgname_;
-}
-
 bool UIWindow::SetDlgBuilder(LPCTSTR v_dlgname) {
     builder_ = make_shared<UIDlgBuilder>();
     UStr dlg_file = UIConfig::FindDlgFile(v_dlgname);
     if (dlg_file.IsEmpty()) {
-        UISetError(kEL_Warning, kEC_IDInvalid, ErrorMsg_IDInvalid(v_dlgname));
+        ErrorMsg_IDInvalid(v_dlgname);
         return false;
     }
     UIXmlLoader *config = (UIXmlLoader*)UIResource::LoadRes(kFT_XML, dlg_file);
-    UIControl* ret = builder_->Init(config->GetRoot(), this);
+    UIControl *ret = builder_->Init(config->GetRoot(), this);
     UIResource::ReleaseRes(config);
     return ret;
 }
@@ -67,19 +50,15 @@ bool UIWindow::OnMaxButton(const UIEvent & v_event) {
     return true;
 }
 
-bool UIWindow::OnRestoreButton(const UIEvent & v_event) {
+bool UIWindow::OnRestoreButton(const UIEvent &v_event) {
     Restore();
     return true;
 }
 
-bool UIWindow::OnMinButton(const UIEvent & v_event) {
+bool UIWindow::OnMinButton(const UIEvent &v_event) {
     Minimize();
     return true;
 }
-
-void UIWindow::OnInit() {}
-
-void UIWindow::OnClose() {}
 
 void UIWindow::OnMaximize() {
     UIButton* btn_max = (UIButton*)FindCtrlFromName(_T("btn_max"));
@@ -99,12 +78,6 @@ void UIWindow::OnRestore() {
         btn_restore->VisibleCtrl(FALSE);
 }
 
-void UIWindow::OnMinimize() {}
-
-UIDlgBuilder* UIWindow::GetDlgBuilder() const {
-    return builder_.get();
-}
-
 LRESULT UIWindow::SendWindowMessage(UINT v_msg, WPARAM v_wparam,
                                     LPARAM v_lparam) const {
     return SendMessage(hwnd_, v_msg, v_wparam, v_lparam);
@@ -112,22 +85,26 @@ LRESULT UIWindow::SendWindowMessage(UINT v_msg, WPARAM v_wparam,
 
 UIControl* UIWindow::CreateControl(UIControl* v_ctrl,
                                    UIControl* v_parent/* = nullptr*/) {
-    if (!builder_)
-        return nullptr;
+    assert(builder_);
     return builder_->CreateControl(v_ctrl, this, v_parent);
 }
 
 bool UIWindow::FinishCreateControl(UIControl* v_ctrl) {
-    if (!builder_)
-        return nullptr;
+    assert(builder_);
     return builder_->FinishCreateControl(v_ctrl);
 }
 
 bool UIWindow::BindMsgHandler(LPCTSTR v_name, WindowMessage v_msg,
                               MsgHandleFun v_func) const {
-    UIControl* ctrl = GetDialog()->FindCtrlFromName(v_name);
+    UIControl *ctrl = GetDialog()->FindCtrlFromName(v_name);
+    // ctrl name whitelist
+    if (!ctrl && (CmpStr(v_name, _T("btn_close")) ||
+                  CmpStr(v_name, _T("btn_max")) ||
+                  CmpStr(v_name, _T("btn_restore")) ||
+                  CmpStr(v_name, _T("btn_min"))))
+        return true;
     if (!ctrl) {
-        UISetError(kEL_Warning, kEC_IDInvalid, ErrorMsg_IDInvalid(v_name));
+        ErrorMsg_IDInvalid(v_name);
         return false;
     }
     ctrl->SetMsgHandler(v_msg, v_func);
@@ -135,9 +112,15 @@ bool UIWindow::BindMsgHandler(LPCTSTR v_name, WindowMessage v_msg,
 }
 
 bool UIWindow::UnbindMsgHandler(LPCTSTR v_name, WindowMessage v_msg) const {
-    UIControl* ctrl = GetDialog()->FindCtrlFromName(v_name);
+    UIControl *ctrl = GetDialog()->FindCtrlFromName(v_name);
+    // ctrl name whitelist
+    if (!ctrl && (CmpStr(v_name, _T("btn_close")) ||
+                  CmpStr(v_name, _T("btn_max")) ||
+                  CmpStr(v_name, _T("btn_restore")) ||
+                  CmpStr(v_name, _T("btn_min"))))
+        return true;
     if (!ctrl) {
-        UISetError(kEL_Warning, kEC_IDInvalid, ErrorMsg_IDInvalid(v_name));
+        ErrorMsg_IDInvalid(v_name);
         return false;
     }
     ctrl->SetMsgHandler(v_msg, nullptr);
@@ -160,21 +143,16 @@ void UIWindow::Minimize() const {
     SendWindowMessage(WM_SYSCOMMAND, SC_MINIMIZE, NULL);
 }
 
-void UIWindow::ChangeSkin(SKINID v_id) {
+void UIWindow::ChangeSkin(CFGID v_id) {
     GetDialog()->Event(UIEvent(kWM_SkinChange, 0, v_id));
 }
 
-void UIWindow::ChangeLang(LANGID v_id) {
+void UIWindow::ChangeLang(CFGID v_id) {
     GetDialog()->Event(UIEvent(kWM_LangChange, 0, v_id));
 }
 
-UIRender* UIWindow::GetRender() const {
-    return render_.get();
-}
-
 UIControl* UIWindow::FindCtrlFromName(LPCTSTR v_name) const {
-    if (!builder_)
-        return nullptr;
+    assert(builder_);
     return GetDialog()->FindCtrlFromName(v_name);
 }
 
@@ -212,7 +190,7 @@ LRESULT UIWindow::MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam) {
         mousepos_ctrl = GetDialog()->FindCtrlFromPT(last_mousepos_);
         break;
     }
-    UIControl* &ctrl_click = *ctrl_click_tmp;
+    UIControl * (&ctrl_click) = *ctrl_click_tmp;
 
     switch (v_msg) {
     case WM_CREATE:
@@ -463,10 +441,9 @@ LRESULT CALLBACK UIWindow::WinProc(HWND v_hwnd, UINT v_msg,
         return DefWindowProc(v_hwnd, v_msg, v_wparam, v_lparam);
 }
 
-bool UIWindow::Paint() {
-    if (!render_)
-        return false;
-    return render_->Paint(this);
+void UIWindow::Paint() {
+    assert(render_);
+    render_->Paint(this);
 }
 
 bool UIWindow::ShowWindow(bool v_show /*= true*/,
@@ -496,7 +473,7 @@ bool UIWindow::SetIcon(UINT v_res) {
                                       ::GetSystemMetrics(SM_CYSMICON),
                                       LR_DEFAULTCOLOR);
     if (!icon || !iconsm) {
-        UISetError(kEL_Warning, kEC_IDInvalid, ErrorMsg_IDInvalid(UStr(v_res)));
+       ErrorMsg_IDInvalid(UStr(v_res).GetData());
         return false;
     }
     SendWindowMessage(WM_SETICON, ICON_BIG, (LPARAM)icon);
@@ -553,9 +530,10 @@ HWND UIWindow::Create(LPCTSTR v_classname) {
     if (hwnd_)
         return hwnd_;
 
+    static UINT class_cnt = 0;
     UStr classname = v_classname;
     if (classname == _T("DuiMini"))
-        classname += UStr(++classname_cnt_);
+        classname += UStr(++class_cnt);     // prevent same classname
     WNDCLASSEX wce = { 0 };
     wce.cbSize = sizeof(wce);
     wce.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
@@ -571,8 +549,7 @@ HWND UIWindow::Create(LPCTSTR v_classname) {
     wce.hIconSm = NULL;
     ATOM nAtom = RegisterClassEx(&wce);
     if (!nAtom) {
-        UISetError(kEL_Warning, kEC_WindowsFail,
-                   _T("Register window class failed"));
+        ErrorMsg_ThirdPartFail(RegisterClassEx);
         return nullptr;
     }
 

@@ -13,35 +13,42 @@ public:
     UIString();
     UIString(const LL v_digit);
     UIString(const UIString& v_src);
+    UIString(UIString&& v_src);
     UIString(LPCTSTR v_str, size_t v_len = -1);
     ~UIString();
 
 public:
-    void Empty();
-    size_t GetLength() const;
-    bool IsEmpty() const;
-    TCHAR GetAt(size_t v_index) const;
     void Append(LPCTSTR v_str);
     void Assign(LPCTSTR v_str, size_t v_len = -1);
+
+    void Empty();
+    bool IsEmpty() const;
+    size_t GetLength() const;
+    void SetAt(size_t v_index, TCHAR v_ch);
+    TCHAR GetAt(size_t v_index) const;
+    shared_ptr_char CreateStr() const;
+    shared_ptr_wchar CreateWStr() const;
     LPCTSTR GetData() const;
+
     LL Str2LL() const;
+    double Str2Double() const;
     UIString Str2Hex() const;
     UIString Int2Hex() const;
     UIString Hex2Str() const;
 
-
-    void SetAt(size_t v_index, TCHAR v_ch);
     operator LPCTSTR() const;
     // prevent bool auto convert
     operator bool() = delete;
     operator bool() const = delete;
 
     TCHAR operator[] (int v_index) const;
-    const UIString& operator=(const TCHAR v_ch);
-    const UIString& operator=(LPCTSTR v_str);
+    UIString& operator=(const TCHAR v_ch);
+    UIString& operator=(LPCTSTR v_str);
+    UIString& operator=(UIString& v_str);
+    UIString& operator=(UIString&& v_str);
     UIString operator+(LPCTSTR v_str) const;
-    const UIString& operator+=(LPCTSTR v_str);
-    const UIString& operator+=(const TCHAR v_ch);
+    UIString& operator+=(LPCTSTR v_str);
+    UIString& operator+=(const TCHAR v_ch);
 
     bool operator == (LPCTSTR v_str) const;
     bool operator != (LPCTSTR v_str) const;
@@ -77,11 +84,8 @@ typedef const UIString CUStr;
 ////////////////////////////////////////
 
 typedef std::map<UStr, UStr> UIAttr;
-typedef std::map<UStr, UStr>::iterator UIAttrIt;
-typedef std::map<UStr, UStr>::const_iterator CUIAttrIt;
 typedef std::vector<UIAttr> UICFGItem;
-typedef std::vector<UIAttr>::iterator UICFGItemIt;
-typedef std::vector<UIAttr>::const_iterator CUICFGItemIt;
+typedef std::vector<LPVOID> UIPtrArray;
 
 ////////////////////////////////////////
 
@@ -95,17 +99,17 @@ public:
 
 public:
     operator WindowMessage() const;
-    WindowMessage GetMsg() const;
-    WPARAM GetWParam() const;
-    LPARAM GetLParam() const;
-    void SetMsg(WindowMessage v_msg);
-    void SetWParam(WPARAM v_wparam);
-    void SetLParam(LPARAM v_lparam);
 
     bool SetMsgFromWinMsg(UINT v_winmsg);
-
     void SetPos(POINT v_pt);
     POINT GetPos() const;
+
+    void SetMsg(WindowMessage v_msg) { msg_ = v_msg; }
+    void SetWParam(WPARAM v_wparam) { wparam_ = v_wparam; }
+    void SetLParam(LPARAM v_lparam) { lparam_ = v_lparam; }
+    WindowMessage GetMsg() const { return msg_; }
+    WPARAM GetWParam() const { return wparam_; }
+    LPARAM GetLParam() const { return lparam_; }
 
 private:
     WindowMessage msg_ = kWM_Start_;
@@ -119,7 +123,7 @@ class DUIMINI_API UIRect {
 public:
     UIRect();
     UIRect(long v_left, long v_top, long v_right, long v_bottom);
-    explicit UIRect(const RECT& v_rect);
+    UIRect(const RECT& v_rect);
     UIRect(const UIRect& v_src);
     ~UIRect();
 
@@ -136,6 +140,7 @@ public:
     RECT& rect();
     long width() const;
     long height() const;
+    // simplify operation
     long &left = rect_.left;
     long &top = rect_.top;
     long &right = rect_.right;
@@ -174,35 +179,6 @@ private:
 
 ////////////////////////////////////////
 
-class DUIMINI_API UIPtrArray {
-public:
-    UIPtrArray();
-    UIPtrArray(UINT v_size);
-    ~UIPtrArray();
-
-public:
-    void Empty();
-    void Resize(UINT v_size);
-    bool IsEmpty() const;
-    int Find(LPVOID v_index) const;
-    bool Add(LPVOID v_data);
-    bool SetAt(UINT v_index, LPVOID v_data);
-    bool InsertAt(UINT v_index, LPVOID v_data);
-    bool Remove(UINT v_index);
-    UINT GetSize() const;
-    LPVOID* GetData();
-
-    LPVOID GetAt(UINT v_index) const;
-    LPVOID operator[] (UINT v_index) const;
-
-protected:
-    LPVOID* ptrvoid_ = nullptr;
-    UINT count_ = 0;
-    UINT allocated_ = 0;
-};
-
-////////////////////////////////////////
-
 class DUIMINI_API UIUtils {
 public:
     /**
@@ -231,6 +207,27 @@ public:
      * @return   size rect
      */
     static UIRect GetWorkAreaSize();
+
+    /**
+     * Get Safe string, no delete worry
+     * @param	size_t v_len: string length
+     * @return	shared_ptr string
+     * e.g.: auto str=UIUtils::SafeTStr(3);
+     */
+    static shared_ptr_tchar SafeTStr(size_t v_len);
+    static shared_ptr_char SafeStr(size_t v_len);
+    static shared_ptr_wchar SafeWStr(size_t v_len);
+    static shared_ptr_byte SafeBYTE(size_t v_len);
+
+    /**
+     * Convert between str/wstr/tstr
+     */
+    static shared_ptr_wchar Convert2WStr(LPCSTR v_str);
+    static shared_ptr_wchar Convert2WStr(LPCWSTR v_str);
+    static shared_ptr_char Convert2Str(LPCSTR v_str);
+    static shared_ptr_char Convert2Str(LPCWSTR v_str);
+    static shared_ptr_tchar Convert2TStr(LPCSTR v_str);
+    static shared_ptr_tchar Convert2TStr(LPCWSTR v_str);
 };
 
 }   // namespace DuiMini

@@ -51,12 +51,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Control\Atom\UIImage.h" />
+    <ClInclude Include="Control\Atom\UIText.h" />
+    <ClInclude Include="Control\Basic\UIButton.h" />
     <ClInclude Include="Control\Layout\UIContainer.h" />
-    <ClInclude Include="Control\UIButton.h" />
+    <ClInclude Include="Control\Layout\UIDialog.h" />
     <ClInclude Include="Control\UIControl.h" />
-    <ClInclude Include="Control\UIDialog.h" />
-    <ClInclude Include="Control\UIImage.h" />
-    <ClInclude Include="Control\UIText.h" />
     <ClInclude Include="Core\Render\UIRender.h" />
     <ClInclude Include="Core\Render\UIRenderGDIP.h" />
     <ClInclude Include="Core\Resource\UIResFile.h" />
@@ -85,12 +85,12 @@
     <ClInclude Include="Utils\UIXmlLoader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Control\Atom\UIImage.cpp" />
+    <ClCompile Include="Control\Atom\UIText.cpp" />
+    <ClCompile Include="Control\Basic\UIButton.cpp" />
     <ClCompile Include="Control\Layout\UIContainer.cpp" />
-    <ClCompile Include="Control\UIButton.cpp" />
+    <ClCompile Include="Control\Layout\UIDialog.cpp" />
     <ClCompile Include="Control\UIControl.cpp" />
-    <ClCompile Include="Control\UIDialog.cpp" />
-    <ClCompile Include="Control\UIImage.cpp" />
-    <ClCompile Include="Control\UIText.cpp" />
     <ClCompile Include="Core\Render\UIRender.cpp" />
     <ClCompile Include="Core\Render\UIRenderGDIP.cpp" />
     <ClCompile Include="Core\Resource\UIResFile.cpp" />

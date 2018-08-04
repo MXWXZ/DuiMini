@@ -11,7 +11,7 @@ namespace DuiMini {
 class DUIMINI_API UIResFile :public IUIRes {
 public:
     UIResFile();
-    explicit UIResFile(LPCTSTR v_info);
+    UIResFile(LPCTSTR v_info);
     virtual ~UIResFile();
 
     void SetResInfo(LPCTSTR v_info) override;

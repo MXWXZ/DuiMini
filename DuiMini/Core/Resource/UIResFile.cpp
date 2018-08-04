@@ -32,8 +32,7 @@ FILESIZE UIResFile::GetFileSize(LPCTSTR v_path) {
     FILE* fp;
     _tfopen_s(&fp, fullpath, _T("rb"));
     if (!fp)
-        UISetError(kEL_Fatal, kEC_FileFail,
-                   ErrorMsg_FileFail(fullpath.GetData()));
+        return FILESIZE(-1);
     fseek(fp, 0, SEEK_END);
     FILESIZE size = ftell(fp);
     fclose(fp);
@@ -47,8 +46,7 @@ bool UIResFile::GetFile(LPCTSTR v_path, BYTE* v_buffer, FILESIZE v_size) {
     FILE* fp;
     _tfopen_s(&fp, fullpath, _T("rb"));
     if (!fp)
-        UISetError(kEL_Fatal, kEC_FileFail,
-                   ErrorMsg_FileFail(fullpath.GetData()));
+        return false;
     fread(v_buffer, 1, v_size, fp);
     fclose(fp);
     return true;

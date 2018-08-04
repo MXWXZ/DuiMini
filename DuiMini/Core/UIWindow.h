@@ -11,7 +11,7 @@
 namespace DuiMini {
 #define MSG_MAP_BEGIN(theclass)         virtual void _CtrlBindMsgHandler() { \
                                             typedef theclass _thisclass;
-#define ON_CONTROL_MSG(name, msg, func)     BindMsgHandler(name, msg, (MsgHandleFun)(&_thisclass::func));
+#define ON_CONTROL_MSG(name, msg, func)     BindMsgHandler(name, msg, std::bind(&_thisclass::func, this, std::placeholders::_1));
 #define ON_PARENT_MSG(parentclass)          parentclass::_CtrlBindMsgHandler();
 #define MSG_MAP_END                     }
 
@@ -20,24 +20,25 @@ namespace DuiMini {
 #define ON_CONTROL_VAR(name, var)       tmp = (UIControl**)&var;       \
                                         *tmp = FindCtrlFromName(name); \
                                         if (!var)                      \
-                                            UISetError(kEL_Warning, kEC_IDInvalid, ErrorMsg_IDInvalid(name));
+                                            ErrorMsg_IDInvalid(name);
 #define ON_PARENT_VAR(parentclass)      parentclass::_CtrlBindVar();
 #define VAR_MAP_END                 }
 
-typedef bool(UIWindow::*MsgHandleFun)(const UIEvent& v_event);
+typedef std::function<bool(const UIEvent &v_event)> MsgHandleFun;
 
 class DUIMINI_API UIWindow {
 public:
     UIWindow();
-    explicit UIWindow(LPCTSTR v_name);
+    UIWindow(LPCTSTR v_name);
     virtual ~UIWindow();
 
 public:
-    UIDialog* GetDialog() const;
-    HWND GetHWND() const;
+    UIDialog *GetDialog() const { return builder_->GetCtrlRoot(); }
+    HWND GetHWND() const { return hwnd_; }
 
-    void  SetDlgName(LPCTSTR v_dlgname);  // Please ONLY set before create
-    CUStr GetDlgName() const;
+    // Please ONLY set before create
+    void SetDlgName(LPCTSTR v_dlgname) { dlgname_ = v_dlgname; }
+    CUStr GetDlgName() const { return dlgname_; }
 
     /**
     * Create and run window
@@ -102,25 +103,25 @@ public:
 
     /**
     * change language/skin
-    * @param    v_id:config id
+    * @param    CFGID v_id:config id
     * Only this window will receive event and global config will NOT be change!
     */
-    void ChangeSkin(SKINID v_id);
-    void ChangeLang(LANGID v_id);
+    void ChangeSkin(CFGID v_id);
+    void ChangeLang(CFGID v_id);
 
 public:
-    UIRender* GetRender() const;
-    UIDlgBuilder* GetDlgBuilder() const;
+    UIRender * GetRender() const { return render_.get(); }
+    UIDlgBuilder* GetDlgBuilder() const { return builder_.get(); }
     LRESULT SendWindowMessage(UINT v_msg, WPARAM v_wparam,
                               LPARAM v_lparam) const;
 
 protected:
     // better to call them if you override
-    virtual void OnInit();
-    virtual void OnClose();
+    virtual void OnInit() {}
+    virtual void OnClose() {}
     virtual void OnMaximize();
     virtual void OnRestore();
-    virtual void OnMinimize();
+    virtual void OnMinimize() {};
 
 protected:
     /**
@@ -129,7 +130,7 @@ protected:
     virtual LRESULT MsgHandler(UINT v_msg, WPARAM v_wparam, LPARAM v_lparam);
     static LRESULT CALLBACK WinProc(HWND v_hwnd, UINT v_msg,
                                     WPARAM v_wparam, LPARAM v_lparam);
-    bool Paint();
+    void Paint();
 
     bool SetDlgBuilder(LPCTSTR v_dlgname);
 
@@ -151,7 +152,7 @@ protected:
     shared_ptr<UIDlgBuilder> builder_ = nullptr;  // dlg builder
     shared_ptr<UIRender> render_ = nullptr;       // render
     UIRect           rect_;                       // window rect
-    static UINT      classname_cnt_;              // auto classname counter
+
     HWND             tooltip_hwnd_ = nullptr;     // tooltip
     TOOLINFO         tooltip_info_;               // tooltip info
     bool             tooltip_active_ = false;     // is active tooltip
@@ -169,6 +170,10 @@ protected:
     bool OnRestoreButton(const UIEvent& v_event);
     bool OnMinButton(const UIEvent& v_event);
 
+    /**
+     * Please modify BindMsgHandler and UnbindMsgHandler to add whitelist for
+     * not find warning
+     */
     MSG_MAP_BEGIN(UIWindow)
         ON_CONTROL_MSG(_T("btn_close"), kWM_LButtonClick, OnCloseButton)
         ON_CONTROL_MSG(_T("btn_max"), kWM_LButtonClick, OnMaxButton)

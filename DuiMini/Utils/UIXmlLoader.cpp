@@ -24,10 +24,7 @@ void UIXmlNode::SetNode(const xmlnode v_node) {
 CUStr UIXmlNode::GetAttrValue(LPCTSTR v_name,
                               LPCTSTR v_default/* = _T("")*/) const {
     xmlattr attr = node_.attribute(v_name);
-    if (!attr)
-        return CUStr(v_default);
-    else
-        return CUStr(attr.value());
+    return CUStr(attr ? attr.value() : v_default);
 }
 
 CUStr UIXmlNode::GetAttrValue(LPCTSTR v_name,
@@ -75,12 +72,10 @@ UIXmlLoader::~UIXmlLoader() {}
 
 void UIXmlLoader::Loadxml(LPCTSTR v_path) {
     FILESIZE buflen = UIResource::GetFileSize(v_path);
-    BYTE* buffer = new BYTE[buflen + 1];
-    UIResource::GetFile(v_path, buffer, buflen);
+    auto buffer = UIUtils::SafeBYTE(buflen + 1);
+    UIResource::GetFile(v_path, buffer.get(), buflen);
     buffer[buflen] = '\0';
-    doc_.load_buffer(buffer, buflen);
-    delete[]buffer;
-    buffer = nullptr;
+    doc_.load_buffer(buffer.get(), buflen);
 }
 
 UIXmlNode UIXmlLoader::GetRoot() const {

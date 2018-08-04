@@ -10,26 +10,25 @@
 namespace DuiMini {
 /**
  * resource type
- * kRT_File:normal file
- * kRT_Package:zip file
- * kRT_RC:rc resource
  */
 enum ResType {
-    kRT_File = 0,
-    kRT_Package = 1,
-    kRT_RC = 2,
+    kRT_File = 0,       // normal file
+    kRT_Package = 1,    // zip file
+    kRT_RC = 2,         // rc resource
 };
 
 /**
 * File type
-* kFT_XML:.xml file
-* kFT_PIC:picture file
 */
 enum FileType {
-    kFT_XML,
-    kFT_PIC,
+    kFT_XML,        // .xml file
+    kFT_PIC,        // picture file
+    // TODO: Add file type here
 };
 
+/**
+ * Cache loaded resource
+ */
 struct DUIMINI_API LoadedRes {
     ~LoadedRes() {
         switch (type_) {
@@ -42,15 +41,13 @@ struct DUIMINI_API LoadedRes {
         }
         res_ = nullptr;
     }
-    FileType type_;
-    UStr path_;
-    LPVOID res_ = nullptr;
-    UINT using_ = 0;
+    FileType type_;             // file type
+    UStr path_;                 // file path
+    LPVOID res_ = nullptr;      // file pointer
+    UINT using_ = 0;            // using count, will be released if equal 0
 };
 
 typedef std::vector<shared_ptr<LoadedRes>> UIResItem;
-typedef UIResItem::iterator UIResItemIt;
-typedef UIResItem::const_iterator CUIResItemIt;
 
 /**
  * resource interface
@@ -82,7 +79,7 @@ public:
     /**
      * Get resource file size
      * @param    LPCTSTR v_path: relative path
-     * @return   the file size,-1 for failed
+     * @return   file size
      */
     static FILESIZE GetFileSize(LPCTSTR v_path);
 
@@ -91,12 +88,11 @@ public:
      * @param    LPCTSTR v_path: relative path
      * @param    BYTE* v_buffer: buffer(please call 'GetFileSize' to get the
      *           size and apply for memory space.)
-     * @param    long v_size: buffer size
-     * @return   true for success
+     * @param    FILESIZE v_size: buffer size
      * WARNING: this function WILL NOT check if there is enough space
      * in the buffer.
      */
-    static bool GetFile(LPCTSTR v_path, BYTE* v_buffer, long v_size);
+    static void GetFile(LPCTSTR v_path, BYTE* v_buffer, FILESIZE v_size);
 
     /**
      * Set resource info
@@ -117,7 +113,7 @@ public:
     static CUStr GetResInfo();
 
 private:
-    static shared_ptr<IUIRes> resclass_;   // resource class
+    static shared_ptr<IUIRes> resclass_;    // resource class
     static ResType restype_;                // resource type
     static UIResItem res_item_;             // loaded res
 };

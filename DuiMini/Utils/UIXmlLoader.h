@@ -15,7 +15,7 @@ namespace DuiMini {
 class DUIMINI_API UIXmlAttr {
 public:
     UIXmlAttr();
-    explicit UIXmlAttr(const xmlattr v_attr);
+    UIXmlAttr(const xmlattr v_attr);
     ~UIXmlAttr();
 
     operator bool() const;
@@ -31,7 +31,7 @@ private:
 class DUIMINI_API UIXmlNode {
 public:
     UIXmlNode();
-    explicit UIXmlNode(const xmlnode v_node);
+    UIXmlNode(const xmlnode v_node);
     ~UIXmlNode();
 
 public:
@@ -55,7 +55,7 @@ private:
 class DUIMINI_API UIXmlLoader {
 public:
     UIXmlLoader();
-    explicit UIXmlLoader(LPCTSTR v_path);
+    UIXmlLoader(LPCTSTR v_path);
     ~UIXmlLoader();
 
     void Loadxml(LPCTSTR v_path);

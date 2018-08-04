@@ -9,27 +9,23 @@
 
 namespace DuiMini {
 enum RenderMode {
-    kRM_GDIPlus,
+    kRM_GDIPlus,    // GDI+
 };
 
 class DUIMINI_API UIRenderImage {
 public:
     UIRenderImage();
-    explicit UIRenderImage(LPCTSTR v_path);
+    UIRenderImage(LPCTSTR v_path);
     ~UIRenderImage();
 
-    bool Load(LPCTSTR v_path);
+    void Load(LPCTSTR v_path);
     void* GetInterface() const;
-    long GetWidth() const;
-    long GetHeight() const;
+    UINT GetWidth() const;
+    UINT GetHeight() const;
 
 private:
     shared_ptr<IUIRenderImage> renderimg_ = nullptr;
 };
-
-#define RENDER_CALL(x) if (!render_)             \
-                           return false;         \
-                       return x
 
 class DUIMINI_API UIRender {
 public:
@@ -40,26 +36,26 @@ public:
      * You ONLY need to call these ONCE at the beginning and the end of the
      * program.
      */
-    static bool GlobalInit();
-    static bool GlobalInit(RenderMode v_mode);
+    static void GlobalInit();
+    static void GlobalInit(RenderMode v_mode);
     // Release will be automatically called by UISystem::Cleanup
-    static bool GlobalRelease();
+    static void GlobalRelease();
 
-    static void SetRenderMode(RenderMode v_mode);
-    static RenderMode GetRenderMode();
+    static void SetRenderMode(RenderMode v_mode) { render_mode_ = v_mode; }
+    static RenderMode GetRenderMode() { return render_mode_; }
 
-    bool Paint(UIWindow* v_wnd);
-    bool RedrawBackground();
-    bool DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
+    void Paint(UIWindow* v_wnd);
+    void RedrawBackground();
+    void DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
                    ALPHA v_alpha = 255, ImageMode v_mode = kIM_Extrude);
-    bool DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
+    void DrawImage(UIRenderImage* v_img, const UIRect& v_destrect,
                    const UIRect& v_srcrect, ALPHA v_alpha = 255,
                    ImageMode v_mode = kIM_Extrude);
-    bool DrawString(LPCTSTR v_text, const UIFont &v_font,
+    void DrawString(LPCTSTR v_text, const UIFont &v_font,
                     const UIStringFormat &v_format, const UIRect &v_rect);
-    bool DrawRect(const UIRect &v_rect, const UIColor &v_color,
+    void DrawRect(const UIRect &v_rect, const UIColor &v_color,
                   long v_border);
-    bool DrawFillRect(const UIRect &v_rect, const UIColor &v_color);
+    void DrawFillRect(const UIRect &v_rect, const UIColor &v_color);
 
 private:
     static IUIRender* SelectRender(shared_ptr<IUIRender>* v_pointer);

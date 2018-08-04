@@ -20,6 +20,8 @@
 #include <vector>
 #include <utility>
 #include <memory>
+#include <functional>
+#include "assert.h"
 #include "CommCtrl.h"
 #pragma comment(lib,"comctl32.lib")  
 
@@ -52,7 +54,7 @@
 // control
 #include "Control/UIControl.h"
 #include "Control/Layout/UIContainer.h"
-#include "Control/UIDialog.h"
-#include "Control/UIText.h"
-#include "Control/UIImage.h"
-#include "Control/UIButton.h"
+#include "Control/Layout/UIDialog.h"
+#include "Control/Atom/UIText.h"
+#include "Control/Atom/UIImage.h"
+#include "Control/Basic/UIButton.h"

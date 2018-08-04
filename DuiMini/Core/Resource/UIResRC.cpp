@@ -39,8 +39,7 @@ ZFile UIResRC::OpenZip() {
     FILE* fp;
     _tfopen_s(&fp, tmpfile, _T("wb"));
     if (!fp)
-        UISetError(kEL_Fatal, kEC_FileFail,
-                   ErrorMsg_FileFail(tmpfile));
+        return nullptr;
     fwrite(file, SizeofResource(UISystem::GetInstance(), srcsys), 1, fp);
     fclose(fp);
     UnlockResource(globalsys);

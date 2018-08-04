@@ -10,9 +10,9 @@
 
 namespace DuiMini {
 UICFGItem UIConfig::dlg_;
-SKINID    UIConfig::shownskin_ = 0;
-LANGID    UIConfig::shownlang_ = 0;
-FONTID    UIConfig::shownfont_ = 0;
+CFGID     UIConfig::shownskin_ = 0;
+CFGID     UIConfig::shownlang_ = 0;
+CFGID     UIConfig::shownfont_ = 0;
 UICFGItem UIConfig::lang_;
 UICFGItem UIConfig::skin_;
 UICFGItem UIConfig::font_;
@@ -47,10 +47,10 @@ void UIConfig::LoadConfig(LPCTSTR v_relativepath/* = DEFAULT_RESFILE*/) {
                     CFG_AddAttrStatic(_T("default"), _T("0"));
                 CFG_EndAttr(skin_);
                 if (CFG_CmpAttr(_T("system"), _T("1")))
-                    AddSystemSkin((SKINID)skin_.size());
+                    AddSystemSkin(skin_.size() - 1);
                 if (CFG_CmpAttr(_T("system"), _T("0")) &&
                     CFG_CmpAttr(_T("default"), _T("1")))
-                    SetShownSkin((SKINID)skin_.size());
+                    SetShownSkin(skin_.size() - 1);
             }
 
             // font config
@@ -67,8 +67,8 @@ void UIConfig::LoadConfig(LPCTSTR v_relativepath/* = DEFAULT_RESFILE*/) {
                 CFG_AddAttrDef(_T("default"), 0);
                 CFG_EndAttr(font_);
                 if (CFG_CmpAttr(_T("default"), _T("1")) &&
-                    CFG_CmpAttr(_T("lang"), lang_[shownlang_ - 1][_T("lang")]))
-                    SetShownFont((FONTID)font_.size());
+                    CFG_CmpAttr(_T("lang"), lang_[shownlang_][_T("lang")]))
+                    SetShownFont(font_.size() - 1);
             }
         }
 
@@ -89,72 +89,33 @@ void UIConfig::LoadConfig(LPCTSTR v_relativepath/* = DEFAULT_RESFILE*/) {
                 CFG_AddAttrDef(_T("default"), 0);
                 CFG_EndAttr(lang_);
                 if (CFG_CmpAttr(_T("default"), _T("1")))
-                    SetShownLang((LANGID)lang_.size());
+                    SetShownLang(lang_.size() - 1);
             }
         }
     }
     UIResource::ReleaseRes(config);
 }
 
-LANGID UIConfig::FindLangID(LPCTSTR v_name) {
-    UICFGItemIt &itend = lang_.end();
-    for (UICFGItemIt it = lang_.begin(); it != itend; ++it)
-        if (CmpStr((*it)[_T("name")], v_name))
-            return it - lang_.begin() + 1;
-    UISetError(kEL_Warning, kEC_IDInvalid, ErrorMsg_IDInvalid(v_name));
-    return 0;
+CFGID UIConfig::FindLangID(LPCTSTR v_name) {
+    return FindItemID(lang_, v_name);
 }
 
-FONTID UIConfig::FindFontID(LPCTSTR v_name) {
-    UICFGItemIt &itend = font_.end();
-    for (UICFGItemIt it = font_.begin(); it != itend; ++it)
-        if (CmpStr((*it)[_T("name")], v_name))
-            return it - font_.begin() + 1;
-    UISetError(kEL_Warning, kEC_IDInvalid, ErrorMsg_IDInvalid(v_name));
-    return 0;
+CFGID UIConfig::FindFontID(LPCTSTR v_name) {
+    return FindItemID(font_, v_name);
 }
 
-SKINID UIConfig::FindSkinID(LPCTSTR v_name) {
-    UICFGItemIt &itend = skin_.end();
-    for (UICFGItemIt it = skin_.begin(); it != itend; ++it)
-        if (CmpStr((*it)[_T("name")], v_name))
-            return it - skin_.begin() + 1;
-    UISetError(kEL_Warning, kEC_IDInvalid, ErrorMsg_IDInvalid(v_name));
-    return 0;
+CFGID UIConfig::FindSkinID(LPCTSTR v_name) {
+    return FindItemID(skin_, v_name);
 }
 
-LANGID UIConfig::GetShownLangID() {
-    return shownlang_;
-}
-
-FONTID UIConfig::GetShownFontID() {
-    return shownfont_;
-}
-
-SKINID UIConfig::GetShownSkinID() {
-    return shownskin_;
-}
-
-UIAttr* UIConfig::GetShownLang() {
-    return &lang_[GetShownLangID() - 1];
-}
-
-UIAttr* UIConfig::GetShownFont() {
-    return &font_[GetShownFontID() - 1];
-}
-
-UIAttr* UIConfig::GetShownSkin() {
-    return &skin_[GetShownSkinID() - 1];
-}
-
-bool UIConfig::SetShownLang(LANGID v_id) {
-    if (v_id > lang_.size()) {
-        UISetError(kEL_Warning, kEC_IDInvalid, ErrorMsg_IDInvalid(v_id));
+bool UIConfig::SetShownLang(CFGID v_id) {
+    if (v_id >= lang_.size()) {
+        ErrorMsg_IDInvalid(v_id);
         return false;
     }
 
     lang_str_.clear();
-    UIXmlLoader *file = (UIXmlLoader*)UIResource::LoadRes(kFT_XML, lang_[v_id - 1][_T("file")]);
+    UIXmlLoader *file = (UIXmlLoader*)UIResource::LoadRes(kFT_XML, lang_[v_id][_T("file")]);
     for (UIXmlNode node = file->GetRoot().FirstChild();
          node;
          node = node.NextSibling()) {
@@ -169,21 +130,20 @@ bool UIConfig::SetShownLang(LANGID v_id) {
     return true;
 }
 
-bool UIConfig::SetShownFont(FONTID v_id) {
-    if (v_id > font_.size()) {
-        UISetError(kEL_Warning, kEC_IDInvalid, ErrorMsg_IDInvalid(v_id));
+bool UIConfig::SetShownFont(CFGID v_id) {
+    if (v_id >= font_.size()) {
+        ErrorMsg_IDInvalid(v_id);
         return false;
     }
 
-    UIAttr &nowfont = font_[v_id - 1];
-    if (nowfont[_T("lang")] != lang_[shownlang_ - 1][_T("lang")])
-        UISetError(kEL_Warning, kEC_FormatInvalid, _T("Font \"%s\" mismatch language \"%s\""),
-                   nowfont[_T("font")].GetData(), lang_[shownlang_ - 1][_T("lang")]);
+    UIAttr &nowfont = font_[v_id];
+    if (nowfont[_T("lang")] != lang_[shownlang_][_T("lang")])
+        ErrorMsg_FormatInvalid(nowfont[_T("font")].GetData());
 
     font_style_.name_ = nowfont[_T("name")];
     font_style_.lang_ = nowfont[_T("lang")];
     font_style_.font_ = nowfont[_T("font")];
-    font_style_.size_ = (USHORT)nowfont[_T("size")].Str2LL();
+    font_style_.size_ = nowfont[_T("size")].Str2LL();
     font_style_.bold_ = nowfont[_T("bold")].Str2LL();
     font_style_.italic_ = nowfont[_T("italic")].Str2LL();
     font_style_.underline_ = nowfont[_T("underline")].Str2LL();
@@ -192,14 +152,14 @@ bool UIConfig::SetShownFont(FONTID v_id) {
     return true;
 }
 
-bool UIConfig::SetShownSkin(SKINID v_id) {
-    if (v_id > skin_.size()) {
-        UISetError(kEL_Warning, kEC_IDInvalid, ErrorMsg_IDInvalid(v_id));
+bool UIConfig::SetShownSkin(CFGID v_id) {
+    if (v_id >= skin_.size()) {
+        ErrorMsg_IDInvalid(v_id);
         return false;
     }
 
     res_id_.clear();
-    UIXmlLoader *file = (UIXmlLoader*)UIResource::LoadRes(kFT_XML, skin_[v_id - 1][_T("value")] + _T("\\resid.xml"));
+    UIXmlLoader *file = (UIXmlLoader*)UIResource::LoadRes(kFT_XML, skin_[v_id][_T("value")] + _T("\\resid.xml"));
     for (UIXmlNode node = file->GetRoot().FirstChild();
          node;
          node = node.NextSibling()) {
@@ -215,13 +175,13 @@ bool UIConfig::SetShownSkin(SKINID v_id) {
     return true;
 }
 
-bool UIConfig::AddSystemSkin(SKINID v_id) {
-    if (v_id > skin_.size()) {
-        UISetError(kEL_Warning, kEC_IDInvalid, ErrorMsg_IDInvalid(v_id));
+bool UIConfig::AddSystemSkin(CFGID v_id) {
+    if (v_id >= skin_.size()) {
+        ErrorMsg_IDInvalid(v_id);
         return false;
     }
 
-    UIXmlLoader *file = (UIXmlLoader*)UIResource::LoadRes(kFT_XML, skin_[v_id - 1][_T("value")] + _T("\\resid.xml"));
+    UIXmlLoader *file = (UIXmlLoader*)UIResource::LoadRes(kFT_XML, skin_[v_id][_T("value")] + _T("\\resid.xml"));
     for (UIXmlNode node = file->GetRoot().FirstChild();
          node;
          node = node.NextSibling()) {
@@ -237,11 +197,7 @@ bool UIConfig::AddSystemSkin(SKINID v_id) {
 }
 
 UIAttr* UIConfig::FindDlg(LPCTSTR v_name) {
-    UIAttr* ret = FindNextCFGItem(dlg_, 0, _T("name"), v_name);
-    if (ret)
-        return ret;
-    UISetError(kEL_Warning, kEC_IDInvalid, ErrorMsg_IDInvalid(v_name));
-    return nullptr;
+    return FindItem(dlg_, v_name);
 }
 
 CUStr UIConfig::FindDlgFile(LPCTSTR v_name) {
@@ -256,7 +212,7 @@ UIAttr* UIConfig::FindResid(LPCTSTR v_name) {
     ret = FindNextCFGItem(sys_res_id_, 0, _T("name"), v_name);
     if (ret)
         return ret;
-    UISetError(kEL_Warning, kEC_IDInvalid, ErrorMsg_IDInvalid(v_name));
+    ErrorMsg_IDInvalid(v_name);
     return nullptr;
 }
 
@@ -268,7 +224,7 @@ CUStr UIConfig::FindResidFile(LPCTSTR v_name) {
 CUStr UIConfig::GetStrPath(LPCTSTR v_str) {
     CUStr str = v_str;
     size_t len = str.GetLength();
-    if (len == 0)
+    if (!len)
         return CUStr();
     if (str[0] == '[' && str[len - 1] == ']')
         return FindResidFile(str.Mid(1, len - 2));
@@ -277,11 +233,7 @@ CUStr UIConfig::GetStrPath(LPCTSTR v_str) {
 }
 
 UIAttr* UIConfig::FindLang(LPCTSTR v_name) {
-    UIAttr* ret = FindNextCFGItem(lang_str_, 0, _T("name"), v_name);
-    if (ret)
-        return ret;
-    UISetError(kEL_Warning, kEC_IDInvalid, ErrorMsg_IDInvalid(v_name));
-    return nullptr;
+    return FindItem(lang_str_, v_name);
 }
 
 CUStr UIConfig::FindLangValue(LPCTSTR v_name) {
@@ -289,16 +241,8 @@ CUStr UIConfig::FindLangValue(LPCTSTR v_name) {
     return langstr ? (*langstr)[_T("value")] : CUStr();
 }
 
-UIFont UIConfig::GetFontStyle() {
-    return font_style_;
-}
-
 UIAttr* UIConfig::FindFont(LPCTSTR v_name) {
-    UIAttr* ret = FindNextCFGItem(font_, 0, _T("name"), v_name);
-    if (ret)
-        return ret;
-    UISetError(kEL_Warning, kEC_IDInvalid, ErrorMsg_IDInvalid(v_name));
-    return nullptr;
+    return FindItem(font_, v_name);
 }
 
 UIFont UIConfig::FindFontValue(LPCTSTR v_name) {
@@ -331,14 +275,29 @@ CUStr UIConfig::TranslateStr(LPCTSTR v_str) {
         return str;
 }
 
-UIAttr* UIConfig::FindNextCFGItem(UICFGItem &v_item, UINT v_start,
+UIAttr* UIConfig::FindNextCFGItem(UICFGItem& v_item, UINT v_start,
                                   LPCTSTR v_name, LPCTSTR v_value) {
     if (v_start >= v_item.size())
         return nullptr;
-    UICFGItemIt &itend = v_item.end();
-    for (UICFGItemIt it = v_item.begin() + v_start; it != itend; ++it)
-        if (CmpStr((*it)[v_name], v_value))
-            return &(*it);
+    for (auto i = v_item.begin() + v_start; i != v_item.end(); ++i)
+        if (CmpStr((*i).at(v_name), v_value))
+            return &(*i);
+    return nullptr;
+}
+
+CFGID UIConfig::FindItemID(const UICFGItem& v_item, LPCTSTR v_name) {
+    for (auto i = v_item.begin(); i != v_item.end(); ++i)
+        if (CmpStr((*i).at(_T("name")), v_name))
+            return i - v_item.begin();
+    ErrorMsg_IDInvalid(v_name);
+    return 0;
+}
+
+UIAttr* UIConfig::FindItem(UICFGItem &v_item, LPCTSTR v_name) {
+    UIAttr *ret = FindNextCFGItem(v_item, 0, _T("name"), v_name);
+    if (ret)
+        return ret;
+    ErrorMsg_IDInvalid(v_name);
     return nullptr;
 }
 }   // namespace DuiMini

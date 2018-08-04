@@ -11,13 +11,13 @@ namespace DuiMini {
 class DUIMINI_API UIResZip :public IUIRes {
 public:
     UIResZip();
-    explicit UIResZip(LPCTSTR v_info);
+    UIResZip(LPCTSTR v_info);
     virtual ~UIResZip();
 
     void SetResInfo(LPCTSTR v_info) override;
     CUStr GetResInfo() const override;
-    long GetFileSize(LPCTSTR v_path) override;
-    bool GetFile(LPCTSTR v_path, BYTE* v_buffer, long v_size) override;
+    FILESIZE GetFileSize(LPCTSTR v_path) override;
+    bool GetFile(LPCTSTR v_path, BYTE* v_buffer, FILESIZE v_size) override;
 
 protected:
     virtual ZFile OpenZip();
