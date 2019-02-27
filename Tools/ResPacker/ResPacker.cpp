@@ -82,7 +82,7 @@ int main(int argc, char* argv[]) {
         if (isunpack) {
             // reading packed exefile
             cout << "Reading " << exefile << endl;
-            if (fopen_s(&fp, exefile.c_str(), "rb")) {
+            if (!(fp = fopen(exefile.c_str(), "rb"))) {
                 cout << exefile << " can't access!" << endl;
                 goto CLEANUP;
             }
@@ -148,7 +148,7 @@ int main(int argc, char* argv[]) {
 
             // append exefile
             cout << "Appending to " << exefile << " ..." << endl;
-            if (fopen_s(&fp, exefile.c_str(), "ab")) {
+            if (!(fp = fopen(exefile.c_str(), "ab"))) {
                 cout << exefile << " can't access!" << endl;
                 goto CLEANUP;
             }
@@ -185,7 +185,7 @@ int main(int argc, char* argv[]) {
 unsigned char* ReadFile(string filename, long* size) {
     cout << "Reading " << filename << " ..." << endl;
     FILE* fp;
-    if (fopen_s(&fp, filename.c_str(), "rb")) {
+    if (!(fp = fopen(filename.c_str(), "rb"))) {
         cout << filename << " can't access!" << endl;
         return nullptr;
     }
@@ -210,7 +210,7 @@ unsigned char* ReadFile(string filename, long* size) {
 bool WriteFile(string filename, void* buffer, long size) {
     cout << "Writting to " << filename << " ..." << endl;
     FILE* fp;
-    if (fopen_s(&fp, filename.c_str(), "wb")) {
+    if (!(fp = fopen(filename.c_str(), "wb"))) {
         cout << filename << " can't access!" << endl;
         return false;
     }

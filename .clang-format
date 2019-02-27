@@ -9,5 +9,6 @@ DerivePointerAlignment: false
 PointerAlignment: Left
 AllowShortLoopsOnASingleLine: false
 AllowShortIfStatementsOnASingleLine: false
+IndentPPDirectives: AfterHash
 ...
 

@@ -1,6 +1,9 @@
 ﻿# TODO: change the project name as you wish
 project("Demo")
 
+# we need C++11
+set(CMAKE_CXX_STANDARD 11)
+
 # set VS startup project
 if(MSVC)
 	set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})

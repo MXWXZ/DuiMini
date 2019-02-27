@@ -14,13 +14,21 @@
  * @warning     Never add definition [UILIB_EXPORT] in your program!
  */
 #ifdef UILIB_STATIC
-#define DUIMINI_API
+#    define DUIMINI_API
 #else
-#if defined(UILIB_EXPORT)
-#define DUIMINI_API __declspec(dllexport)
-#else
-#define DUIMINI_API __declspec(dllimport)
-#endif
+#    ifdef WIN32
+#        if defined(UILIB_EXPORT)
+#            define DUIMINI_API __declspec(dllexport)
+#        else
+#            define DUIMINI_API __declspec(dllimport)
+#        endif
+#    else  // Linux, FreeBSD, Mac OS X
+#        if __GNUC__ >= 4
+#            define DUIMINI_API __attribute__((__visibility__("default")))
+#        else
+#            define DUIMINI_API
+#        endif
+#    endif
 #endif
 
 #define DUIMINI_VERSION "0.1.0"  //!< UI library version

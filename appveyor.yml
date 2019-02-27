@@ -1,0 +1,31 @@
+version: 0.1.0.{build}
+
+branches:
+  only:
+  - master
+
+image:
+  - Visual Studio 2017
+
+configuration: Release
+
+platform:
+  - x64
+
+environment:
+  matrix:
+    - CMAKE_SHARED: on
+    - CMAKE_SHARED: off
+  
+matrix:
+  fast_finish: true
+
+before_build:
+  - mkdir build
+  - cd build
+  - cmake -G "Visual Studio 15 2017 Win64" -DBUILD_SHARED_LIBS=%CMAKE_SHARED% -DCMAKE_BUILD_TYPE=%configuration% ..
+
+build:
+  project: $(APPVEYOR_BUILD_FOLDER)\build\Project.sln
+  parallel: true
+  verbosity: minimal

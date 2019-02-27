@@ -1,6 +1,6 @@
 # DuiMini: DirectUI for Humans™
 
-![](https://img.shields.io/badge/Status-dev-lightgrey.svg) ![](https://readthedocs.org/projects/duimini-doc/badge/?version=latest) ![](https://img.shields.io/badge/License-MIT-red.svg) ![](https://img.shields.io/badge/Language-C%2B%2B-yellow.svg) ![](https://img.shields.io/badge/Version-0.1.0-blue.svg)
+![](https://img.shields.io/badge/Status-dev-lightgrey.svg) ![](https://travis-ci.com/MXWXZ/DuiMini.svg?branch=master) ![](https://readthedocs.org/projects/duimini-doc/badge/?version=latest) ![](https://img.shields.io/badge/License-MIT-red.svg) ![](https://img.shields.io/badge/Language-C%2B%2B-yellow.svg) ![](https://img.shields.io/badge/Version-0.1.0-blue.svg)
 
 DuiMini是一个快速、小巧的跨平台DirectUI库。
 
