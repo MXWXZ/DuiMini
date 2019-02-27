@@ -1,0 +1,13 @@
+---
+BasedOnStyle: Google
+IndentWidth: 4
+SortIncludes: false
+---
+Language: Cpp
+AccessModifierOffset: -4
+DerivePointerAlignment: false
+PointerAlignment: Left
+AllowShortLoopsOnASingleLine: false
+AllowShortIfStatementsOnASingleLine: false
+...
+

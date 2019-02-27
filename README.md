@@ -1,20 +1,16 @@
-# DuiMini
+# DuiMini: DirectUI for Humans™
 
-![](https://img.shields.io/badge/Status-dev-lightgrey.svg) ![](https://img.shields.io/badge/License-MIT-red.svg) ![](https://img.shields.io/badge/Language-C%2B%2B-brightgreen.svg) ![](https://img.shields.io/badge/Version-1.0-blue.svg)
+![](https://img.shields.io/badge/Status-dev-lightgrey.svg) ![](https://readthedocs.org/projects/duimini-doc/badge/?version=latest) ![](https://img.shields.io/badge/License-MIT-red.svg) ![](https://img.shields.io/badge/Language-C%2B%2B-yellow.svg) ![](https://img.shields.io/badge/Version-0.1.0-blue.svg)
 
-这是一个基于MIT开源协议的轻量级DirectUI库。
+DuiMini是一个快速、小巧的跨平台DirectUI库。
 
-抛弃繁杂的功能，只追求轻量、快速与实用~
+你还在忍受反人类的平台GUI差异？还在纠结于传统GUI的丑陋？试试DuiMini吧，仅需几分钟，你就会爱上它！
 
-开发手册：<https://github.com/MXWXZ/DuiMini-wiki> 
+## 文档
+- 开发手册：https://duimini-doc.readthedocs.io
+- 开发手册源码：https://github.com/MXWXZ/DuiMini-doc
 
-开发手册在线查看：<https://mxwxz.gitbook.io/duimini-wiki/>
-
-稳定版本：<https://github.com/MXWXZ/DuiMini/releases>
-<br><br>
-
-版本号：1.0
-
-Contributers：MXWXZ
-
-最后更新：2018年8月05日
+## 特点
+- 跨平台，一次编码，Windows/Linux/OSX 全平台支持。
+- 轻量级，即使全静态连接，不经过压缩也能保持10M内的大小。
+- 高效率，基于OpenGL，通过游戏级引擎（SFML）调用。

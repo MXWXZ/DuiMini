@@ -1,7 +1,0 @@
-<root>
-    <str name="STR_MAIN_TITLE" value="Demo" />
-    <str name="STR_SYS_CLOSE" value="关闭" />
-    <str name="STR_SYS_MAXIMIZE" value="最大化" />
-    <str name="STR_SYS_RESTORE" value="还原" />
-    <str name="STR_SYS_MINIMIZE" value="最小化" />
-</root>

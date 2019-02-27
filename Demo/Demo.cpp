@@ -1,33 +1,14 @@
-/**
- * Copyright (c) 2017-2050
- * All rights reserved.
- *
- * @Author:MXWXZ
- * @Date:2017/10/17
- *
- * @Description:
- */
-#include "stdafx.h"
-#include "Demo.h"
-#include "MainDlg.h"
+﻿#include "DuiMini.h"
+#include <iostream>
 
-int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
-                      _In_opt_ HINSTANCE hPrevInstance,
-                      _In_ LPTSTR    lpCmdLine,
-                      _In_ int       nCmdShow) {
-    UISystem::Init(hInstance);      // Initialize UI library
-    /* [option]Set Res Type
-    UIResource::SetResType(...);
-    UIResource::SetResInfo(...);
-    */
-    UIRender::GlobalInit();         // Init render
-    UIConfig::LoadConfig();         // Load main config
+using namespace DuiMini;
+using namespace std;
 
-    {                       // Please write code between the brackets
-        MainDlg dlg;        // Show main dlg
-        dlg.Run();
-    }
-
-    UISystem::Cleanup();            // Clean up UI library
+int main() {
+    UIResource::SetResMode(kRT_File, "uires");
+    //     auto test = UIResource::LoadRes<UIRawLoader>("uires/1.txt");
+    //     cout << (unsigned char*)test->GetFile() << endl;
+    //     cout << test->GetFileSize();
+    getchar();
     return 0;
 }
