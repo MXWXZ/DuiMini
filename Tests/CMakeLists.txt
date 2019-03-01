@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.8)
 project("test_duimini")
 
 macro(make_test name filename)
-	add_executable(${name} "test_main.cpp" filename)
+	add_executable(${name} "test_main.cpp" ${filename})
 	target_link_libraries(${name} gtest gtest_main DuiMini)
     add_test(NAME ${name} COMMAND $<TARGET_FILE:${name}>)
 endmacro()
