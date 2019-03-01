@@ -86,7 +86,7 @@ public:
     int Format(const char* str, ...);
 
 private:
-    std::string buffer_ = "";
+    std::string* buffer_;  //!< prevent warning C4251
 };
 typedef UIString UIStr;
 

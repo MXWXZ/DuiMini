@@ -1,4 +1,6 @@
-﻿# TODO: change the project name as you wish
+﻿cmake_minimum_required(VERSION 3.8)
+
+# TODO: change the project name as you wish
 project("Demo")
 
 # we need C++11
