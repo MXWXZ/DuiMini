@@ -6,26 +6,18 @@ notifications:
 os:
 - windows
 - linux
-- osx
 
 dist: xenial
 
-env:
-  global:
-    - MSBUILD_PATH="c:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin"
-  matrix:
-    - CMAKE_SHARED=on
-    - CMAKE_SHARED=off
-
-matrix:
-  exclude:
-  - os: osx
-    env: CMAKE_SHARED=on
+env: 
+- CMAKE_SHARED=on
+- CMAKE_SHARED=off
 
 matrix:
   fast_finish: true
 
 before_install:
+  - if [ $TRAVIS_OS_NAME == windows ]; then MSBUILD_PATH="c:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin"; fi
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get install -y libx11-dev libxcb1-dev libx11-xcb-dev libxcb-randr0-dev libxcb-image0-dev libxrandr-dev libgl1-mesa-dev libudev-dev libxrandr-dev libfreetype6-dev libjpeg-dev; fi
 
 before_script:
@@ -34,13 +26,10 @@ before_script:
   - mkdir build
   - cd build
   - if [ $TRAVIS_OS_NAME == windows ]; then cmake -G "Visual Studio 15 2017 Win64" -DBUILD_SHARED_LIBS=$CMAKE_SHARED -DCMAKE_BUILD_TYPE=Release -DDUI_BUILD_TESTS=on ..; fi
-  - if [ $TRAVIS_OS_NAME != windows ]; then cmake -DBUILD_SHARED_LIBS=$CMAKE_SHARED -DCMAKE_BUILD_TYPE=Release -DDUI_BUILD_TESTS=on ..; fi
+  - if [ $TRAVIS_OS_NAME == linux ]; then cmake -DBUILD_SHARED_LIBS=$CMAKE_SHARED -DCMAKE_BUILD_TYPE=Release -DDUI_BUILD_TESTS=on ..; fi
 
 script:
   - if [ $TRAVIS_OS_NAME == windows ]; then export PATH=$MSBUILD_PATH:$PATH && MSBuild.exe Project.sln -p:Configuration=Release -verbosity:minimal; fi
-  - if [ $TRAVIS_OS_NAME != windows ]; then make; fi
-
-jobs:
-  include:
-    - stage: test
-      script: ctest
+  - if [ $TRAVIS_OS_NAME == windows && $CMAKE_SHARED == off ]; then ctest -C Release; fi
+  - if [ $TRAVIS_OS_NAME == linux ]; then make; fi
+  - if [ $TRAVIS_OS_NAME == linux ]; then ctest; fi
