@@ -21,7 +21,7 @@
 #endif
 
 namespace DuiMini {
-UIString::UIString() { buffer_ = new std::string; }
+UIString::UIString() { buffer_ = std::make_shared<std::string>(); }
 
 UIString::UIString(const char ch) : UIString() { *buffer_ = ch; }
 
@@ -37,10 +37,7 @@ UIString::UIString(const UIString& src) : UIString() {
 
 UIString::UIString(UIString&& src) : UIString() { buffer_ = move(src.buffer_); }
 
-UIString::~UIString() {
-    delete buffer_;
-    buffer_ = nullptr;
-}
+UIString::~UIString() {}
 
 void UIString::Append(const char* str) { buffer_->append(str); }
 
