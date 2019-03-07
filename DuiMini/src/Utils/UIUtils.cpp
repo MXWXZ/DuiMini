@@ -7,16 +7,17 @@
  */
 
 #include "Utils/UIUtils.h"
+#include "Utils/UIException.h"
 #include <SFML/Window/VideoMode.hpp>
 
 #include <string>
 #include <stdarg.h>
 
-#ifdef WIN32
-#    define stricmp _stricmp
-#else
+#ifdef __GNUC__
 #    include <strings.h>
 #    define stricmp strcasecmp
+#else
+#    define stricmp _stricmp
 #endif
 
 namespace DuiMini {
@@ -263,13 +264,19 @@ UIColor UIUtils::GetColorFromStr(const char* str) {
         tmp = "#C0C0C0";
     else if (tmp == "transparent")
         tmp = "#00000000";
-    if (tmp.GetLength() == 9)  // RGBA
-        return UIColor(
-            (RGBA)tmp.Mid(1, 2).Hex2UL(), (RGBA)tmp.Mid(3, 2).Hex2UL(),
-            (RGBA)tmp.Mid(5, 2).Hex2UL(), (RGBA)tmp.Mid(7, 2).Hex2UL());
-    else  // RGB(A=255)
-        return UIColor((RGBA)tmp.Mid(1, 2).Hex2UL(),
-                       (RGBA)tmp.Mid(3, 2).Hex2UL(),
-                       (RGBA)tmp.Mid(5, 2).Hex2UL());
+
+    if (tmp[0] == '#') {
+        if (tmp.GetLength() == 9)  // RGBA
+            return UIColor(
+                (RGBA)tmp.Mid(1, 2).Hex2UL(), (RGBA)tmp.Mid(3, 2).Hex2UL(),
+                (RGBA)tmp.Mid(5, 2).Hex2UL(), (RGBA)tmp.Mid(7, 2).Hex2UL());
+        else if (tmp.GetLength() == 7)  // RGB(A=255)
+            return UIColor((RGBA)tmp.Mid(1, 2).Hex2UL(),
+                           (RGBA)tmp.Mid(3, 2).Hex2UL(),
+                           (RGBA)tmp.Mid(5, 2).Hex2UL());
+    }
+    UISetError(kEL_Warning, "Color string \"%s\" format incorrect!",
+               tmp.GetData());
+    return UIColor();
 }
 }  // namespace DuiMini

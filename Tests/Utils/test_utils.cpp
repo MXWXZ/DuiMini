@@ -9,22 +9,33 @@
 #include "Utils/UIUtils.h"
 using namespace DuiMini;
 
-#define TESTSTR "Test123!@#"
-
 TEST(Utils_Utils, UIString) {
-    // assume UIString::UIString(const char* str); must
-    // correct
-    UIString str1(TESTSTR);
-    EXPECT_STREQ(str1.GetData(), TESTSTR);
-    EXPECT_EQ(str1, TESTSTR);  // test "="
-    UIString str2('a');
-    EXPECT_EQ(str2, "a");
-    UIString str3(TESTSTR, 4);
-    EXPECT_EQ(str3, "Test");
+    UIString str = "1234567890";
+    EXPECT_EQ(str.Str2LL(), 1234567890);
+    str = "12345.6789";
+    EXPECT_EQ(str.Str2Double(), 12345.6789);
+    str = "abc123JKL";
+    EXPECT_EQ(str.Str2Hex(), "6162633132334A4B4C");
+    str = "6162633132334A4B4C";
+    EXPECT_EQ(str.Hex2Str(), "abc123JKL");
+    str = "1234567890";
+    EXPECT_EQ(str.UL2Hex(), "499602D2");
+    str = "499602D2";
+    EXPECT_EQ(str.Hex2UL(), 1234567890);
+}
 
-    UIString str = TESTSTR;
-    EXPECT_EQ(str, TESTSTR);
-    EXPECT_EQ(str.IsEmpty(), false);
-    str.Empty();
-    EXPECT_EQ(str.IsEmpty(), true);
+TEST(Utils_Utils, UIUtils) {
+    EXPECT_EQ(GetColorFromStr("#00000000"), UIColor(0, 0, 0, 0));
+    EXPECT_EQ(GetColorFromStr("#FFFFFFFF"), UIColor(0xFF, 0xFF, 0xFF, 0xFF));
+    EXPECT_EQ(GetColorFromStr("#67890A"), UIColor(0x67, 0x89, 0x0A, 0xFF));
+    EXPECT_EQ(GetColorFromStr("black"), UIColor(0, 0, 0));
+    EXPECT_EQ(GetColorFromStr("white"), UIColor(0xFF, 0xFF, 0xFF));
+    EXPECT_EQ(GetColorFromStr("red"), UIColor(0xFF, 0, 0));
+    EXPECT_EQ(GetColorFromStr("green"), UIColor(0, 0xFF, 0));
+    EXPECT_EQ(GetColorFromStr("blue"), UIColor(0, 0, 0xFF));
+    EXPECT_EQ(GetColorFromStr("yellow"), UIColor(0xFF, 0xFF, 0));
+    EXPECT_EQ(GetColorFromStr("cyan"), UIColor(0, 0xFF, 0xFF));
+    EXPECT_EQ(GetColorFromStr("purple"), UIColor(0xFF, 0, 0xFF));
+    EXPECT_EQ(GetColorFromStr("gray"), UIColor(0xC0, 0xC0, 0xC0));
+    EXPECT_EQ(GetColorFromStr("transparent"), UIColor(0, 0, 0, 0));
 }

@@ -130,7 +130,7 @@ public:
      * gray         #C0C0C0\n
      * transparent  #00000000
      * @endparblock
-     * @return	Parsed color
+     * @return	Parsed color, black for error
      */
     static UIColor GetColorFromStr(const char* str);
 };
