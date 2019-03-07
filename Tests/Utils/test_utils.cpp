@@ -25,17 +25,19 @@ TEST(Utils_Utils, UIString) {
 }
 
 TEST(Utils_Utils, UIUtils) {
-    EXPECT_EQ(GetColorFromStr("#00000000"), UIColor(0, 0, 0, 0));
-    EXPECT_EQ(GetColorFromStr("#FFFFFFFF"), UIColor(0xFF, 0xFF, 0xFF, 0xFF));
-    EXPECT_EQ(GetColorFromStr("#67890A"), UIColor(0x67, 0x89, 0x0A, 0xFF));
-    EXPECT_EQ(GetColorFromStr("black"), UIColor(0, 0, 0));
-    EXPECT_EQ(GetColorFromStr("white"), UIColor(0xFF, 0xFF, 0xFF));
-    EXPECT_EQ(GetColorFromStr("red"), UIColor(0xFF, 0, 0));
-    EXPECT_EQ(GetColorFromStr("green"), UIColor(0, 0xFF, 0));
-    EXPECT_EQ(GetColorFromStr("blue"), UIColor(0, 0, 0xFF));
-    EXPECT_EQ(GetColorFromStr("yellow"), UIColor(0xFF, 0xFF, 0));
-    EXPECT_EQ(GetColorFromStr("cyan"), UIColor(0, 0xFF, 0xFF));
-    EXPECT_EQ(GetColorFromStr("purple"), UIColor(0xFF, 0, 0xFF));
-    EXPECT_EQ(GetColorFromStr("gray"), UIColor(0xC0, 0xC0, 0xC0));
-    EXPECT_EQ(GetColorFromStr("transparent"), UIColor(0, 0, 0, 0));
+    EXPECT_EQ(UIUtils::GetColorFromStr("#00000000"), UIColor(0, 0, 0, 0));
+    EXPECT_EQ(UIUtils::GetColorFromStr("#FFFFFFFF"),
+              UIColor(0xFF, 0xFF, 0xFF, 0xFF));
+    EXPECT_EQ(UIUtils::GetColorFromStr("#67890A"),
+              UIColor(0x67, 0x89, 0x0A, 0xFF));
+    EXPECT_EQ(UIUtils::GetColorFromStr("black"), UIColor(0, 0, 0));
+    EXPECT_EQ(UIUtils::GetColorFromStr("white"), UIColor(0xFF, 0xFF, 0xFF));
+    EXPECT_EQ(UIUtils::GetColorFromStr("red"), UIColor(0xFF, 0, 0));
+    EXPECT_EQ(UIUtils::GetColorFromStr("green"), UIColor(0, 0xFF, 0));
+    EXPECT_EQ(UIUtils::GetColorFromStr("blue"), UIColor(0, 0, 0xFF));
+    EXPECT_EQ(UIUtils::GetColorFromStr("yellow"), UIColor(0xFF, 0xFF, 0));
+    EXPECT_EQ(UIUtils::GetColorFromStr("cyan"), UIColor(0, 0xFF, 0xFF));
+    EXPECT_EQ(UIUtils::GetColorFromStr("purple"), UIColor(0xFF, 0, 0xFF));
+    EXPECT_EQ(UIUtils::GetColorFromStr("gray"), UIColor(0xC0, 0xC0, 0xC0));
+    EXPECT_EQ(UIUtils::GetColorFromStr("transparent"), UIColor(0, 0, 0, 0));
 }
