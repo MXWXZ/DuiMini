@@ -1,9 +1,8 @@
-/**
- * Copyright (c) 2019-2050
- * All rights reserved.
+/** @file
+ * Test for utils.
  *
  * @author  MXWXZ
- * @date    2019/02/28
+ * @date    2019/03/09
  */
 #include "googletest/googletest/include/gtest/gtest.h"
 #include "Utils/UIUtils.h"

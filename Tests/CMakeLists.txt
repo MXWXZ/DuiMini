@@ -19,4 +19,7 @@ if(NOT BUILD_SHARED_LIBS)
 	add_definitions(-DUILIB_STATIC)
 endif()
 
+file(COPY "TestRes" DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_BUILD_TYPE})
+
+add_executable(HostFile "Tools/HostFile.cpp")
 make_test(test_utils "Utils/test_utils.cpp")

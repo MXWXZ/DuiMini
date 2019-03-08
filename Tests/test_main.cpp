@@ -1,9 +1,8 @@
-/**
- * Copyright (c) 2019-2050
- * All rights reserved.
+/** @file
+ * Main function for all test.
  *
  * @author  MXWXZ
- * @date    2019/02/28
+ * @date    2019/03/09
  */
 #include "googletest/googletest/include/gtest/gtest.h"
 

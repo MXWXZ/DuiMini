@@ -1,23 +1,25 @@
 /**
- * Copyright (c) 2019-2050
- * All rights reserved.
- *
  * @author  MXWXZ
- * @date    2019/01/18
+ * @date    2019/03/09
  */
 
 #include "Utils/UIUtils.h"
 #include "Utils/UIException.h"
+#include "UIBuildConfig.h"
 #include <SFML/Window/VideoMode.hpp>
 
 #include <string>
 #include <stdarg.h>
 
-#ifdef __GNUC__
-#    include <strings.h>
-#    define stricmp strcasecmp
-#else
+#ifdef HAVE_STRICMP
 #    define stricmp _stricmp
+#else
+#    ifdef HAVE_STRCASECMP
+#        include <strings.h>
+#        define stricmp strcasecmp
+#    else
+#        error "No-case compare function not found!"
+#    endif
 #endif
 
 namespace DuiMini {

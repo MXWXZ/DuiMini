@@ -1,9 +1,8 @@
-/**
- * Copyright (c) 2019-2050
- * All rights reserved.
+/** @file
+ * Load resource in zip style.
  *
  * @author  MXWXZ
- * @date    2019/02/10
+ * @date    2019/03/09
  */
 #ifndef DUI_CORE_RESOURCE_UIRESZIP_H_
 #define DUI_CORE_RESOURCE_UIRESZIP_H_

@@ -1,9 +1,8 @@
-/**
- * Copyright (c) 2019-2050
- * All rights reserved.
+/** @file
+ * Load resource in plain file style.
  *
  * @author  MXWXZ
- * @date    2019/02/10
+ * @date    2019/03/08
  */
 #ifndef DUI_CORE_RESOURCE_UIRESFILE_H_
 #define DUI_CORE_RESOURCE_UIRESFILE_H_

@@ -1,9 +1,9 @@
-/**
- * Copyright (c) 2019-2050
- * All rights reserved.
+/** @file
+ * Raw resource loader exposed to user.
+ * This loader will return the resource in binary form.
  *
  * @author  MXWXZ
- * @date    2019/02/26
+ * @date    2019/03/08
  */
 #ifndef DUI_CORE_RESOURCE_UIRESLOADER_HPP_
 #define DUI_CORE_RESOURCE_UIRESLOADER_HPP_

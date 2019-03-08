@@ -1,9 +1,9 @@
-/**
- * Copyright (c) 2019-2050
- * All rights reserved.
+/** @file
+ * Resource manager.
+ * Manage the resource, decide how to load resources and make it auto-deleted.
  *
  * @author  MXWXZ
- * @date    2019/02/25
+ * @date    2019/03/09
  */
 #ifndef DUI_CORE_RESOURCE_UIRESOURCE_H_
 #define DUI_CORE_RESOURCE_UIRESOURCE_H_
@@ -17,7 +17,7 @@
 
 namespace DuiMini {
 /**
- * resource type
+ * Resource type.
  */
 enum ResType {
     kRT_None = 0,
@@ -27,15 +27,14 @@ enum ResType {
 };
 
 /**
- * resource interface
- * get resource data in multiple ways
+ * Resource interface.
+ * Get resource data in multiple ways.
  */
 class DUIMINI_API UIResource {
 public:
     /**
-     * Load resource only ONCE
-     * @param	FileType type: res type
-     * @param	const char* path: res path
+     * Load resource only ONCE.
+     * @param	path: res path
      * @return	loaded class pointer, nullptr for error
      * @note    Res will be load if there is no other copy exist,otherwise will
      * return existed copy.
@@ -77,9 +76,9 @@ public:
     }
 
     /**
-     * Set resource mode
-     * @param   ResType type: resource type
-     * @param   const char* info: info passed to res class
+     * Set resource mode.
+     * @param   type: resource type
+     * @param   info: info passed to res class
      * @note    For kRT_File is the root folder of res
      *          For kRT_Package is the zip path
      *          For kRT_Raw is the packed executable file path
@@ -94,6 +93,11 @@ private:
     static bool GetFile(const char* path, void* buffer, long size);
     static long GetFileSize(const char* path);
 
+    /**
+     * Deleter for shared_ptr.
+     * @param	pointer: deleter param
+     * @warning	Do NOT call it by yourself!
+     */
     template <typename T>
     static void DeleteRes(T* pointer) {
         auto path = ((IUILoadFile*)pointer)->GetPath();
@@ -111,7 +115,9 @@ private:
 
 private:
     /**
-     * Cache loaded resource
+     * Cache loaded resource.
+     * Free space and any other things when the resource is not being used by
+     * any object.
      */
     struct LoadedRes {
         std::shared_ptr<void> res_;  //!< loaded T pointer

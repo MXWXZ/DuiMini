@@ -1,9 +1,8 @@
-/**
- * Copyright (c) 2019-2050
- * All rights reserved.
+/** @file
+ * UI event transfered.
  *
  * @author  MXWXZ
- * @date    2019/01/18
+ * @date    2019/03/09
  */
 #ifndef DUI_UTILS_UIEVENT_HPP_
 #define DUI_UTILS_UIEVENT_HPP_
@@ -44,7 +43,7 @@ struct ResChangeEvent {
 };
 
 /**
- * Control event
+ * Control event.
  * Every control behavior is driven by the message
  * @todo    Add new Msg
  */

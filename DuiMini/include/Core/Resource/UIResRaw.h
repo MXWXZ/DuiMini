@@ -1,9 +1,8 @@
-/**
- * Copyright (c) 2019-2050
- * All rights reserved.
+/** @file
+ * Load resource in Raw style embedded in executable file.
  *
  * @author  MXWXZ
- * @date    2019/02/24
+ * @date    2019/03/09
  */
 #pragma once
 #include "Core/Resource/UIResZip.h"

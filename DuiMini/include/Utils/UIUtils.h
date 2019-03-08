@@ -1,9 +1,8 @@
-/**
- * Copyright (c) 2019-2050
- * All rights reserved.
+/** @file
+ * Utils for the UI system
  *
  * @author  MXWXZ
- * @date    2019/01/17
+ * @date    2019/03/09
  */
 #ifndef DUI_UTILS_UIUTILS_H_
 #define DUI_UTILS_UIUTILS_H_
@@ -20,6 +19,11 @@
 #include <SFML/Graphics/Color.hpp>
 
 namespace DuiMini {
+/**
+ * make_shared do not support array, just make it support.
+ * @param	size: array size
+ * @return	shared_ptr var
+ */
 template <typename T>
 std::shared_ptr<T> make_shared_array(size_t size) {
     return std::shared_ptr<T>(new T[size], std::default_delete<T[]>());
@@ -95,7 +99,7 @@ typedef sf::Color UIColor;
 typedef unsigned char RGBA;
 
 /**
- * Screen point
+ * Screen point.
  */
 struct Point {
     uint x;  //!< from left to right
@@ -107,28 +111,28 @@ struct Point {
 class DUIMINI_API UIUtils {
 public:
     /**
-     * Get full screen rect
+     * Get full screen rect.
      * @return  size rect
      */
     static UIRect GetScreenRect();
 
     /**
-     * Get color from #xxxxxx or explicit color name
-     * @param	const char* str: color string\n
+     * Get color from \#xxxxxx or explicit color name.
+     * @param	str: color string\n
      * @parblock
      * Support format:\n
-     * #00000000-#FFFFFFFF RGBA hex format\n
-     * #000000-#FFFFFF  RGB hex format with 100% alpha(equal to #xxxxxxFF)\n
-     * black        #000000\n
-     * white        #FFFFFF\n
-     * red          #FF0000\n
-     * green        #00FF00\n
-     * blue         #0000FF\n
-     * yellow       #FFFF00\n
-     * cyan         #00FFFF\n
-     * purple       #FF00FF\n
-     * gray         #C0C0C0\n
-     * transparent  #00000000
+     * \#00000000-\#FFFFFFFF RGBA hex format\n
+     * \#000000-\#FFFFFF  RGB hex format with 100% alpha(equal to \#xxxxxxFF)\n
+     * black        \#000000\n
+     * white        \#FFFFFF\n
+     * red          \#FF0000\n
+     * green        \#00FF00\n
+     * blue         \#0000FF\n
+     * yellow       \#FFFF00\n
+     * cyan         \#00FFFF\n
+     * purple       \#FF00FF\n
+     * gray         \#C0C0C0\n
+     * transparent  \#00000000
      * @endparblock
      * @return	Parsed color, black for error
      */

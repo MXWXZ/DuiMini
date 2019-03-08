@@ -1,9 +1,6 @@
 /**
- * Copyright (c) 2019-2050
- * All rights reserved.
- *
  * @author  MXWXZ
- * @date    2019/02/05
+ * @date    2019/03/09
  */
 #include "Utils/UIException.h"
 #include "Core/UISystem.h"

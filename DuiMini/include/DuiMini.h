@@ -1,9 +1,9 @@
-/**
- * Copyright (c) 2019-2050
- * All rights reserved.
+/** @file
+ * Include all DuiMini files
+ * Just include this file in your program.
  *
  * @author  MXWXZ
- * @date    2019/02/05
+ * @date    2019/03/09
  */
 #ifndef DUI_DUIMINI_H_
 #define DUI_DUIMINI_H_

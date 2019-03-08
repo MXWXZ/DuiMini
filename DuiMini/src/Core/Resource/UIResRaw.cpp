@@ -1,9 +1,6 @@
 /**
- * Copyright (c) 2019-2050
- * All rights reserved.
- *
  * @author  MXWXZ
- * @date    2019/02/24
+ * @date    2019/03/09
  */
 #include <memory>
 #include "Core/Resource/UIResRaw.h"

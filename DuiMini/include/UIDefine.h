@@ -1,9 +1,8 @@
-/**
- * Copyright (c) 2019-2050
- * All rights reserved.
+/** @file
+ * Define macro.
  *
  * @author  MXWXZ
- * @date    2019/01/17
+ * @date    2019/03/09
  */
 #ifndef DUI_UIDEFINE_H_
 #define DUI_UIDEFINE_H_

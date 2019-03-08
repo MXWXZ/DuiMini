@@ -1,9 +1,8 @@
-/**
- * Copyright (c) 2019-2050
- * All rights reserved.
+/** @file
+ * XMLParser
  *
  * @author  MXWXZ
- * @date    2019/02/10
+ * @date    2019/03/09
  */
 #ifndef DUI_UTILS_UIXMLPARSE_HPP_
 #define DUI_UTILS_UIXMLPARSE_HPP_
@@ -17,7 +16,7 @@ typedef pugi::xml_attribute xmlattr;
 
 namespace DuiMini {
 /**
- * xml attribute wrapper class using pugixml
+ * xml attribute wrapper class using pugixml.
  */
 class DUIMINI_API UIXmlAttr {
 public:
@@ -43,7 +42,7 @@ private:
 ////////////////////////////////////////
 
 /**
- * xml node wrapper class using pugixml
+ * xml node wrapper class using pugixml.
  */
 class DUIMINI_API UIXmlNode {
 public:
