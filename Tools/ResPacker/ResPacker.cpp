@@ -206,7 +206,7 @@ bool WriteFile(string filename, const void* buffer, long size) {
     });
     if (!fp) {
         cout << filename << " can't access!" << endl;
-        return nullptr;
+        return false;
     }
 
     if (fwrite(buffer, size, 1, fp.get()) != 1) {

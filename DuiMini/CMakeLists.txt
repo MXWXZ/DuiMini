@@ -2,11 +2,6 @@
 
 project("DuiMini")
 
-configure_file(
-	${CMAKE_CURRENT_SOURCE_DIR}/include/UIBuildConfig.h.in
-	${CMAKE_CURRENT_SOURCE_DIR}/include/UIBuildConfig.h
-)
-
 include(CheckFunctionExists)
 
 # check stricmp
@@ -16,6 +11,11 @@ check_function_exists(strcasecmp HAVE_STRCASECMP)
 if(NOT HAVE_STRICMP AND NOT HAVE_STRCASECMP)
     message(FATAL_ERROR "ERROR: _stricmp or strcasecmp must exist!")
 endif()
+
+configure_file(
+	${CMAKE_CURRENT_SOURCE_DIR}/include/UIBuildConfig.h.in
+	${CMAKE_CURRENT_SOURCE_DIR}/include/UIBuildConfig.h
+)
 
 # we need C++11
 set(CMAKE_CXX_STANDARD 11)

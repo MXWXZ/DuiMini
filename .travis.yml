@@ -3,17 +3,25 @@ language: cpp
 notifications:
   email: false
 
-os:
-- windows
-- linux
-
-dist: xenial
-
-env: 
-- CMAKE_SHARED=on
-- CMAKE_SHARED=off
-
 matrix:
+  include:
+    - os: linux
+      dist: xenial
+      env: CMAKE_SHARED=on
+
+    - os: linux
+      dist: xenial
+      env: CMAKE_SHARED=off
+
+    - os: osx
+      env: CMAKE_SHARED=off
+
+    - os: windows
+      env: CMAKE_SHARED=on
+
+    - os: windows
+      env: CMAKE_SHARED=off
+  
   fast_finish: true
 
 before_install:
@@ -26,10 +34,10 @@ before_script:
   - mkdir build
   - cd build
   - if [ $TRAVIS_OS_NAME == windows ]; then cmake -G "Visual Studio 15 2017 Win64" -DBUILD_SHARED_LIBS=$CMAKE_SHARED -DCMAKE_BUILD_TYPE=Release -DDUI_BUILD_TESTS=on ..; fi
-  - if [ $TRAVIS_OS_NAME == linux ]; then cmake -DBUILD_SHARED_LIBS=$CMAKE_SHARED -DCMAKE_BUILD_TYPE=Release -DDUI_BUILD_TESTS=on ..; fi
+  - if [ $TRAVIS_OS_NAME != windows ]; then cmake -DBUILD_SHARED_LIBS=$CMAKE_SHARED -DCMAKE_BUILD_TYPE=Release -DDUI_BUILD_TESTS=on ..; fi
 
 script:
   - if [ $TRAVIS_OS_NAME == windows ]; then export PATH=$MSBUILD_PATH:$PATH && MSBuild.exe Project.sln -p:Configuration=Release -verbosity:minimal; fi
-  - if [[ $TRAVIS_OS_NAME == windows && $CMAKE_SHARED == off ]]; then ctest -C Release; fi
-  - if [ $TRAVIS_OS_NAME == linux ]; then make; fi
-  - if [ $TRAVIS_OS_NAME == linux ]; then ctest; fi
+  - if [ $TRAVIS_OS_NAME == windows ]; then ctest -C Release --verbose; fi
+  - if [ $TRAVIS_OS_NAME != windows ]; then make; fi
+  - if [ $TRAVIS_OS_NAME != windows ]; then ctest --verbose; fi
