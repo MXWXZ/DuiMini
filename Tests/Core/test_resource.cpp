@@ -49,7 +49,7 @@ TEST(Core_Resource, UIResource) {
 
 TEST(Core_Resource, UIResLoader) {
     UIResource::SetResMode(kRT_File, "TestRes");
-    auto file = UIResource::LoadRes<UIXmlLoader>("testxml.xml");
+    auto file = UIResource::LoadRes<UIXmlLoader>("testxml.xml", true);
     ASSERT_TRUE(file);
 
     auto root = file->GetRoot();

@@ -18,6 +18,7 @@
 
 #include "Core/UIInterface.h"
 #include "Core/UISystem.h"
+#include "Core/UIConfig.h"
 
 #include "Core/Resource/UIResFile.h"
 #include "Core/Resource/UIResZip.h"

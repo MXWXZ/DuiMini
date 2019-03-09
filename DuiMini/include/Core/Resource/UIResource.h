@@ -54,14 +54,15 @@ public:
             filesize = GetFileSize(path);
             if (filesize == -1)
                 return nullptr;
-            filedata = make_shared_array<unsigned char>(filesize + endtext);
-            if (!GetFile(path, filedata.get(), filesize))
+            filesize += endtext;
+            filedata = make_shared_array<unsigned char>(filesize);
+            if (!GetFile(path, filedata.get(), filesize - endtext))
                 return nullptr;
             if (endtext)
-                ((unsigned char*)filedata.get())[filesize] = '\0';
+                ((unsigned char*)filedata.get())[filesize - 1] = '\0';
             auto tmp = std::make_shared<LoadedRes>();
             tmp->res_ = filedata;
-            tmp->size_ = filesize + endtext;
+            tmp->size_ = filesize;
             tmp->using_ = 1;
             resitem_[path] = tmp;
         } else {

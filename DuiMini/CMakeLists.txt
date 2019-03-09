@@ -49,6 +49,7 @@ set(SRC
 	${INCROOT}/Utils/UIXmlParse.hpp
 
 	${SRCROOT}/Core/UISystem.cpp
+	${SRCROOT}/Core/UIConfig.cpp
 	${SRCROOT}/Core/Resource/UIResFile.cpp
 	${SRCROOT}/Core/Resource/UIResource.cpp
 	${SRCROOT}/Core/Resource/UIResRaw.cpp

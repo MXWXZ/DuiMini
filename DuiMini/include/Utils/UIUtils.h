@@ -17,6 +17,7 @@
 #include <SFML/System/String.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/Color.hpp>
+#include <SFML/Graphics/Font.hpp>
 
 namespace DuiMini {
 /**
@@ -96,7 +97,10 @@ typedef UIString UIStr;
 
 typedef sf::IntRect UIRect;
 typedef sf::Color UIColor;
+typedef sf::Font UIFont;
 typedef unsigned char RGBA;
+typedef std::map<UIStr, UIStr> UIConfigAttr;
+typedef std::vector<UIConfigAttr> UIConfigItem;
 
 /**
  * Screen point.

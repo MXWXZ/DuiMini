@@ -30,9 +30,11 @@
 #    endif
 #endif
 
-#define DUIMINI_VERSION "0.1.0"  //!< UI library version
+#define DUIMINI_VERSION "0.1.0"                  //!< UI library version
+#define DUIMINI_DEFAULT_CONFIGFILE "config.xml"  //!< default config file
 
 typedef unsigned int uint;
+
 #define CMPSTR(x, y) strcmp(x, y) == 0
 
 #endif  // !DUI_UIDEFINE_H_
