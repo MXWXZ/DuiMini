@@ -21,8 +21,6 @@ matrix:
 
     - os: windows
       env: CMAKE_SHARED=off
-  
-  fast_finish: true
 
 before_install:
   - if [ $TRAVIS_OS_NAME == windows ]; then MSBUILD_PATH="c:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin"; fi
