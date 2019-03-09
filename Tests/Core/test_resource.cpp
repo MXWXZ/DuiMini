@@ -21,7 +21,6 @@ bool CmpFile(const char* file1, const char* file2);
 bool TestLoad();
 
 TEST(Core_Resource, UIResource) {
-    system("ls");
     // plain file
     UIResource::SetResMode(kRT_File, "TestRes/uires");
     EXPECT_EQ(TestLoad(), true);
