@@ -36,6 +36,6 @@ before_script:
 
 script:
   - if [ $TRAVIS_OS_NAME == windows ]; then export PATH=$MSBUILD_PATH:$PATH && MSBuild.exe Project.sln -p:Configuration=Release -verbosity:minimal; fi
-  - if [ $TRAVIS_OS_NAME == windows ]; then ctest -C Release --verbose; fi
+  - if [[ $TRAVIS_OS_NAME == windows && $CMAKE_SHARED == off ]]; then ctest -C Release --verbose; fi
   - if [ $TRAVIS_OS_NAME != windows ]; then make; fi
   - if [ $TRAVIS_OS_NAME != windows ]; then ctest --verbose; fi
