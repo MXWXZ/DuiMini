@@ -38,20 +38,25 @@ include_directories("SFML/include")
 include_directories("include")
 
 # all files
-aux_source_directory("include/Utils" UTILS_HPP)
-aux_source_directory("include/Core/Resource" CORE_RESOURCE_HPP)
-aux_source_directory("src/Utils" UTILS_SRC)
-aux_source_directory("src/Core/Resource" CORE_RESOURCE_SRC)
-aux_source_directory("src/Core" CORE_SRC)
-LIST (APPEND ALL_SRC
-	${UTILS_HPP}
-	${CORE_RESOURCE_HPP}
-    ${UTILS_SRC}
-	${CORE_RESOURCE_SRC}
-	${CORE_SRC}
+set(INCROOT ${PROJECT_SOURCE_DIR}/include)
+set(SRCROOT ${PROJECT_SOURCE_DIR}/src)
+
+set(SRC
+    ${SRCROOT}/Utils/UIException.cpp
+	${SRCROOT}/Utils/UIUnzip.cpp
+	${SRCROOT}/Utils/UIUtils.cpp
+	${INCROOT}/Utils/UIEvent.hpp
+	${INCROOT}/Utils/UIXmlParse.hpp
+
+	${SRCROOT}/Core/UISystem.cpp
+	${SRCROOT}/Core/Resource/UIResFile.cpp
+	${SRCROOT}/Core/Resource/UIResource.cpp
+	${SRCROOT}/Core/Resource/UIResRaw.cpp
+	${SRCROOT}/Core/Resource/UIResZip.cpp
+	${INCROOT}/Core/Resource/UIResLoader.hpp
 )
 
-add_library(DuiMini ${ALL_SRC})
+add_library(DuiMini ${SRC})
 
 target_link_libraries(DuiMini sfml-graphics miniz)
 set_target_properties(DuiMini PROPERTIES DEBUG_POSTFIX -d)	# add -d in Debug mode

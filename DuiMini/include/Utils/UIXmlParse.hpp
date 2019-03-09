@@ -18,7 +18,7 @@ namespace DuiMini {
 /**
  * xml attribute wrapper class using pugixml.
  */
-class DUIMINI_API UIXmlAttr {
+class UIXmlAttr {
 public:
     UIXmlAttr() {}
     UIXmlAttr(xmlattr attr) { SetAttr(attr); }
@@ -44,7 +44,7 @@ private:
 /**
  * xml node wrapper class using pugixml.
  */
-class DUIMINI_API UIXmlNode {
+class UIXmlNode {
 public:
     UIXmlNode() {}
     UIXmlNode(xmlnode node) { SetNode(node); }

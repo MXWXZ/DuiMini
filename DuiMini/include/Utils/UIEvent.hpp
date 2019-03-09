@@ -47,7 +47,7 @@ struct ResChangeEvent {
  * Every control behavior is driven by the message
  * @todo    Add new Msg
  */
-class DUIMINI_API UIEvent {
+class UIEvent {
 public:
     UIEvent() {}
     UIEvent(Event event) : event_(event) {}

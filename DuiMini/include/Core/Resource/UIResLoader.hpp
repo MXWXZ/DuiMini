@@ -9,12 +9,10 @@
 #define DUI_CORE_RESOURCE_UIRESLOADER_HPP_
 
 #include "UIDefine.h"
-#include "Utils/UIUtils.h"
 #include "Core/UIInterface.h"
-#include "Core/Resource/UIResource.h"
 
 namespace DuiMini {
-class DUIMINI_API UIRawLoader : public IUILoadFile {
+class UIRawLoader : public IUILoadFile {
 public:
     const void* GetFile() const { return buffer_; }
     long GetFileSize() const { return buffersize_; }
