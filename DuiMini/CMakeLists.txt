@@ -58,5 +58,5 @@ set(SRC
 
 add_library(DuiMini ${SRC})
 
-target_link_libraries(DuiMini sfml-graphics miniz)
+target_link_libraries(DuiMini sfml-graphics miniz pugixml)
 set_target_properties(DuiMini PROPERTIES DEBUG_POSTFIX -d)	# add -d in Debug mode

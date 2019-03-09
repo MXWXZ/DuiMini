@@ -23,28 +23,66 @@ bool TestLoad();
 TEST(Core_Resource, UIResource) {
     // plain file
     UIResource::SetResMode(kRT_File, "TestRes/uires");
-    EXPECT_EQ(TestLoad(), true);
+    EXPECT_TRUE(TestLoad());
 
     // zip file
     UIResource::SetResMode(kRT_Package, "TestRes/uires.zip");
-    EXPECT_EQ(TestLoad(), true);
+    EXPECT_TRUE(TestLoad());
 
     // raw file
 #ifdef _WIN32
     system("ResPacker.exe HostFile.exe TestRes/uires.zip");
     system("HostFile.exe");
     UIResource::SetResMode(kRT_Raw, "HostFile.exe");
-    EXPECT_EQ(TestLoad(), true);
+    EXPECT_TRUE(TestLoad());
     EXPECT_EQ(remove("HostFile.exe"), 0);
     EXPECT_EQ(rename("HostFile.exe.bak", "HostFile.exe"), 0);
 #else
     system("./ResPacker HostFile TestRes/uires.zip");
     system("./HostFile");
     UIResource::SetResMode(kRT_Raw, "HostFile");
-    EXPECT_EQ(TestLoad(), true);
+    EXPECT_TRUE(TestLoad());
     EXPECT_EQ(remove("HostFile"), 0);
     EXPECT_EQ(rename("HostFile.bak", "HostFile"), 0);
 #endif
+}
+
+TEST(Core_Resource, UIResLoader) {
+    UIResource::SetResMode(kRT_File, "TestRes");
+    auto file = UIResource::LoadRes<UIXmlLoader>("testxml.xml");
+    ASSERT_TRUE(file);
+
+    auto root = file->GetRoot();
+    ASSERT_TRUE(root);
+    EXPECT_EQ(root.GetName(), "root");
+    EXPECT_EQ(root.FirstAttribute().GetName(), "title");
+    EXPECT_EQ(root.FirstAttribute().GetValue(), "abc");
+    ASSERT_FALSE(root.FirstAttribute().NextAttribute());
+    ASSERT_FALSE(root.NextSibling());
+
+    root = root.FirstChild();
+    ASSERT_TRUE(root);
+    EXPECT_EQ(root.GetName(), "inroot");
+    ASSERT_FALSE(root.FirstAttribute());
+
+    auto inner = root.FirstChild();
+    ASSERT_TRUE(inner);
+    EXPECT_EQ(inner.GetName(), "ctrl");
+    EXPECT_EQ(inner.FirstAttribute().GetName(), "name");
+    EXPECT_EQ(inner.FirstAttribute().GetValue(), "123");
+    EXPECT_EQ(inner.GetAttrValue("pos"), "4,5");
+
+    inner = inner.NextSibling();
+    ASSERT_TRUE(inner);
+    EXPECT_EQ(inner.GetName(), "ctrl");
+    ASSERT_FALSE(inner.FirstAttribute());
+    ASSERT_FALSE(inner.NextSibling());
+
+    root = root.NextSibling();
+    ASSERT_TRUE(root);
+    EXPECT_EQ(root.GetName(), "ctrl2");
+    EXPECT_EQ(root.GetAttrValue("name"), "abc");
+    ASSERT_FALSE(root.NextSibling());
 }
 
 bool TestLoad() {

@@ -1,0 +1,7 @@
+<root title="abc">
+    <inroot>
+        <ctrl name="123" pos="4,5" />
+        <ctrl />
+    </inroot>
+    <ctrl2 name="abc" />
+</root>

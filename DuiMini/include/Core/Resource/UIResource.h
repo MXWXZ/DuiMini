@@ -35,6 +35,7 @@ public:
     /**
      * Load resource only ONCE.
      * @param	path: res path
+     * @param   endtext: true to append '\0' in the end of file(end of text)
      * @return	loaded class pointer, nullptr for error
      * @note    Res will be load if there is no other copy exist,otherwise will
      * return existed copy.
@@ -42,7 +43,7 @@ public:
      * careful, what you do to pointed class will affect other copies!
      */
     template <typename T>
-    static std::shared_ptr<T> LoadRes(const char* path) {
+    static std::shared_ptr<T> LoadRes(const char* path, bool endtext = false) {
         static_assert(std::is_base_of<IUILoadFile, T>::value,
                       "class should inherit from IUILoadFile");
 
@@ -53,12 +54,14 @@ public:
             filesize = GetFileSize(path);
             if (filesize == -1)
                 return nullptr;
-            filedata = make_shared_array<unsigned char>(filesize);
+            filedata = make_shared_array<unsigned char>(filesize + endtext);
             if (!GetFile(path, filedata.get(), filesize))
                 return nullptr;
+            if (endtext)
+                ((unsigned char*)filedata.get())[filesize] = '\0';
             auto tmp = std::make_shared<LoadedRes>();
             tmp->res_ = filedata;
-            tmp->size_ = filesize;
+            tmp->size_ = filesize + endtext;
             tmp->using_ = 1;
             resitem_[path] = tmp;
         } else {

@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.8)
 
 add_subdirectory("miniz")
+add_subdirectory("pugixml")
 
 # SFML
 override_option(SFML_BUILD_NETWORK FALSE BOOL "TRUE to build SFML's Network module.")

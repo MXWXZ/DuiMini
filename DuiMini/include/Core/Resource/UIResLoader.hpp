@@ -10,12 +10,14 @@
 
 #include "UIDefine.h"
 #include "Core/UIInterface.h"
+#include "Utils/UIXmlParse.hpp"
 
 namespace DuiMini {
 class UIRawLoader : public IUILoadFile {
 public:
     const void* GetFile() const { return buffer_; }
     long GetFileSize() const { return buffersize_; }
+
     bool LoadFile(const void* buffer, long size) override {
         buffer_ = buffer;
         buffersize_ = size;
@@ -25,6 +27,18 @@ public:
 protected:
     const void* buffer_;
     long buffersize_;
+};
+
+class UIXmlLoader : public IUILoadFile {
+public:
+    bool LoadFile(const void* buffer, long size) override {
+        return doc_.load_buffer(buffer, size);
+    }
+
+    UIXmlNode GetRoot() const { return UIXmlNode(doc_.first_child()); }
+
+protected:
+    xmldoc doc_;
 };
 }  // namespace DuiMini
 
