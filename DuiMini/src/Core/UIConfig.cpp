@@ -1,8 +1,3 @@
-#include "..\..\include\Core\UIConfig.h"
-#include "..\..\include\Core\UIConfig.h"
-#include "..\..\include\Core\UIConfig.h"
-#include "..\..\include\Core\UIConfig.h"
-#include "..\..\include\Core\UIConfig.h"
 /**
  * @author  MXWXZ
  * @date    2019/03/09
@@ -36,7 +31,8 @@ uint UIConfig::cache_font_size_ = 0;
 #define Config_CmpAttr(x, y) _now[x] == y
 
 void DuiMini::UIConfig::LoadConfig(
-    const char* path /* = DUIMINI_DEFAULT_CONFIGFILE*/) {}
+    const char* path /* = DUIMINI_DEFAULT_CONFIGFILE*/) {
+}
 
 int UIConfig::FindLangID(const char* name) { return FindItemID(lang_, name); }
 
