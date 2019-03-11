@@ -39,11 +39,13 @@ TEST(Core_Resource, UIResource) {
     EXPECT_EQ(rename("HostFile.exe.bak", "HostFile.exe"), 0);
 #else
     system("./ResPacker HostFile TestRes/uires.zip");
+    system("chmod +x HostFile");
     system("./HostFile");
     UIResource::SetResMode(kRT_Raw, "HostFile");
     EXPECT_TRUE(TestLoad());
     EXPECT_EQ(remove("HostFile"), 0);
     EXPECT_EQ(rename("HostFile.bak", "HostFile"), 0);
+    system("chmod +x HostFile");
 #endif
 }
 

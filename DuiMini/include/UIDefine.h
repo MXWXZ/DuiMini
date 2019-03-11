@@ -7,6 +7,8 @@
 #ifndef DUI_UIDEFINE_H_
 #define DUI_UIDEFINE_H_
 
+#include <cstring>
+
 /**
  * Library export/import define.
  * Add [UILIB_STATIC] as a preprocessor definition if you use static library.

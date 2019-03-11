@@ -4,7 +4,7 @@
 #ifndef DUI_UIBUILDCONFIG_H_
 #define DUI_UIBUILDCONFIG_H_
 
-#define HAVE_STRICMP
-/* #undef HAVE_STRCASECMP */
+/* #undef HAVE_STRICMP */
+#define HAVE_STRCASECMP
 
 #endif  // !DUI_UIBUILDCONFIG_H_
