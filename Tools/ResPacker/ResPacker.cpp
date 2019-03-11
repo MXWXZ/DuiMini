@@ -10,7 +10,6 @@
 #include <vector>
 #include <memory>
 
-#include <miniz/miniz.h>
 #include <cxxopts/cxxopts.hpp>
 using namespace std;
 

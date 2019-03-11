@@ -70,7 +70,7 @@ bool UIConfig::SetShownFont(uint id) {
     auto& nowfont = font_[id];
     if (nowfont["lang"] != lang_[shownlang_]["lang"]) {
         UISetError(kEL_Warning, "Font %s in language %s mismatch with %s!",
-                   nowfont["name"], nowfont["lang"], lang_[shownlang_]["lang"]);
+                   nowfont["name"].GetData(), nowfont["lang"].GetData(), lang_[shownlang_]["lang"].GetData());
         return false;
     }
 
