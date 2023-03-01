@@ -31,6 +31,7 @@ THE SOFTWARE.
 #include <iostream>
 #include <map>
 #include <memory>
+#include <limits>
 #include <regex>
 #include <sstream>
 #include <string>
